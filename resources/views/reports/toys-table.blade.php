@@ -31,7 +31,7 @@
         </div>
         <div class="row">
             <div class="col-md-4">
-            <button class="btn btn-primary col-md-12">Gerar relatório</button>
+                <button class="btn btn-primary col-md-12">Gerar relatório</button>
             </div>
         </div>
 
@@ -42,7 +42,7 @@
         <thead>
         <tr>
             <th class="text-center">Brinquedo</th>
-            <th class="text-center">Tempo total de uso</th>
+            <th class="text-center">Tempo total de uso (horas)</th>
             <th class="text-center">Valor total (R$)</th>
         </tr>
         </thead>

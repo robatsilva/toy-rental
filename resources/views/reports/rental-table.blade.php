@@ -31,8 +31,14 @@
         </div>
         <div class="row">
             <div class="col-md-4">
-            <button class="btn btn-primary col-md-12">Gerar relatório</button>
+                <button class="btn btn-primary col-md-12">Gerar relatório</button>
             </div>
+            @if($resume)
+                <div class="col-md-8 text-right">
+                    <h4>Total no período </h4>
+                    <h2>{{ $resume }} </h2>
+                </div>
+            @endif
         </div>
 
     </form>
@@ -52,7 +58,6 @@
             <th class="text-center">Cobrado</th>
             <th class="text-center">Motivo tempo adicional</th>
             <th class="text-center">Valor (R$)</th>
-            <th class="text-center">Valor pago (R$)</th>
             <th class="text-center">Status</th>
         </tr>
         </thead>
@@ -70,8 +75,7 @@
                 <td>{{ $rental->time_diff }}</td> 
                 <td>{{ $rental->time_considered }}</td> 
                 <td>{{ $rental->reason_extra_time }}</td> 
-                <td>{{ $rental->value }}</td> 
-                <td>{{ $rental->value - $rental->discount }}</td> 
+                <td>{{ $rental->total_pay }}</td> 
                 <td>{{ $rental->status }}</td> 
             </tr>       
             @endforeach

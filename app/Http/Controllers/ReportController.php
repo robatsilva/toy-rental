@@ -17,7 +17,10 @@ class ReportController extends Controller
      */
     public function reportByDate(Request $request)
     {
-        $rentals = Rental::selectRaw("*, 
+        $total = Rental::
+            where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->sum("value");
+        $rentals = Rental::selectRaw("*, rentals.value as total_pay,
                 
                 TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, NOW())) AS time_diff,
                 
@@ -34,14 +37,15 @@ class ReportController extends Controller
 
         return view('reports.rental-table')
             ->with('rentals', $rentals)
-            ->with('input', $request->input());
+            ->with('input', $request->input())
+            ->with('resume', $total);
     }
 
     public function reportByToys(Request $request)
     {
         $rentals = Rental::selectRaw("*, 
                     
-                sum( TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, NOW())) ) as total_time,
+                sum( TIMESTAMPDIFF(HOUR, init, if(END is not null, END, NOW())) ) as total_time,
                 sum(value - discount) as total_pay
                     ")
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
@@ -67,7 +71,8 @@ class ReportController extends Controller
     {
         return view('reports.rental-table')
             ->with('rentals', null)
-            ->with('input', null);
+            ->with('input', null)
+            ->with('resume', null);
     }
 
     public function toys()

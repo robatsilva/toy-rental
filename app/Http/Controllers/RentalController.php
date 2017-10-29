@@ -174,8 +174,6 @@ class RentalController extends Controller
         $calc = $this->calculeRental($rental->id)->getData();
         $rental->value = $calc->valueTotal;
         $rental->period_id = $calc->period->id;
-        $rental->period_id = $calc->period->id;
-        //$rental->discount = $request->input('discount');
         $rental->payment_way = $request->input('payment_way');
         $rental->status = "Encerrado";
         if(!$rental->end)
