@@ -19,6 +19,7 @@ class ReportController extends Controller
     {
         $total = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->where("kiosk_id", $request->input("kiosk_id"))
             ->sum("value");
         $rentals = Rental::selectRaw("*, rentals.value as total_pay,
                 
@@ -30,7 +31,8 @@ class ReportController extends Controller
                     ((select time_considered) - time)) AS time_exceded")
             ->join('periods', 'periods.id', '=', 'period_id')
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
-            ->where("kiosk_id", $request->input("kiosk_id"));
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->orderBy("init", "desc");
         
         $rentals = $rentals
                 ->get();
@@ -51,6 +53,7 @@ class ReportController extends Controller
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id",$request->input("kiosk_id"))
             ->where("status", "!=", "Cancelado")
+            ->orderBy("init", "desc")
             ->groupBy("toy_id")
             ->with("toy");
         

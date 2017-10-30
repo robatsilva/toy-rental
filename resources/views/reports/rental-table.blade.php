@@ -12,7 +12,7 @@
 </style>
 <div class="container">
 <div class="row">
-    <form id="rental-form" action="/report/" method="post">
+    <form id="rental-form" action="/report" method="post">
         {!! csrf_field() !!}
         <div class="row">
             <div class="form-group col-md-4">
@@ -47,6 +47,7 @@
     <table class="table">
         <thead>
         <tr>
+            <th class="text-center">Data</th>
             <th class="text-center">Brinquedo</th>
             <th class="text-center">Cliente</th>
             <th class="text-center">Início</th>
@@ -65,6 +66,7 @@
         @if($rentals)
             @foreach($rentals as $rental)
             <tr class="text-center" id="{{$rental->id}}"> 
+                <td>{{ Carbon\Carbon::parse($rental->init)->format('d/m/Y') }}</td> 
                 <td>{{ $rental->toy->description }}</td> 
                 <td>{{ $rental->customer->name }}</td> 
                 <td>{{ Carbon\Carbon::parse($rental->init)->format('H:i') }}</td> 
@@ -111,7 +113,6 @@
         $.get("/kiosk/list", function(data){
             hideLoader();
             kioskResponse(data);
-            loadToys();
         });
     }
 
