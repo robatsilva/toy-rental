@@ -169,12 +169,11 @@
     });
 
     ////////////////////////Loaders
-    function initLoaders(){
-        loadPeriods();
+    function initLoaders(){;
         loadKiosks();
     }
     function loadPeriods(){
-        $.get("/period", function(data){
+        $.get("/period/" + $("#kiosks").val(), function(data){
             periodResponse(data);
         });
     }
@@ -185,6 +184,7 @@
             hideLoader();
             kioskResponse(data);
             loadToys();
+            loadPeriods();
         });
     }
     function loadToys()

@@ -70,7 +70,6 @@ class RentalController extends Controller
         ->orderBy("status")
         ->orderBy("created_at", "desc")
         ->get();
-        
         if($request->header('Content-Type') == 'JSON')
             return response()->json($rentals);
         return view('rentals.table.rental')

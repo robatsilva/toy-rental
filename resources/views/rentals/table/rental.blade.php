@@ -113,7 +113,7 @@
         $("#btn-save-extra-time").click(function(){
             var rentalId = $(this).val();
             showLoader();
-            $.post("/rental/extra-time/", {
+            $.post("/rental/extra-time  ", {
                 _token: "{{ csrf_token() }}",
                 id: rentalId,
                 extra_time: $("#extra-time").val(),

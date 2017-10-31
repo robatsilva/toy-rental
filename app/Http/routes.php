@@ -47,3 +47,7 @@ Route::get('/report/toys', 'ReportController@toys');
 Route::post('/report/toys', 'ReportController@reportByToys');
 
 Route::get('/period', 'PeriodController@index');
+Route::post('/period', 'PeriodController@store');
+Route::get('/period/create', 'PeriodController@create');
+Route::get('/period/list', 'PeriodController@listPeriods');
+Route::get('/period/{kiosk_id}', 'PeriodController@getByKioskId');
