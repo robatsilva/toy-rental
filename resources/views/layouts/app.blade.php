@@ -92,6 +92,7 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="{{ url('/report') }}">Aluguéis</a></li>
                             <li><a href="{{ url('/report/toys') }}">Brinquedos</a></li>
+                            <li><a href="{{ url('/report/payment-way') }}">Forma de pagamento</a></li>
                         </ul>
                     </li>
                 </ul>

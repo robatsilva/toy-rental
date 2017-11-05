@@ -41,26 +41,34 @@
             <td>{{ $rental->value_to_pay }}</td> 
             <td class="status">{{$rental->status}}</td>
             <td class="status">
-                <p>
+                <div class="col-xs-6">
                     @if($rental->status == "Alugado") 
                         <button type="button" class="btn btn-default btn-pause" aria-label="Left Align">
                             <span class="glyphicon glyphicon-pause" title="Pausar" aria-hidden="true"></span>
-                        </button> @endif
+                        </button> 
+                    @endif
+                </div>
+                <div class="col-xs-6">
                     @if($rental->status == "Pausado" || $rental->status == "Alugado") 
                         <button type="button" class="btn btn-default btn-finish" aria-label="Left Align">
-                            <span class="glyphicon glyphicon-usd" title="Encerrar" aria-hidden="true"></span> @endif
-                        </button>
-                </p>
-                <p>
+                            <span class="glyphicon glyphicon-usd" title="Encerrar" aria-hidden="true"></span>
+                        </button> 
+                    @endif
+                </div>
+                <div class="col-xs-6">
                     @if($rental->status == "Pausado" || $rental->status == "Alugado" || $rental->status == "Encerrado") 
                         <button type="button" class="btn btn-default btn-cancel" aria-label="Left Align">
-                            <span class="glyphicon glyphicon-remove" title="Cancelar" aria-hidden="true"></span>@endif
-                        </button>
+                            <span class="glyphicon glyphicon-remove" title="Cancelar" aria-hidden="true"></span>
+                        </button> 
+                    @endif
+                </div>
+                <div class="col-xs-6">
                     @if($rental->status == "Pausado" || $rental->status == "Alugado") 
                         <button type="button" class="btn btn-default btn-extra-time" aria-label="Left Align">
-                            <span class="glyphicon glyphicon-time" title="Tempo Extra" aria-hidden="true"></span>@endif
-                        </button>
-                </p>
+                            <span class="glyphicon glyphicon-time" title="Tempo Extra" aria-hidden="true"></span>
+                        </button> 
+                    @endif
+                </div>
             </td> 
         </tr>       
         @endforeach

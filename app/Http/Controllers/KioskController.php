@@ -42,7 +42,8 @@ class KioskController extends Controller
      */
     public function create()
     {
-        return view('kiosks/form');
+        return view('kiosks/form')
+            ->with('kiosk', null);
     }
 
     /**
@@ -91,7 +92,9 @@ class KioskController extends Controller
      */
     public function edit($id)
     {
-        //
+        $kiosk = Kiosk::find($id);
+        return view('kiosks/form')
+            ->with("kiosk", $kiosk);
     }
 
     /**
@@ -103,7 +106,12 @@ class KioskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $kiosk = Kiosk::find($id);
+        $kiosk->name = $request->input('name');
+        $kiosk->tolerance = $request->input('tolerance');
+        $kiosk->extra_value = $request->input('extra-value');
+        $kiosk->save();
+        return redirect('kiosk');
     }
 
     /**
@@ -114,6 +122,8 @@ class KioskController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $kiosk = Kiosk::find($id);
+        $kiosk->delete();
+        return redirect('kiosk');
     }
 }

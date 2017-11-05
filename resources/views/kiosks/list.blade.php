@@ -19,6 +19,7 @@
                             <th>Nome</th>
                             <th>Tolerância</th>
                             <th>R$ minuto extra</th>
+                            <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,6 +28,14 @@
                                 <td>{{ $kiosk->name }}</td>
                                 <td>{{ $kiosk->tolerance }}</td>
                                 <td>{{ $kiosk->extra_value }}</td>
+                                <td>
+                                    <a href="/kiosk/{{$kiosk->id}}" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-edit" title="Editar" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="/kiosk/remove/{{$kiosk->id}}" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-remove" title="Excluir" aria-hidden="true"></span>
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

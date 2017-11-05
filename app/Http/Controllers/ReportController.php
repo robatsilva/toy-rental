@@ -44,11 +44,14 @@ class ReportController extends Controller
             ->with('resume', $total);
     }
 
+    /**
+     * get total of rentals group by toys
+     */
     public function reportByToys(Request $request)
     {
         $rentals = Rental::selectRaw("*, 
                     
-                sum( TIMESTAMPDIFF(HOUR, init, if(END is not null, END, UNIX_TIMESTAMP())) ) as total_time,
+                sum( TIMESTAMPDIFF(HOUR, init, if(END is not null, END, '" . Carbon::now() . "')) ) as total_time,
                 sum(value - discount) as total_pay
                     ")
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
@@ -62,6 +65,27 @@ class ReportController extends Controller
                 ->get();
 
         return view('reports.toys-table')
+            ->with('rentals', $rentals)
+            ->with('input', $request->input());
+    }
+    /**
+     * get total of rentals group by payment way
+     */
+    public function reportByPaymentWay(Request $request)
+    {
+        $rentals = Rental::selectRaw("*, 
+                sum(value - discount) as total_pay
+                    ")
+            ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->where("kiosk_id",$request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
+            ->orderBy("init", "desc")
+            ->groupBy("payment_way");
+        
+        $rentals = $rentals
+                ->get();
+
+        return view('reports.payment-way-table')
             ->with('rentals', $rentals)
             ->with('input', $request->input());
     }
@@ -82,6 +106,13 @@ class ReportController extends Controller
     public function toys()
     {
         return view('reports.toys-table')
+            ->with('rentals', null)
+            ->with('input', null);
+    }
+    
+    public function paymentWay()
+    {
+        return view('reports.payment-way-table')
             ->with('rentals', null)
             ->with('input', null);
     }

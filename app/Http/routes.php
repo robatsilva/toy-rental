@@ -21,6 +21,9 @@ Route::get('/kiosk', 'KioskController@index');
 Route::post('/kiosk', 'KioskController@store');
 Route::get('/kiosk/create', 'KioskController@create');
 Route::get('/kiosk/list', 'KioskController@listKiosk');
+Route::get('/kiosk/{id}', 'KioskController@edit');
+Route::post('/kiosk/update/{id}', 'KioskController@update');
+Route::get('/kiosk/remove/{id}', 'KioskController@destroy');
 
 Route::get('/customer/{kiosk_id}/{cpf}', 'CustomerController@show');
 
@@ -45,6 +48,8 @@ Route::get('/report', 'ReportController@rentals');
 Route::post('/report', 'ReportController@reportByDate');
 Route::get('/report/toys', 'ReportController@toys');
 Route::post('/report/toys', 'ReportController@reportByToys');
+Route::get('/report/payment-way', 'ReportController@paymentWay');
+Route::post('/report/payment-way', 'ReportController@reportByPaymentWay');
 
 Route::get('/period', 'PeriodController@index');
 Route::post('/period', 'PeriodController@store');
