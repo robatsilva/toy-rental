@@ -33,7 +33,11 @@
             <td>{{ $rental->toy->description }}</td> 
             <td>{{ $rental->customer->name }}</td> 
             <td>{{ Carbon\Carbon::parse($rental->init)->format('H:i') }}</td> 
+            @if($rental->end != "")
+            <td>{{ Carbon\Carbon::parse($rental->end)->format('H:i') }}</td>
+            @else 
             <td>{{ Carbon\Carbon::parse($rental->init)->addMinutes($rental->period->time)->format('H:i') }}</td> 
+            @endif
             <td>{{ $rental->value_to_pay }}</td> 
             <td class="status">{{$rental->status}}</td>
             <td class="status">

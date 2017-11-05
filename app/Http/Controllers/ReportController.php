@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Carbon\Carbon;
+
 use DB;
 
 use App\Models\Rental;
@@ -23,15 +25,14 @@ class ReportController extends Controller
             ->sum("value");
         $rentals = Rental::selectRaw("*, rentals.value as total_pay,
                 
-                TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, NOW())) AS time_diff,
+                TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
                 
-                ((select time_diff) - extra_time) as time_considered,
-                
+                ((select time_diff) - (if(extra_time > (select time_diff), 0, extra_time))) as time_considered,                            
                 if((select time_considered) <= (time + tolerance), 0,
                     ((select time_considered) - time)) AS time_exceded")
             ->join('periods', 'periods.id', '=', 'period_id')
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
-            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("rentals.kiosk_id", $request->input("kiosk_id"))
             ->orderBy("init", "desc");
         
         $rentals = $rentals
@@ -47,7 +48,7 @@ class ReportController extends Controller
     {
         $rentals = Rental::selectRaw("*, 
                     
-                sum( TIMESTAMPDIFF(HOUR, init, if(END is not null, END, NOW())) ) as total_time,
+                sum( TIMESTAMPDIFF(HOUR, init, if(END is not null, END, UNIX_TIMESTAMP())) ) as total_time,
                 sum(value - discount) as total_pay
                     ")
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))

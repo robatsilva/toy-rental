@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Auth;
 use DB;
+use Carbon\Carbon;
 
 use App\Models\Toy;
 use App\Models\Kiosk;
@@ -43,7 +44,7 @@ class ToyController extends Controller
             $query->select(DB::raw(1))
                   ->from('rentals')
                   ->whereRaw('toys.id = rentals.toy_id')
-                  ->where(DB::raw("date(init)"), DB::raw("curdate()"))
+                  ->where(DB::raw("date(init)"), DB::raw("'". Carbon::now()->format("Y/m/d") . "'"))
                   ->whereRaw('status != "Encerrado" and status != "Cancelado"');
         })
         ->get();

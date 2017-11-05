@@ -38,9 +38,9 @@ class RentalController extends Controller
         $rentals = Rental::selectRaw("*, 
             (select time from periods order by time asc limit 1) as min_period,
             
-            TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, NOW())) AS time_diff,
+            TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
             
-            ((select time_diff) - extra_time) as time_considered,            
+            ((select time_diff) - (if(extra_time > (select time_diff), 0, extra_time))) as time_considered,            
             (
                 SELECT TIME
                 FROM periods
@@ -60,7 +60,7 @@ class RentalController extends Controller
             LIMIT 1)as value_to_pay")
 
         ->where("kiosk_id", $kiosk_id)
-        ->where(DB::raw("date(init)"), DB::raw("curdate()"))
+        ->where(DB::raw("date(init)"), DB::raw("'". Carbon::now()->format("Y/m/d") . "'"))
         ->where('status', 'Pausado')
         ->orWhere('status', 'Alugado')
         ->with("toy")

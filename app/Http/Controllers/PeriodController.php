@@ -38,14 +38,6 @@ class PeriodController extends Controller
     public function getByKioskId($kiosk_id)
     {
         $periods = Period::where('kiosk_id', $kiosk_id)
-        ->whereNotExists(function($query)
-        {
-            $query->select(DB::raw(1))
-                  ->from('rentals')
-                  ->whereRaw('periods.id = rentals.period_id')
-                  ->where(DB::raw("date(init)"), DB::raw("curdate()"))
-                  ->whereRaw('status != "Encerrado" and status != "Cancelado"');
-        })
         ->get();
         return response()->json($periods);
     }
