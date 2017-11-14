@@ -35,7 +35,7 @@ class RentalController extends Controller
     public function index(Request $request, $kiosk_id)
     {
         $kiosk = Kiosk::find($kiosk_id);
-        $rentals = Rental::selectRaw("*, 
+        $rentals = Rental::selectRaw("/*, 
             (select time from periods order by time asc limit 1) as min_period,
             
             TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
@@ -45,6 +45,7 @@ class RentalController extends Controller
                 SELECT TIME
                 FROM periods
                 WHERE TIME <= if(time_considered < min_period, min_period, time_considered)
+                and kiosk_id = " . $kiosk_id . "
                 ORDER BY TIME DESC
                 LIMIT 1) AS period_calculated,
                 
@@ -56,6 +57,7 @@ class RentalController extends Controller
             SELECT VALUE + ((select time_exceded) * extra_value)
             FROM periods
             WHERE TIME <= if(time_considered < min_period, min_period, time_considered)
+            and kiosk_id = " . $kiosk_id . "
             ORDER BY TIME DESC
             LIMIT 1)as value_to_pay")
 
@@ -255,6 +257,7 @@ class RentalController extends Controller
             $time_considered = $time_total - $rental->extra_time; 
         
         $period = Period::where('time', '<=', $time_considered)
+            ->where('kiosk_id', $rental->kiosk_id)
             ->orderBy('time', 'desc')
             ->first();
         if(!$period)
