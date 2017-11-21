@@ -35,8 +35,12 @@ class RentalController extends Controller
     public function index(Request $request, $kiosk_id)
     {
         $kiosk = Kiosk::find($kiosk_id);
-        $rentals = Rental::selectRaw("/*, 
-            (select time from periods order by time asc limit 1) as min_period,
+        $rentals = Rental::selectRaw("*, 
+            (select time 
+                from periods
+                where kiosk_id = " . $kiosk_id . "
+                order by time asc 
+            limit 1) as min_period,
             
             TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
             
@@ -63,8 +67,7 @@ class RentalController extends Controller
 
         ->where("kiosk_id", $kiosk_id)
         ->where(DB::raw("date(init)"), DB::raw("'". Carbon::now()->format("Y/m/d") . "'"))
-        ->where('status', 'Pausado')
-        ->orWhere('status', 'Alugado')
+        ->whereRaw('status = "Pausado" or status = "Alugado"')
         ->with("toy")
         ->with("customer")
         ->with("kiosk")
@@ -261,7 +264,9 @@ class RentalController extends Controller
             ->orderBy('time', 'desc')
             ->first();
         if(!$period)
-            $period = Period::orderBy('time', 'asc')->first();
+            $period = Period::
+                        where('kiosk_id', $rental->kiosk_id)
+                        ->orderBy('time', 'asc')->first();
 
         $timeExceeded = 0;
         $valueExceeded = 0;
