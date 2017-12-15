@@ -11,14 +11,22 @@
                         <h3>Quiosques</h3>
                     </a>
                 </div>
+
+                <div class="col-md-6 text-center">
+                    <a href="employe/create">
+                        <img src="/images/customer.jpeg" class="img-responsive center-block">
+                        <h3>Funcionários</h3>
+                    </a>
+                </div>
+
+            </div>
+            <div class="row" style="margin-top: 50px;">
                 <div class="col-md-6 text-center">
                     <a href="toy">
                         <img src="/images/cars.jpeg" class="img-responsive center-block">
                         <h3>Brinquedos</h3>
                     </a>
                 </div>
-            </div>
-            <div class="row" style="margin-top: 50px;">
                 <div class="col-md-6 text-center">
                     <a href="period">
                         <img src="/images/time.png" class="img-responsive center-block">

@@ -11,6 +11,8 @@
 |
 */
 
+
+
 Route::get('/', 'RentalController@home');
 
 Route::auth();
@@ -26,6 +28,9 @@ Route::post('/kiosk/update/{id}', 'KioskController@update');
 Route::get('/kiosk/remove/{id}', 'KioskController@destroy');
 
 Route::get('/customer/{kiosk_id}/{cpf}', 'CustomerController@show');
+
+Route::get('/employe/create', 'EmployeController@create');
+Route::post('/employe/register', 'EmployeController@store');
 
 Route::get('/toy', 'ToyController@index');
 Route::post('/toy', 'ToyController@store');

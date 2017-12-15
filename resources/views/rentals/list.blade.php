@@ -37,7 +37,7 @@
                 
                 <div class="form-group col-xs-6 col-md-3">
                     <label for="period">Periodo:</label>
-                    <select name="period_id" class="form-control" id="period" required>
+                    <select name="period_id" class="form-control clear" id="period" required>
                         <option value="">Escolha o periodo...</option>
                     </select>
                 </div>

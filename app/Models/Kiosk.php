@@ -11,6 +11,11 @@ class Kiosk extends Model
         return $this->belongsTo('App\user');
     }
 
+    public function employe()
+    {
+        return $this->hasMany('App\user', 'kiosk_id');
+    }
+
     public function customers()
     {
         return $this->hasMany('App\Csutomer');
