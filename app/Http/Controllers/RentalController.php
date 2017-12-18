@@ -56,10 +56,10 @@ class RentalController extends Controller
     public function index(Request $request, $kiosk_id)
     {
         $kiosk = Kiosk::find($kiosk_id);
-        $rentals = Rental::selectRaw("*, 
+        $rentals = Rental::selectRaw("rentals.*, 
             (select time 
                 from periods
-                where kiosk_id = " . $kiosk_id . "
+                where periods.kiosk_id = " . $kiosk_id . "
                 order by time asc 
             limit 1) as min_period,
             
@@ -70,7 +70,7 @@ class RentalController extends Controller
                 SELECT TIME
                 FROM periods
                 WHERE TIME <= if(time_considered < min_period, min_period, time_considered)
-                and kiosk_id = " . $kiosk_id . "
+                and periods.kiosk_id = " . $kiosk_id . "
                 ORDER BY TIME DESC
                 LIMIT 1) AS period_calculated,
                 
@@ -82,11 +82,11 @@ class RentalController extends Controller
             SELECT VALUE + ((select time_exceded) * extra_value)
             FROM periods
             WHERE TIME <= if(time_considered < min_period, min_period, time_considered)
-            and kiosk_id = " . $kiosk_id . "
+            and periods.kiosk_id = " . $kiosk_id . "
             ORDER BY TIME DESC
             LIMIT 1)as value_to_pay")
-        ->joint('toys', 'toys.kiosk_id', '=', $kiosk_id, 'left')
-        ->where("kiosk_id", $kiosk_id)
+        ->join('toys', 'toys.id', '=', 'rentals.toy_id', 'right')
+        ->where("rentals.kiosk_id", $kiosk_id)
         ->where(DB::raw("date(init)"), DB::raw("'". Carbon::now()->format("Y/m/d") . "'"))
         ->whereRaw('status = "Pausado" or status = "Alugado"')
         ->with("toy")
