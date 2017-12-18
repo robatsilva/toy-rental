@@ -126,4 +126,21 @@ class KioskController extends Controller
         $kiosk->delete();
         return redirect('kiosk');
     }
+
+    public function setDefault($id)
+    {
+        $kioskDefault = Kiosk::where("user_id", Auth::user()->id)
+                        ->where("default", 1)
+                        ->first();
+                        
+        $kiosk = Kiosk::find($id);
+        $kiosk->default = 1;
+        $kiosk->save();
+        
+        if($kioskDefault){
+            $kioskDefault->default = 0;
+            $kioskDefault->save();
+        }
+        return redirect('kiosk');
+    }
 }

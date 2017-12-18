@@ -1,11 +1,12 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Employe extends Authenticatable
 {
+    protected $table = 'users';
     /**
      * The attributes that are mass assignable.
      *
@@ -23,5 +24,10 @@ class Employe extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function kiosk()
+    {
+        return $this->belongsTo('App\Models\Kiosk');
+    }
 
 }

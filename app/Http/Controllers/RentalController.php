@@ -14,6 +14,7 @@ use App\Models\Customer;
 use App\Models\Toy;
 use App\Models\Kiosk;
 use App\Models\Period;
+use App\Models\Employe;
 
 class RentalController extends Controller
 {
@@ -27,6 +28,26 @@ class RentalController extends Controller
         $this->middleware('auth');
     }
     
+    /**
+     * Open home of rental screen
+     */
+    public function home()
+    {
+        $user = Employe::find(Auth::user()->id);
+        if($user->kiosk_id)
+            $kiosk_id = $user->kiosk_id;
+        else{
+            $kiosk_id = Kiosk::
+            where('user_id', $user->id)
+            ->where('default', "1")
+            ->first()->id;
+        }
+        $kiosks = Kiosk::where('user_id', Auth::user()->id);
+        if($kiosks)
+            return view('rentals.list')->with('kiosk_id', $kiosk_id);
+        else
+            return redirect('cadastro');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -64,7 +85,7 @@ class RentalController extends Controller
             and kiosk_id = " . $kiosk_id . "
             ORDER BY TIME DESC
             LIMIT 1)as value_to_pay")
-
+        ->joint('toys', 'toys.kiosk_id', '=', $kiosk_id, 'left')
         ->where("kiosk_id", $kiosk_id)
         ->where(DB::raw("date(init)"), DB::raw("'". Carbon::now()->format("Y/m/d") . "'"))
         ->whereRaw('status = "Pausado" or status = "Alugado"')
@@ -77,22 +98,10 @@ class RentalController extends Controller
         ->get();
         if($request->header('Content-Type') == 'JSON')
             return response()->json($rentals);
-        return view('rentals.table.rental')
+        return view('rentals.rentals-toys')
             ->with('rentals', $rentals);
     }
     
-    /**
-     * Open home of rental screen
-     */
-    public function home()
-    {
-        $kiosks = Kiosk::where('user_id', Auth::user()->id)
-        ->first();
-        if($kiosks)
-            return view('rentals.list');
-        else
-            return redirect('cadastro');
-    }
     /**
      * Show the form for creating a new resource.
       *

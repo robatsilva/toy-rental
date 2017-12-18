@@ -26,17 +26,25 @@ Route::get('/kiosk/list', 'KioskController@listKiosk');
 Route::get('/kiosk/{id}', 'KioskController@edit');
 Route::post('/kiosk/update/{id}', 'KioskController@update');
 Route::get('/kiosk/remove/{id}', 'KioskController@destroy');
+Route::get('/kiosk/default/{id}', 'KioskController@setDefault');
 
 Route::get('/customer/{kiosk_id}/{cpf}', 'CustomerController@show');
 
+Route::get('/employe', 'EmployeController@index');
+Route::post('/employe', 'EmployeController@store');
 Route::get('/employe/create', 'EmployeController@create');
-Route::post('/employe/register', 'EmployeController@store');
+Route::get('/employe/{id}', 'EmployeController@edit');
+Route::post('/employe/update/{id}', 'EmployeController@update');
+Route::get('/employe/remove/{id}', 'EmployeController@destroy');
 
 Route::get('/toy', 'ToyController@index');
 Route::post('/toy', 'ToyController@store');
 Route::get('/toy/list', 'ToyController@listToys');
 Route::get('/toy/create', 'ToyController@create');
-Route::get('/toy/{kiosk_id}', 'ToyController@getByKioskId');
+Route::get('/toy/{id}', 'ToyController@edit');
+Route::get('/toy/getByKioskId/{kiosk_id}', 'ToyController@getByKioskId');
+Route::post('/toy/update/{id}', 'ToyController@update');
+Route::get('/toy/remove/{id}', 'ToyController@destroy');
 
 Route::get('/rental', 'RentalController@index');
 Route::post('/rental', 'RentalController@store');
@@ -60,4 +68,7 @@ Route::get('/period', 'PeriodController@index');
 Route::post('/period', 'PeriodController@store');
 Route::get('/period/create', 'PeriodController@create');
 Route::get('/period/list', 'PeriodController@listPeriods');
-Route::get('/period/{kiosk_id}', 'PeriodController@getByKioskId');
+Route::get('/period/{id}', 'PeriodController@edit');
+Route::get('/period/getByKioskId/{kiosk_id}', 'PeriodController@getByKioskId');
+Route::post('/period/update/{id}', 'PeriodController@update');
+Route::get('/period/remove/{id}', 'PeriodController@destroy');

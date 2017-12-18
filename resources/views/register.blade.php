@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="col-md-6 text-center">
-                    <a href="employe/create">
+                    <a href="employe">
                         <img src="/images/customer.jpeg" class="img-responsive center-block">
                         <h3>Funcionários</h3>
                     </a>

@@ -10,6 +10,7 @@ use Auth;
 
 use App\Models\Toy;
 use App\Models\Kiosk;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -30,6 +31,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('rental.list');
+        $user = User::find(Auth::user()->id);
+        if($user->kiosk_id)
+            $kiosk_id = $user->kiosk_id;
+        else{
+            $kiosk_id = Kiosk::
+            where('user_id', $user->id)
+            ->where('default', "1")
+            ->first()->id;
+        }
+            dd($kiosk_id);
+        return view('rental.list')->with('kiosk_id', $kiosk_id);
     }
 }

@@ -15,7 +15,8 @@ class PeriodController extends Controller
 {
     public function index()
     {
-        $periods = Period::join('kiosks', 'kiosks.id', '=', 'periods.kiosk_id')
+        $periods = Period::select('periods.*')
+        ->join('kiosks', 'kiosks.id', '=', 'periods.kiosk_id')
         ->join('users', 'users.id', '=' ,'kiosks.user_id')
         ->where('users.id', Auth::user()->id)
         ->get();
@@ -23,7 +24,8 @@ class PeriodController extends Controller
     }
 
     public function listPeriods(){
-        $periods = Period::join('kiosks', 'kiosks.id', '=', 'periods.kiosk_id')
+        $periods = Period::select('periods.*')
+        ->join('kiosks', 'kiosks.id', '=', 'periods.kiosk_id')
         ->join('users', 'users.id', '=' ,'kiosks.user_id')
         ->where('users.id', Auth::user()->id)
         ->get();
@@ -89,7 +91,11 @@ class PeriodController extends Controller
      */
     public function edit($id)
     {
-        //
+        $kiosks = Kiosk::where("user_id", Auth::user()->id)->get();
+        $period = Period::find($id);
+        return view('periods.form')
+            ->with('kiosks', $kiosks)
+            ->with("period", $period);
     }
 
     /**
@@ -101,7 +107,12 @@ class PeriodController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $period = Period::find($id);
+        $period->time = $request->input('time');
+        $period->value = $request->input('value');
+        $period->kiosk_id = $request->input('kiosk_id');
+        $period->save();
+        return redirect('period');
     }
 
     /**

@@ -10,21 +10,25 @@
                 </div>
             </div>
             <div class="row">
-                <form action="/toy" method="post">
+                <form action="{{ $toy?'/toy/update/' . $toy->id : url('/toy') }}" method="post">
                     {!! csrf_field() !!}
                     <div class="form-group">
                         <label for="code">Código:</label>
-                        <input type="text" name="code" class="form-control" id="code">
+                        <input type="text" name="code" class="form-control" id="code" value="{{$toy?$toy->code:''}}">
                     </div>
                     <div class="form-group">
                         <label for="description">Descrição:</label>
-                        <input type="text" name="description" class="form-control" id="description">
+                        <input type="text" name="description" class="form-control" id="description" value="{{$toy?$toy->description:''}}">
                     </div>
                     <div class="form-group">
                         <label for="toy_id">Quiosque:</label>
                         <select name="kiosk_id" class="form-control" id="kiosk_id">
                             @foreach($kiosks as $kiosk)
-                            <option value='{{ $kiosk->id }}'>{{ $kiosk->name }}</option>
+                            <option value='{{ $kiosk->id }}'
+                                @if ($toy->kiosk_id == $kiosk->id)
+                                    selected="selected"
+                                @endif
+                            >{{ $kiosk->name }}</option>
                             @endforeach
                         </select>
                     </div>

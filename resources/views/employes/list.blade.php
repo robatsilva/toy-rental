@@ -6,33 +6,33 @@
         <div class="col-md-10 col-md-offset-1">
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <h1>Brinquedos Cadastrados</h1>
+                    <h1>Funcionários Cadastrados</h1>
                 </div>
                 <div class="col-md-12 text-right">
-                    <a href="toy/create" class="btn btn-primary" id="btn-new-toy" class="btn btn-primary">Novo</a>
+                    <a href="employe/create" class="btn btn-primary" id="btn-new-toy" class="btn btn-primary">Novo</a>
                 </div>
             </div>
             <div class="row">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Código</th>
-                            <th>Descrição</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
                             <th>Quiosque</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($toys as $toy)
+                        @foreach ($employes as $employe)
                             <tr>
-                                <td>{{ $toy->code }}</td>
-                                <td>{{ $toy->description }}</td>
-                                <td>{{ $toy->kiosk->name }}</td>
+                                <td>{{ $employe->name }}</td>
+                                <td>{{ $employe->email }}</td>
+                                <td>{{ $employe->kiosk->name }}</td>
                                 <td>
-                                    <a href="/toy/{{$toy->id}}" class="btn btn-default">
+                                    <a href="/employe/{{$employe->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
                                     </a>
-                                    <a href="/toy/remove/{{$toy->id}}" class="btn btn-default">
+                                    <a href="/employe/remove/{{$employe->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-remove" title="Excluir" aria-hidden="true"></span>
                                     </a>
                                 </td>

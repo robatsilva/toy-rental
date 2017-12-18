@@ -16,7 +16,8 @@ class ToyController extends Controller
 {
     public function index()
     {
-        $toys = Toy::join('kiosks', 'kiosks.id', '=', 'toys.kiosk_id')
+        $toys = Toy::select('toys.*')
+        ->join('kiosks', 'kiosks.id', '=', 'toys.kiosk_id')
         ->join('users', 'users.id', '=' ,'kiosks.user_id')
         ->where('users.id', Auth::user()->id)
         ->get();
@@ -98,7 +99,11 @@ class ToyController extends Controller
      */
     public function edit($id)
     {
-        //
+        $kiosks = Kiosk::where("user_id", Auth::user()->id)->get();
+        $toy = Toy::find($id);
+        return view('toys.form')
+            ->with('kiosks', $kiosks)
+            ->with("toy", $toy);
     }
 
     /**
@@ -110,7 +115,12 @@ class ToyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $toy = Toy::find($id);
+        $toy->code = $request->input('code');
+        $toy->description = $request->input('description');
+        $toy->kiosk_id = $request->input('kiosk_id');
+        $toy->save();
+        return redirect('toy');
     }
 
     /**

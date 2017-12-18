@@ -26,11 +26,6 @@ class User extends Authenticatable
 
     public function kiosks()
     {
-        return $this->hasMany('App\Kiosk');
-    }
-
-    public function kiosk()
-    {
-        return $this->hasOne('App\Kiosk');
+        return $this->hasMany('App\Models\Kiosk');
     }
 }

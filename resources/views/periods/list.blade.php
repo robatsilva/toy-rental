@@ -19,6 +19,7 @@
                             <th>Tempo</th>
                             <th>Valor</th>
                             <th>Quiosque</th>
+                            <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,6 +28,14 @@
                                 <td>{{ $period->time }}</td>
                                 <td>{{ $period->value }}</td>
                                 <td>{{ $period->kiosk->name }}</td>
+                                <td>
+                                    <a href="/period/{{$period->id}}" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="/period/remove/{{$period->id}}" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-remove" title="Excluir" aria-hidden="true"></span>
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

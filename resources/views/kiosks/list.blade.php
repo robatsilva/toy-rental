@@ -1,4 +1,4 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -30,11 +30,16 @@
                                 <td>{{ $kiosk->extra_value }}</td>
                                 <td>
                                     <a href="/kiosk/{{$kiosk->id}}" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-edit" title="Editar" aria-hidden="true"></span>
+                                        <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
                                     </a>
                                     <a href="/kiosk/remove/{{$kiosk->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-remove" title="Excluir" aria-hidden="true"></span>
                                     </a>
+                                    @if($kiosk->default != 1)
+                                        <a href="/kiosk/default/{{$kiosk->id}}" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-star" title="Principal" aria-hidden="true"></span>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
