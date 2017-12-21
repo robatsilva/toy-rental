@@ -56,7 +56,7 @@ class RentalController extends Controller
     public function index(Request $request, $kiosk_id)
     {
         $kiosk = Kiosk::find($kiosk_id);
-        $rentals = Rental::selectRaw("rentals.*, 
+        $rentals = Rental::selectRaw("rentals.*, toys.description, toys.id as toy_id, toys.image,
             (select time 
                 from periods
                 where periods.kiosk_id = " . $kiosk_id . "
@@ -87,8 +87,8 @@ class RentalController extends Controller
             LIMIT 1)as value_to_pay")
         ->join('toys', 'toys.id', '=', 'rentals.toy_id', 'right')
         ->where("rentals.kiosk_id", $kiosk_id)
-        ->where(DB::raw("date(init)"), DB::raw("'". Carbon::now()->format("Y/m/d") . "'"))
-        ->whereRaw('status = "Pausado" or status = "Alugado"')
+        ->whereRaw('(status = "Pausado" or status = "Alugado")')
+        ->orWhereNull('rentals.id')
         ->with("toy")
         ->with("customer")
         ->with("kiosk")

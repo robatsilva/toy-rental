@@ -1,5 +1,30 @@
 @extends('layouts.app')
+<style>
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
 
+    #img-upload{
+        margin-top: 30px;
+        width: 80px;
+    }
+</style>
 @section('content')
 <div class="container">
     <div class="row">
@@ -10,7 +35,7 @@
                 </div>
             </div>
             <div class="row">
-                <form action="{{ $toy?'/toy/update/' . $toy->id : url('/toy') }}" method="post">
+                <form action="{{ $toy?'/toy/update/' . $toy->id : url('/toy') }}" method="post" enctype="multipart/form-data">
                     {!! csrf_field() !!}
                     <div class="form-group">
                         <label for="code">Código:</label>
@@ -25,12 +50,24 @@
                         <select name="kiosk_id" class="form-control" id="kiosk_id">
                             @foreach($kiosks as $kiosk)
                             <option value='{{ $kiosk->id }}'
-                                @if ($toy->kiosk_id == $kiosk->id)
+                                @if ($toy && $toy->kiosk_id == $kiosk->id)
                                     selected="selected"
                                 @endif
                             >{{ $kiosk->name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Image</label>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-default btn-file">
+                                    Browse… <input type="file" id="imgInp" accept="image/*" name="image">
+                                </span>
+                            </span>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                        <img id='img-upload' {{ ($toy && $toy->image) ? "src='$toy->image'" : "" }}/>
                     </div>
                     <button type="submit" class="btn btn-primary">Salvar</button>
                 </form>
@@ -38,4 +75,43 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(document).ready( function() {
+    	$(document).on('change', '.btn-file :file', function() {
+		var input = $(this),
+			label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+		input.trigger('fileselect', [label]);
+		});
+
+		$('.btn-file :file').on('fileselect', function(event, label) {
+		    
+		    var input = $(this).parents('.input-group').find(':text'),
+		        log = label;
+		    
+		    if( input.length ) {
+		        input.val(log);
+		    } else {
+		        if( log ) alert(log);
+		    }
+	    
+		});
+		function readURL(input) {
+		    if (input.files && input.files[0]) {
+		        var reader = new FileReader();
+		        
+		        reader.onload = function (e) {
+		            $('#img-upload').attr('src', e.target.result);
+		        }
+		        
+		        reader.readAsDataURL(input.files[0]);
+		    }
+		}
+
+		$("#imgInp").change(function(){
+		    readURL(this);
+		}); 	
+	});
+</script>
 @endsection
