@@ -10,4 +10,9 @@ class Toy extends Model
     {
         return $this->belongsTo('App\Models\Kiosk');
     }
+
+    public function rental()
+    {
+        return $this->hasOne('App\Models\Rental');
+    }
 }

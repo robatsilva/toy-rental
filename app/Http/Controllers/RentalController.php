@@ -43,8 +43,14 @@ class RentalController extends Controller
             ->first()->id;
         }
         $kiosks = Kiosk::where('user_id', Auth::user()->id);
+        $periods = Period::where("kiosk_id", $kiosk_id)
+        ->orderBy('time', "asc")
+        ->get();
+
         if($kiosks)
-            return view('rentals.list')->with('kiosk_id', $kiosk_id);
+            return view('rentals.list')
+                ->with('kiosk_id', $kiosk_id)
+                ->with('periods', json_encode($periods->toArray()));
         else
             return redirect('cadastro');
     }
@@ -56,7 +62,11 @@ class RentalController extends Controller
     public function index(Request $request, $kiosk_id)
     {
         $kiosk = Kiosk::find($kiosk_id);
-        $rentals = Rental::selectRaw("rentals.*, toys.description, toys.id as toy_id, toys.image,
+        $toys = Toy::
+        where('toys.kiosk_id', $kiosk_id)
+        ->with("kiosk")
+        ->with(["rental" => function($query) use ($kiosk_id){
+            $query->selectRaw("*, 
             (select time 
                 from periods
                 where periods.kiosk_id = " . $kiosk_id . "
@@ -85,21 +95,17 @@ class RentalController extends Controller
             and periods.kiosk_id = " . $kiosk_id . "
             ORDER BY TIME DESC
             LIMIT 1)as value_to_pay")
-        ->join('toys', 'toys.id', '=', 'rentals.toy_id', 'right')
-        ->where("rentals.kiosk_id", $kiosk_id)
-        ->whereRaw('(status = "Pausado" or status = "Alugado")')
-        ->orWhereNull('rentals.id')
-        ->with("toy")
-        ->with("customer")
-        ->with("kiosk")
-        ->with("period")
-        ->orderBy("status")
-        ->orderBy("created_at", "desc")
+                ->where("kiosk_id", $kiosk_id)
+                ->whereRaw('(status = "Pausado" or status = "Alugado")')
+                ->with("customer");
+        }])
+        ->orderBy("toys.id")
         ->get();
+
         if($request->header('Content-Type') == 'JSON')
-            return response()->json($rentals);
+            return response()->json($toys);
         return view('rentals.rentals-toys')
-            ->with('rentals', $rentals);
+            ->with('toys', $toys);
     }
     
     /**
@@ -120,19 +126,19 @@ class RentalController extends Controller
      */
     public function store(Request $request)
     {
-        if(!$request->input('id'))
+        if(!$request->input('customer.id'))
         {
-            $cpf = $request->input('cpf');
+            $cpf = $request->input('customer.cpf');
             $cpf = str_replace('.', '', $cpf);
             $cpf = str_replace('-', '', $cpf);
             $customer = new Customer;
-            $customer->name = $request->input('name');   
+            $customer->name = $request->input('customer.name');   
             $customer->cpf = $cpf;
             $customer->kiosk_id = $request->input('kiosk_id');
             $customer->save();
         }
         else{
-            $customer = Customer::find($request->input('id'));
+            $customer = Customer::find($request->input('customer.id'));
         }
         $kiosk = Kiosk::find($request->input('kiosk_id'));
 
@@ -140,7 +146,7 @@ class RentalController extends Controller
         $rental->customer_id = $customer->id;
         $rental->kiosk_id = $request->input('kiosk_id');
         $rental->toy_id = $request->input('toy_id');
-        $rental->period_id = $request->input('period_id');
+        $rental->period_id = $request->input('period.id');
         $rental->tolerance = $kiosk->tolerance;
         $rental->extra_time = 0;
         $rental->extra_value = $kiosk->extra_value;
@@ -185,16 +191,19 @@ class RentalController extends Controller
         $rental = Rental::find($request->input('id'));
         
         $calc = $this->calculeRental($rental->id)->getData();
-        $rental->value = $calc->valueTotal;
+        if($request->input('payment_way') == "cc")
+            $rental->value_cc = $calc->valueTotal;
+        if($request->input('payment_way') == "cd")
+            $rental->value_cd = $calc->valueTotal;
+        if($request->input('payment_way') == "di")
+            $rental->value_di = $calc->valueTotal;
         $rental->period_id = $calc->period->id;
-        $rental->payment_way = $request->input('payment_way');
         $rental->status = "Encerrado";
         if(!$rental->end)
             $rental->end = Carbon::now();
         
         $rental->save();
-            
-        return "testes";
+
         return;
     }
 

@@ -167,6 +167,13 @@
 @endsection
 @section('scripts')
 <script>
+    var kiosk_id = {{ $kiosk_id }};
+    var toys;
+    var toy;
+    var customer;
+    var periods = JSON.parse(`{!! $periods !!}`);
+
+    
     $(document).ready(function(){
         $('#cpf').mask('000.000.000-00', {reverse: true});
         //$('#extra-time').mask('00', {reverse: true});
@@ -179,7 +186,7 @@
         reloadRentals();
 
         //loaders
-        initLoaders();
+        // initLoaders();
         //Listeners
         initListeners();
     });
@@ -189,7 +196,7 @@
     //     loadKiosks();
     // }
     function loadPeriods(){
-        $.get("/period/getByKioskId/" + $("#kiosks").val(), function(data){
+        $.get("/period/getByKioskId/" + kiosk_id, function(data){
             periodResponse(data);
         });
     }
@@ -213,14 +220,14 @@
     function loadRentals()
     {
         //$.get("/rental/" + $("#kiosks").val(), function(data){
-        $.get("/rental/" + {{ $kiosk_id }}, function(data){
+        $.get("/rental/" + kiosk_id, function(data){
             rentalsResponse(data);
         });
     }
     function loadCpf(){
         if(validateCpf()){
             showLoader();
-            $.get("/customer/" + $("#kiosks").val() + "/" + $("#cpf").val(), function(data){
+            $.get("/customer/" + {{ $kiosk_id }} + "/" + $("#cpf").val(), function(data){
                 cpfResponse(data);
                 //validateCustomer();
             });
@@ -297,38 +304,10 @@
 //         });
 //     }
 
-    $("#btn-save-finish").click(function(){
-        var rentalId = $(this).val();
-        showLoader();
-        $.post("/rental/finish", 
-        {
-            _token: "{{ csrf_token() }}",
-            id: rentalId,
-            payment_way: $("#payment_way").val(),
-            discount: $("#discount").val()
-
-        }, function(){
-            loadRentals();
-            loadToys();
-            $("#modal-payment").modal('hide');
-            $('body').removeClass('modal-open');
-            $('.modal-backdrop').remove();
-        });
-    });
+    
     ////////////////End listeners
     ////////////////Registers
-    function registerRental(){
-
-        $.post("/rental", $("#rental-form").serialize(), function(data){
-            //reload toys and rentals
-            loadToys();
-            loadRentals();
-            $(".clear").val("");
-            $(".clear").text("");
-            // validateCustomer();
-            hideLoader();
-        });
-    }
+    
     ////////////////End Registers
     ////////////////Responses
     // function periodResponse(data){
@@ -388,10 +367,13 @@
         $("#customer").show();
         if(data.name !== undefined){
             if(data.id){
+                customer = data;
+                customer.cpf = $("#cpf").val();
                 $("#id").val(data.id);
                 $("#name").val(data.name);
+                $("#name").val(data.name);
                 $("#name").attr("disabled", true);
-                toysFocus();
+                // toysFocus();
             }
         }
         else{
