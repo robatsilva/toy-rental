@@ -58,7 +58,7 @@
         cursor: pointer;
         background: #ccc;
     }
-    .value-init, .label-init{
+    .toy-init, .label-init{
         display: none;
     }
 </style>
@@ -81,10 +81,10 @@
                         <div class="col-md-12"> {{ $toy->rental->period->time }} min</div>
                     </div> 
                     <div class="btn-time col-md-6 toy-row">
-                        <div class="col-md-12 label-end"><b>Retorno</b></div>
-                        <div class="col-md-12 label-init"><b>Inicio</b></div>
-                        <div class="col-md-12 value-end"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->format('H:i') }} </div>
-                        <div class="col-md-12 value-init"> {{ Carbon\Carbon::parse($toy->rental->init)->format('H:i') }} </div>
+                        <div class="col-md-12 toy-end"><b>Retorno</b></div>
+                        <div class="col-md-12 toy-init"><b>Inicio</b></div>
+                        <div class="col-md-12 toy-end"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->format('H:i') }} </div>
+                        <div class="col-md-12 toy-init"> {{ Carbon\Carbon::parse($toy->rental->init)->format('H:i') }} </div>
                     </div> 
                     <div class="col-md-6 toy-row">
                         <div class="col-md-12"><b>Tempo</b></div>
@@ -168,10 +168,15 @@
         });
         $(".btn-time").dblclick(function(){
             debugger;
-            var init = $(this).closest(".value-init");
-            init.css("display", "block");
-            $(this).closest(".value-init").css("display", "block");
-            $(this).closest(".value-end").css("display", "none");
+            var init = $(this).find(".toy-init");
+            var end = $(this).find(".toy-end");
+            if(init.css("display") == "none"){
+                init.css("display", "block");
+                end.css("display", "none");
+            } else {
+                init.css("display", "none");
+                end.css("display", "block");
+            }
         });
         $(".btn-status").dblclick(function(){
             toy = $(this).parent().parent().attr("data-rental");
