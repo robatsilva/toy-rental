@@ -53,9 +53,10 @@ Route::post('/rental/finish', 'RentalController@finish');
 Route::get('/rental/{kiosk_id}', 'RentalController@index');
 Route::post('/rental/extra-time', 'RentalController@extraTime');
 Route::get('/rental/edit/{rental_id}', 'RentalController@edit');
-Route::get('/rental/pause/{rental_id}', 'RentalController@pause');
-Route::get('/rental/cancel/{rental_id}', 'RentalController@cancel');
-Route::get('/rental/calcule/{rental_id}', 'RentalController@calculeRental');
+Route::post('/rental/next-period/{rental_id}', 'RentalController@nextPeriod');
+Route::post('/rental/pause/{rental_id}', 'RentalController@pause');
+Route::post('/rental/cancel/{rental_id}', 'RentalController@cancel');
+Route::post('/rental/calcule/{rental_id}', 'RentalController@calculeRental');
 
 Route::get('/report', 'ReportController@rentals');
 Route::post('/report', 'ReportController@reportByDate');

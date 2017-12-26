@@ -37,12 +37,13 @@
         padding: 10px;
     }
     .toy-row{
-        padding: 5px;
+        padding:5px 0 0 0;
     }
     .toy-description{
         margin-top: 5px;
     }
     .toy-pays{
+        width: 100%;
         padding-top: 5px;
         display: inline-block;
     }
@@ -53,37 +54,51 @@
         background-color: #AAA;
         padding: 5px;
     }
-    .btn-status:hover{
+    .btn-customer:hover, .btn-status:hover, .btn-period:hover, .btn-time:hover{
         cursor: pointer;
+        background: #ccc;
+    }
+    .value-init, .label-init{
+        display: none;
     }
 </style>
+
 @foreach($toys as $toy)
     <div class="col-md-2 col-sm-3 col-xs-6 card-container" data-rental="{{ $toy }}">
         @if($toy->rental != null) 
             <span class="btn-close"></span>
         @endif
-        <div class="card" @if($toy->rental && $toy->rental->time_exceded > 0) style="background-color: #ffa1a1" @endif>
-            <div class="text-center toy-data"> 
+        <div class="card" @if($toy->rental && $toy->rental->period->time < $toy->rental->time_diff) style="background-color: #ffa1a1" @endif>
+            <div class="toy-data"> 
                 <img 
                     src="{{ $toy->image ? '/images/toys-img/' . $toy->image : '/images/Imagem_Indisponível.png' }}" 
-                    class="img-responsive center-block toy-img">
-                <div class="toy-description">{{ $toy->description }}</div> 
+                    class="img-responsive center-block toy-img"/>
+                <div class="text-center">{{ $toy->description }}</div> 
                 @if($toy->rental)
-                    <div>
-                        <div class="col-md-6 text-left toy-row"><b>Nome:</b></div>
-                        <div class="col-md-6 text-right toy-row"> {{ $toy->rental->customer->name }} </div>
+                    <div class="btn-customer text-center"><b>{{ $toy->rental->customer->name }}</b></div> 
+                    <div class="btn-period col-md-6 toy-row">
+                        <div class="col-md-12"><b>Período</b></div>
+                        <div class="col-md-12"> {{ $toy->rental->period->time }} min</div>
                     </div> 
-                    <div>
-                        <div class="col-md-6 text-left toy-row"><b>Retorno:</b></div>
-                        <div class="col-md-6 text-right toy-row"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->format('H:i') }} </div>
+                    <div class="btn-time col-md-6 toy-row">
+                        <div class="col-md-12 label-end"><b>Retorno</b></div>
+                        <div class="col-md-12 label-init"><b>Inicio</b></div>
+                        <div class="col-md-12 value-end"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->format('H:i') }} </div>
+                        <div class="col-md-12 value-init"> {{ Carbon\Carbon::parse($toy->rental->init)->format('H:i') }} </div>
                     </div> 
-                    <div>
-                        <div class="col-md-6 text-left toy-row"><b>Valor:</b></div>
-                        <div class="col-md-6 text-right toy-row"> 
+                    <div class="col-md-6 toy-row">
+                        <div class="col-md-12"><b>Tempo</b></div>
+                        <div class="col-md-12"> {{ $toy->rental->time_considered }} +
+                            <span>{{ $toy->rental->extra_tiem }}</span>
+                        </div>
+                    </div> 
+                    <div class="col-md-6 toy-row">
+                        <div class="col-md-12"><b>Valor</b></div>
+                        <div class="col-md-12"> 
                             {{ $toy->rental->value_to_pay }}  
                         </div>
                     </div> 
-                    <div class="toy-pays"> 
+                    <div class="toy-pays text-center"> 
                         <buttom data-value="cd"class="btn btn-primary btn-pay">CD</buttom>
                         <buttom data-value="cc" class="btn btn-primary btn-pay">CC</buttom>
                         <buttom data-value="di"class="btn btn-primary btn-pay">DI</buttom>
@@ -108,13 +123,6 @@
             toy = $(this).parent().parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
             if(toy.rental || !$("#name").val()){
-                customer = toy.rental.customer;
-                $('#name').val(customer.name);
-                $('#id').val(customer.id);
-                $('#cpf').val(customer.cpf);
-                return;
-            }
-            if(!$("#name").val()){
                 return;
             } else {
                 toy.rental = new Object();
@@ -125,6 +133,17 @@
                 registerRental();
             }
         });
+
+        $(".btn-customer").dblclick(function(){
+            toy = $(this).parent().parent().parent().attr("data-rental");
+            toy = JSON.parse(toy);
+            customer = toy.rental.customer;
+            $('#name').val(customer.name);
+            $('#id').val(customer.id);
+            $('#cpf').val(customer.cpf);
+            return;
+        });
+
         function registerRental(){
             showLoader();
             toy.rental._token = "{{ csrf_token() }}";
@@ -137,6 +156,23 @@
                 hideLoader();
             });
         }
+        $(".btn-period").dblclick(function(){
+            toy = $(this).parent().parent().parent().attr("data-rental");
+            toy = JSON.parse(toy);
+            showLoader();
+            $.post("/rental/next-period/" + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(){
+                loadRentals();
+                hideLoader();
+            });
+
+        });
+        $(".btn-time").dblclick(function(){
+            debugger;
+            var init = $(this).closest(".value-init");
+            init.css("display", "block");
+            $(this).closest(".value-init").css("display", "block");
+            $(this).closest(".value-end").css("display", "none");
+        });
         $(".btn-status").dblclick(function(){
             toy = $(this).parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
@@ -145,7 +181,7 @@
             {
                 endPoint = "/rental/pause/";
                 showLoader();
-                $.get(endPoint + toy.rental.id, function(data){
+                $.post(endPoint + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(data){
                     hideLoader();
                     loadRentals();
                 });
@@ -170,7 +206,7 @@
             toy = JSON.parse(toy);
 
             showLoader();
-            $.get("/rental/cancel/" + toy.rental.id, function(data){
+            $.post("/rental/cancel/" + toy.rental.id, {_token: "{{ csrf_token() }}"},function(data){
                 loadRentals();
                 hideLoader();
             });

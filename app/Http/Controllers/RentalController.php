@@ -73,6 +73,20 @@ class RentalController extends Controller
                 order by time asc 
             limit 1) as min_period,
             
+            (select value 
+                from periods
+                where periods.kiosk_id = " . $kiosk_id . "
+                and periods.id = period_id
+                order by time asc 
+            limit 1) as period_value_selected,
+
+            (select time 
+                from periods
+                where periods.kiosk_id = " . $kiosk_id . "
+                and periods.id = period_id
+                order by time asc 
+            limit 1) as period_selected,
+            
             TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
             
             ((select time_diff) - (if(extra_time > (select time_diff), 0, extra_time))) as time_considered,            
@@ -94,10 +108,15 @@ class RentalController extends Controller
             WHERE TIME <= if(time_considered < min_period, min_period, time_considered)
             and periods.kiosk_id = " . $kiosk_id . "
             ORDER BY TIME DESC
-            LIMIT 1)as value_to_pay")
-                ->where("kiosk_id", $kiosk_id)
-                ->whereRaw('(status = "Pausado" or status = "Alugado")')
-                ->with("customer");
+            LIMIT 1)as period_value_calculated,
+
+            if(((select period_value_selected) < (select period_value_calculated)) and ((select period_calculated) < (select period_selected)), 
+                (select period_selected), 
+                (select period_value_calculated)) as value_to_pay")
+            ->where("kiosk_id", $kiosk_id)
+            ->whereRaw('(status = "Pausado" or status = "Alugado")')
+            ->with("period")
+            ->with("customer");
         }])
         ->orderBy("toys.id")
         ->get();
@@ -156,6 +175,27 @@ class RentalController extends Controller
         return;
     }
 
+    /**
+     * Change to next period of rental
+     * @param int $id is the id of rental
+     * @return call the index to update rental list
+     */
+    public function nextPeriod(Request $request, $id){
+        $rental = Rental::find($id);
+        $period = Period::where("id", ">", $rental->period_id)
+                    ->where("kiosk_id", $rental->kiosk_id)
+                    ->orderBy("id")->first();
+        if($period)
+            $rental->period_id = $period->id;
+        else{
+            $period = Period::where("kiosk_id", $rental->kiosk_id)
+            ->orderBy("id")->first();
+            
+            $rental->period_id = $period->id;
+        }
+        $rental->save();
+        return;
+    }
     /**
      * Change the status of rental to pause
      * @param int $id is the id of rental

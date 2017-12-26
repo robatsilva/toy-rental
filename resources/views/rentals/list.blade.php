@@ -134,7 +134,7 @@
                     <input name="cpf" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" class="form-control clear" placeholder="CPF" required>
                 </div>
                 <div class="form-group col-xs-6 col-md-3">
-                    <input type="hidden" name="id" id="id"/>
+                    <input type="hidden" name="id" id="i_oldd"/>
                     <label for="name">Nome:</label>
                     <input class="form-control clear" name="name" placeholder="Nome" disabled required>
                 </div>
