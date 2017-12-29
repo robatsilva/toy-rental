@@ -20,6 +20,8 @@ class EmployeController extends Controller
     {
         $employes = Employe::select('users.*')
         ->join('kiosks', 'kiosks.id', '=', 'users.kiosk_id')
+        ->where('users.status', 1)
+        ->where('kiosks.status', 1)
         ->where('user_id', Auth::user()->id)
         ->with('kiosk')
         ->get();
@@ -33,8 +35,9 @@ class EmployeController extends Controller
      */
     public function create()
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->get();
+        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
         return view('employes.register')
+            ->with('employe', null)
             ->with('kiosks', $kiosks);
     }
 

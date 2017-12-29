@@ -72,7 +72,7 @@
                                 <select name="kiosk_id" class="form-control" id="kiosk_id">
                                     @foreach($kiosks as $kiosk)
                                         <option value='{{ $kiosk->id }}'
-                                            @if ($employe->kiosk_id == $kiosk->id)
+                                            @if ($employe && $employe->kiosk_id == $kiosk->id)
                                                 selected="selected"
                                             @endif
                                         >{{ $kiosk->name }}</option>

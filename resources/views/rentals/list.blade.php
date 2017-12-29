@@ -13,11 +13,98 @@
         </div>
     </div>
     
-    <!--Table-->
+    <!--Grid-->
     <div id="rentals-toys" class="row form-group">
     </div>
 
-    <!--Modal payment-->
+    <!-- Modal extra-time-->
+    <div id="modal-extra-time" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Adicionar tempo extra</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="extra-time-form">
+                        <div class="row">
+                            <div class="form-group col-md-9">
+                                <label for="reason-extra-time">Escolha o motivo:</label>
+                                <select size="8" name="reason-extra-time" class="form-control" id="reason-extra-time" required>
+                                @foreach($reasons as $reason)
+                                    <option value="{{ $reason->text }}">{{ $reason->text }}</option>
+                                @endforeach
+                                    <option value="">Outro</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-9">
+                                <label for="reason-extra-time-other">Outro:</label>
+                                <input name="reason_extra_time-other" class="form-control" id="reason-extra-time-other" placeholder="Motivo" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="toy-pays text-center"> 
+                                <buttom data-value="1"class="btn btn-primary btn-save-extra-time">+ 1 min</buttom>
+                                <buttom data-value="2"class="btn btn-primary btn-save-extra-time">+ 2 min</buttom>
+                                <buttom data-value="3"class="btn btn-primary btn-save-extra-time">+ 3 min</buttom>
+                                <buttom data-value="4"class="btn btn-primary btn-save-extra-time">+ 4 min</buttom>
+                                <buttom data-value="5" class="btn btn-primary btn-save-extra-time">+ 5 min</buttom>
+                                <buttom data-value="10"class="btn btn-primary btn-save-extra-time">+ 10 min</buttom>
+                                <buttom data-value="0"class="btn btn-primary btn-save-extra-time">Zerar</buttom>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <h2>Tempo extra: <span id="extra-time"></span></h2>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal cancel-->
+    <div id="modal-cancel" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Cancelar</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="cancel-form">
+                        <div class="row">
+                            <div class="form-group col-md-9">
+                                <label for="reason-cancel">Escolha o motivo:</label>
+                                <select size="8" name="reason-cancel" class="form-control" id="reason-cancel" required>
+                                @foreach($reasons as $reason)
+                                    <option value="{{ $reason->text }}">{{ $reason->text }}</option>
+                                @endforeach
+                                    <option value="">Outro</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-9">
+                                <label for="reason-cancel-other">Outro:</label>
+                                <input name="reason_cancel-other" class="form-control" id="reason-cancel-other" placeholder="Motivo" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="text-center"> 
+                                <buttom class="btn btn-primary btn-save-cancel">Salvar cancelamento</buttom>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal payment-->
     <div id="modal-payment" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -79,36 +166,7 @@
         </div>
     </div>
 
-    <!-- Modal extra-time-->
-    <div id="modal-extra-time" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Tempo extra</h4>
-                </div>
-                <div class="modal-body">
-                    <form id="extra-time-form">
-                        <div class="row">
-                            <div class="form-group col-md-3">
-                                <label for="extra-time">Tempo adicional:</label>
-                                <input name="extra_time" class="form-control" id="extra-time" placeholder="Tempo adicional">
-                            </div>
-                            <div class="form-group col-md-9">
-                                <label for="reason-extra-time">Motivo do tempo adicional:</label>
-                                <input name="reason_extra_time" class="form-control" id="reason-extra-time" placeholder="Motivo" required>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-primary" id="btn-save-extra-time">Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </div>
 <div class="container" style="display: none;">
     <!--form-->
@@ -269,6 +327,53 @@
             // validateCustomer();
         });
     }
+
+    $(".btn-save-extra-time").click(function(){
+        if(!$("#reason-extra-time :selected").val() 
+            && !$("#reason-extra-time-other").val()
+            && $(this).attr("data-value") != 0){
+            alert("Selecione um motivo");
+            return;
+        }
+            
+        showLoader();
+        var extra_time = $(this).attr("data-value");
+        $.post("/rental/extra-time  ", {
+            _token: "{{ csrf_token() }}",
+            id: toy.rental.id,
+            extra_time: extra_time,
+            reason_extra_time: $("#reason-extra-time :selected").val(),
+            reason_extra_time_other: $("#reason-extra-time-other").val()
+        }, function(data){
+            if(extra_time == 0)
+                $("#extra-time").html("0");
+            else
+                $("#extra-time").html(Number($("#extra-time").html()) + Number(extra_time));
+            hideLoader();
+            loadRentals();
+        });
+    });
+
+    $(".btn-save-cancel").click(function(){
+        debugger;
+        if(!$("#reason-cancel :selected").val() 
+            && !$("#reason-cancel-other").val()){
+            alert("Selecione um motivo");
+            return;
+        }
+        showLoader();
+        $.post("/rental/cancel/" + toy.rental.id, {
+            _token: "{{ csrf_token() }}",
+            reason_cancel: $("#reason-cancel :selected").val(),
+            reason_cancel_other: $("#reason-cancel-other").val()
+            },function(data){
+            loadRentals();
+            $("#modal-cancel").modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            hideLoader();
+        });
+    });
     // function toysChange(){
     //     $("#toys").on('change', function() {
     //         setTimeout(function() {

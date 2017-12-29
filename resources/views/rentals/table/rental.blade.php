@@ -116,28 +116,6 @@
                 hideLoader();
             });
         });
-        $(".btn-extra-time").click(function(){
-            var id = $(this).closest('tr').attr('id');
-            $("#btn-save-extra-time").val(id);
-            $("#modal-extra-time").modal('show');
-        });
-        
-        $("#btn-save-extra-time").click(function(){
-            var rentalId = $(this).val();
-            showLoader();
-            $.post("/rental/extra-time  ", {
-                _token: "{{ csrf_token() }}",
-                id: rentalId,
-                extra_time: $("#extra-time").val(),
-                reason_extra_time: $("#reason-extra-time").val()
-            }, function(data){
-                hideLoader();
-                loadRentals();
-                $("#modal-extra-time").modal('hide');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-            });
-        });
     }
 </script>
 

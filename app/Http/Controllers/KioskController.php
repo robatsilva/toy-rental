@@ -20,6 +20,7 @@ class KioskController extends Controller
     public function index(Request $request)
     {
         $kiosks = Kiosk::where('user_id', Auth::user()->id)
+            ->where('status', 1)
             ->orderBy("default", "desc")
             ->get();
         if($request->header('Content-Type') == 'JSON')
@@ -30,6 +31,7 @@ class KioskController extends Controller
     public function listKiosk(Request $request)
     {
         $kiosks = Kiosk::where('user_id', Auth::user()->id)
+            ->where('status', 1)
             ->orderBy("default", "desc")
             ->get();
         return response()->json($kiosks);

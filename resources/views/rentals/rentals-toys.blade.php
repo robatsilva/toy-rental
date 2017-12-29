@@ -54,7 +54,7 @@
         background-color: #AAA;
         padding: 5px;
     }
-    .btn-customer:hover, .btn-status:hover, .btn-period:hover, .btn-time:hover{
+    .btn-customer:hover, .btn-status:hover, .btn-period:hover, .btn-time:hover, .btn-extra-time:hover{
         cursor: pointer;
         background: #ccc;
     }
@@ -83,13 +83,13 @@
                     <div class="btn-time col-md-6 toy-row">
                         <div class="col-md-12 toy-end"><b>Retorno</b></div>
                         <div class="col-md-12 toy-init"><b>Inicio</b></div>
-                        <div class="col-md-12 toy-end"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->format('H:i') }} </div>
+                        <div class="col-md-12 toy-end"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->addMinutes($toy->rental->extra_time)->format('H:i') }} </div>
                         <div class="col-md-12 toy-init"> {{ Carbon\Carbon::parse($toy->rental->init)->format('H:i') }} </div>
                     </div> 
-                    <div class="col-md-6 toy-row">
+                    <div class="btn-extra-time col-md-6 toy-row">
                         <div class="col-md-12"><b>Tempo</b></div>
-                        <div class="col-md-12"> {{ $toy->rental->time_considered }} +
-                            <span>{{ $toy->rental->extra_tiem }}</span>
+                        <div class="col-md-12"> {{ $toy->rental->time_diff }} +
+                            <span>{{ $toy->rental->extra_time }}</span>
                         </div>
                     </div> 
                     <div class="col-md-6 toy-row">
@@ -167,7 +167,6 @@
 
         });
         $(".btn-time").dblclick(function(){
-            debugger;
             var init = $(this).find(".toy-init");
             var end = $(this).find(".toy-end");
             if(init.css("display") == "none"){
@@ -194,7 +193,6 @@
         });
 
         $(".btn-pay").dblclick(function(){
-            debugger;
             toy = $(this).parent().parent().parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
             toy.rental.payment_way = $(this).attr("data-value");
@@ -206,38 +204,20 @@
             });
         });
 
+        $(".btn-extra-time").dblclick(function(){
+            toy = $(this).parent().parent().parent().attr("data-rental");
+            toy = JSON.parse(toy);
+            $("#btn-save-extra-time").val(id);
+            $("#extra-time").html(toy.rental.extra_time);
+            $("#modal-extra-time").modal('show');
+        });
+
         $(".btn-close").click(function(){
             toy = $(this).parent().attr("data-rental");
             toy = JSON.parse(toy);
-
-            showLoader();
-            $.post("/rental/cancel/" + toy.rental.id, {_token: "{{ csrf_token() }}"},function(data){
-                loadRentals();
-                hideLoader();
-            });
+            $("#modal-cancel").modal('show');
         });
-        $(".btn-extra-time").click(function(){
-            var id = $(this).closest('tr').attr('id');
-            $("#btn-save-extra-time").val(id);
-            $("#modal-extra-time").modal('show');
-        });
-        
-        $("#btn-save-extra-time").click(function(){
-            var rentalId = $(this).val();
-            showLoader();
-            $.post("/rental/extra-time  ", {
-                _token: "{{ csrf_token() }}",
-                id: rentalId,
-                extra_time: $("#extra-time").val(),
-                reason_extra_time: $("#reason-extra-time").val()
-            }, function(data){
-                hideLoader();
-                loadRentals();
-                $("#modal-extra-time").modal('hide');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-            });
-        });
+    
     }
 </script>
 

@@ -19,6 +19,7 @@ class PeriodController extends Controller
         ->join('kiosks', 'kiosks.id', '=', 'periods.kiosk_id')
         ->join('users', 'users.id', '=' ,'kiosks.user_id')
         ->where('users.id', Auth::user()->id)
+        ->where('status', 1)
         ->get();
         return view('periods.list')->with('periods', $periods);
     }
@@ -28,6 +29,7 @@ class PeriodController extends Controller
         ->join('kiosks', 'kiosks.id', '=', 'periods.kiosk_id')
         ->join('users', 'users.id', '=' ,'kiosks.user_id')
         ->where('users.id', Auth::user()->id)
+        ->where('status', 1)
         ->get();
         return response()->json($periods);
     }
@@ -40,6 +42,7 @@ class PeriodController extends Controller
     public function getByKioskId($kiosk_id)
     {
         $periods = Period::where('kiosk_id', $kiosk_id)
+        ->where('status', 1)
         ->get();
         return response()->json($periods);
     }
@@ -51,7 +54,7 @@ class PeriodController extends Controller
      */
     public function create()
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->get();
+        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
         return view('periods/form')
             ->with('kiosks', $kiosks);
     }
@@ -91,7 +94,7 @@ class PeriodController extends Controller
      */
     public function edit($id)
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->get();
+        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
         $period = Period::find($id);
         return view('periods.form')
             ->with('kiosks', $kiosks)

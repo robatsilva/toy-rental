@@ -15,6 +15,7 @@ use App\Models\Toy;
 use App\Models\Kiosk;
 use App\Models\Period;
 use App\Models\Employe;
+use App\Models\Reason;
 
 class RentalController extends Controller
 {
@@ -39,17 +40,21 @@ class RentalController extends Controller
         else{
             $kiosk_id = Kiosk::
             where('user_id', $user->id)
+            ->where('status', 1)
             ->where('default', "1")
             ->first()->id;
         }
-        $kiosks = Kiosk::where('user_id', Auth::user()->id);
+        $reasons = Reason::where("kiosk_id", $kiosk_id)->get();
+        $kiosks = Kiosk::where('user_id', Auth::user()->id)->where('status', 1);
         $periods = Period::where("kiosk_id", $kiosk_id)
+        ->where('status', 1)
         ->orderBy('time', "asc")
         ->get();
 
         if($kiosks)
             return view('rentals.list')
                 ->with('kiosk_id', $kiosk_id)
+                ->with('reasons', $reasons)
                 ->with('periods', json_encode($periods->toArray()));
         else
             return redirect('cadastro');
@@ -64,6 +69,7 @@ class RentalController extends Controller
         $kiosk = Kiosk::find($kiosk_id);
         $toys = Toy::
         where('toys.kiosk_id', $kiosk_id)
+        ->where('status', 1)
         ->with("kiosk")
         ->with(["rental" => function($query) use ($kiosk_id){
             $query->selectRaw("*, 
@@ -161,16 +167,22 @@ class RentalController extends Controller
         }
         $kiosk = Kiosk::find($request->input('kiosk_id'));
 
-        $rental = new Rental;
-        $rental->customer_id = $customer->id;
-        $rental->kiosk_id = $request->input('kiosk_id');
-        $rental->toy_id = $request->input('toy_id');
-        $rental->period_id = $request->input('period.id');
-        $rental->tolerance = $kiosk->tolerance;
-        $rental->extra_time = 0;
-        $rental->extra_value = $kiosk->extra_value;
-        $rental->init = Carbon::now();
-        $rental->status = "Alugado";
+        $rental = Rental::where("customer_id", $customer->id)->where("status", "Alugado")->first();
+        if($rental){
+            $rental->toy_id = $request->input('toy_id');
+        } else {
+            $rental = new Rental;
+            $rental->customer_id = $customer->id;
+            $rental->kiosk_id = $request->input('kiosk_id');
+            $rental->toy_id = $request->input('toy_id');
+            $rental->period_id = $request->input('period.id');
+            $rental->tolerance = $kiosk->tolerance;
+            $rental->extra_time = 0;
+            $rental->extra_value = $kiosk->extra_value;
+            $rental->init = Carbon::now();
+            $rental->status = "Alugado";
+        }
+
         $rental->save();
         return;
     }
@@ -183,12 +195,14 @@ class RentalController extends Controller
     public function nextPeriod(Request $request, $id){
         $rental = Rental::find($id);
         $period = Period::where("id", ">", $rental->period_id)
+                    ->where('status', 1)
                     ->where("kiosk_id", $rental->kiosk_id)
                     ->orderBy("id")->first();
         if($period)
             $rental->period_id = $period->id;
         else{
             $period = Period::where("kiosk_id", $rental->kiosk_id)
+            ->where('status', 1)
             ->orderBy("id")->first();
             
             $rental->period_id = $period->id;
@@ -215,8 +229,19 @@ class RentalController extends Controller
      * @return call the index to update rental list
      */
     public function cancel(Request $request, $id){
+        $user = Employe::find(Auth::user()->id);
         $rental = Rental::find($id);
+        $rental->reason_cancel = $request->input('reason_cancel');
+        
+        if(!$rental->reason_cancel){
+            $reason = new Reason();
+            $reason->text = $request->input('reason_cancel_other');
+            $reason->kiosk_id = $rental->kiosk_id;
+            $reason->save();
+            $rental->reason_cancel = $request->input('reason_cancel_other');
+        }
         $rental->status = "Cancelado";
+        $rental->employe_id = $user->id;
         $rental->end = Carbon::now();
         $rental->save();
         return;
@@ -228,6 +253,8 @@ class RentalController extends Controller
      * @return call the index to update rental list
      */
     public function finish(Request $request){
+        $user = Employe::find(Auth::user()->id);
+
         $rental = Rental::find($request->input('id'));
         
         $calc = $this->calculeRental($rental->id)->getData();
@@ -239,6 +266,7 @@ class RentalController extends Controller
             $rental->value_di = $calc->valueTotal;
         $rental->period_id = $calc->period->id;
         $rental->status = "Encerrado";
+        $rental->employe_id = $user->id;
         if(!$rental->end)
             $rental->end = Carbon::now();
         
@@ -249,13 +277,24 @@ class RentalController extends Controller
 
     public function extraTime(Request $request){
         $rental = Rental::find($request->input('id'));
-        
-        $rental->extra_time = $request->input('extra_time');
+        if($request->input('extra_time') == 0){
+            $rental->extra_time = 0;
+            $rental->save();
+            return;
+        }
+        else
+            $rental->extra_time += $request->input('extra_time');
+
         $rental->reason_extra_time = $request->input('reason_extra_time');
         
+        if(!$rental->reason_extra_time){
+            $reason = new Reason();
+            $reason->text = $request->input('reason_extra_time_other');
+            $reason->kiosk_id = $rental->kiosk_id;
+            $reason->save();
+            $rental->reason_extra_time = $request->input('reason_extra_time_other');
+        }
         $rental->save();
-
-        dd($request->input());
     }
     
 

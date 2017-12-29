@@ -15,16 +15,20 @@
     <form id="rental-form" action="/report" method="post">
         {!! csrf_field() !!}
         <div class="row">
+        @if (!Auth::guest() && !Auth::user()->kiosk_id)
             <div class="form-group col-md-4">
-                    <label for="kiosks">Quiosque operado:</label>
-                    <select name="kiosk_id" class="form-control" id="kiosks">
-                    </select>
-                </div>
-            <div class="col-md-4">
+                <label for="kiosks">Quiosque operado:</label>
+                <select name="kiosk_id" class="form-control" id="kiosks">
+                </select>
+            </div>
+        @else
+            <input type="hidden" name="kiosk_id" value="{{ Auth::user()->kiosk_id }}">
+        @endif
+            <div class="form-group col-md-4">
                 <label for="init">Data de:</label>
                 <input type='text' name="init" value="{{ $input?$input['init']:'' }}" class="form-control" id='init'/>
             </div>
-            <div class="col-md-4">
+            <div class="form-group col-md-4">
                 <label for="end">Data até:</label>
                 <input type='text' name="end" value="{{ $input?$input['end']:'' }}" class="form-control" id='end'/>
             </div>
@@ -78,7 +82,7 @@
                 <td>{{ $rental->time_considered }}</td> 
                 <td>{{ $rental->reason_extra_time }}</td> 
                 <td>{{ $rental->total_pay }}</td> 
-                <td>{{ $rental->status }}</td> 
+                <td>{{ $rental->rental_status }}</td> 
             </tr>       
             @endforeach
         @endif

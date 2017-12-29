@@ -83,7 +83,9 @@
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
+                    @if (!Auth::guest() && !Auth::user()->kiosk_id)
                     <li><a href="{{ url('/cadastro') }}">Cadastros</a></li>
+                    @endif
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                             Relatórios<span class="caret"></span>

@@ -8,8 +8,9 @@ use App\Http\Requests;
 use Carbon\Carbon;
 
 use DB;
-
+use Auth;
 use App\Models\Rental;
+use App\Models\Employe;
 
 class ReportController extends Controller
 {
@@ -19,19 +20,35 @@ class ReportController extends Controller
      */
     public function reportByDate(Request $request)
     {
+        $user = Employe::find(Auth::user()->id);
         $total = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
             ->sum("value_cd");
         $total += Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
             ->sum("value_cc");
         $total += Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
             ->sum("value_di");
-        $rentals = Rental::selectRaw("*, (value_cd + value_cc + value_di) as total_pay,
+        $rentals = Rental::selectRaw("*, rentals.status as rental_status, (value_cd + value_cc + value_di) as total_pay,
                 
                 TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
                 
@@ -41,6 +58,11 @@ class ReportController extends Controller
             ->join('periods', 'periods.id', '=', 'period_id')
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("rentals.kiosk_id", $request->input("kiosk_id"))
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
             ->orderBy("init", "desc");
         
         $rentals = $rentals
@@ -57,6 +79,8 @@ class ReportController extends Controller
      */
     public function reportByToys(Request $request)
     {
+        $user = Employe::find(Auth::user()->id);
+
         $rentals = Rental::selectRaw("*, 
                     
                 sum( TIMESTAMPDIFF(HOUR, init, if(END is not null, END, '" . Carbon::now() . "')) ) as total_time,
@@ -65,6 +89,11 @@ class ReportController extends Controller
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id",$request->input("kiosk_id"))
             ->where("status", "!=", "Cancelado")
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
             ->orderBy("init", "desc")
             ->groupBy("toy_id")
             ->with("toy");
@@ -81,12 +110,19 @@ class ReportController extends Controller
      */
     public function reportByPaymentWay(Request $request)
     {
-        $rentals = Rental::selectRaw("*, 
+        $user = Employe::find(Auth::user()->id);
+
+        $rentals = Rental::selectRaw("*, if(value_cc, 'Cartão de crédito', if(value_cd, 'Cartão de débito', if(value_di, 'Dinheiro', ''))) as payment_way,
                 sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay
                     ")
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id",$request->input("kiosk_id"))
             ->where("status", "!=", "Cancelado")
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
             ->orderBy("init", "desc")
             ->groupBy("value_cc")
             ->groupBy("value_cd")
