@@ -18,10 +18,8 @@ class EmployeController extends Controller
      */
     public function index()
     {
-        $employes = Employe::select('users.*')
+        $employes = Employe::selectRaw('users.*, users.status as status_employe')
         ->join('kiosks', 'kiosks.id', '=', 'users.kiosk_id')
-        ->where('users.status', 1)
-        ->where('kiosks.status', 1)
         ->where('user_id', Auth::user()->id)
         ->with('kiosk')
         ->get();
@@ -71,7 +69,7 @@ class EmployeController extends Controller
      */
     public function edit($id)
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->get();
+        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
         $employe = Employe::find($id);
         return view('employes.register')
             ->with('kiosks', $kiosks)
@@ -103,8 +101,14 @@ class EmployeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function toogle($id)
     {
-        //
+        $employe = Employe::find($id);
+        if($employe->status)
+            $employe->status = 0;
+        else
+            $employe->status = 1;
+        $employe->save();
+        return redirect('employe');
     }
 }

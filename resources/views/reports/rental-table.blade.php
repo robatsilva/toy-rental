@@ -40,7 +40,7 @@
             @if($resume)
                 <div class="col-md-8 text-right">
                     <h4>Total no período </h4>
-                    <h2>{{ $resume }} </h2>
+                    <h2>R$ {{ $resume }} </h2>
                 </div>
             @endif
         </div>
@@ -63,6 +63,7 @@
             <th class="text-center">Cobrado</th>
             <th class="text-center">Motivo tempo adicional</th>
             <th class="text-center">Valor (R$)</th>
+            <th class="text-center">Recebido por</th>
             <th class="text-center">Status</th>
         </tr>
         </thead>
@@ -82,6 +83,7 @@
                 <td>{{ $rental->time_considered }}</td> 
                 <td>{{ $rental->reason_extra_time }}</td> 
                 <td>{{ $rental->total_pay }}</td> 
+                <td>{{ $rental->employe->name }}</td> 
                 <td>{{ $rental->rental_status }}</td> 
             </tr>       
             @endforeach

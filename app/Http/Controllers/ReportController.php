@@ -63,10 +63,9 @@ class ReportController extends Controller
                     $query->where("employe_id", $user->id);
                 }
             })
-            ->orderBy("init", "desc");
-        
-        $rentals = $rentals
-                ->get();
+            ->orderBy("init", "desc")
+            ->with('employe')
+            ->get();
 
         return view('reports.rental-table')
             ->with('rentals', $rentals)
@@ -224,7 +223,7 @@ class ReportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function toogle($id)
     {
         //
     }

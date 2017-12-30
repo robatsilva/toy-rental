@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rental extends Model
 {
+    public function employe()
+    {
+        return $this->belongsTo('App\Models\Employe');
+    }
     public function kiosk()
     {
         return $this->belongsTo('App\Models\Kiosk');

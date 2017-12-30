@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+</style>
 @section('content')
 <div class="container">
     <div class="row">
@@ -16,8 +21,10 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Imagem</th>
                             <th>Código</th>
                             <th>Descrição</th>
+                            <th>Status</th>
                             <th>Quiosque</th>
                             <th>Ação</th>
                         </tr>
@@ -25,15 +32,23 @@
                     <tbody>
                         @foreach ($toys as $toy)
                             <tr>
+                                <td><img style="max-height: 100px;"
+                                    src="{{ $toy->image ? '/images/toys-img/' . $toy->image : '/images/Imagem_Indisponível.png' }}" 
+                                /></td>
                                 <td>{{ $toy->code }}</td>
                                 <td>{{ $toy->description }}</td>
+                                <td>{{ $toy->status_toy? "Ativo" : "Inativo" }}</td>
                                 <td>{{ $toy->kiosk->name }}</td>
                                 <td>
                                     <a href="/toy/{{$toy->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
                                     </a>
-                                    <a href="/toy/remove/{{$toy->id}}" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-remove" title="Excluir" aria-hidden="true"></span>
+                                    <a href="/toy/toogle/{{$toy->id}}" class="btn btn-default">
+                                        @if($toy->status_toy)
+                                        <i class="fa fa-toggle-on" title="Desativar" aria-hidden="true"></i>
+                                        @else
+                                        <i class="fa fa-toggle-off" title="Ativar" aria-hidden="true"></i>
+                                        @endif
                                     </a>
                                 </td>
                             </tr>

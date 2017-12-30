@@ -16,10 +16,9 @@ class ToyController extends Controller
 {
     public function index()
     {
-        $toys = Toy::select('toys.*')
+        $toys = Toy::selectRaw('toys.*, toys.status as status_toy')
         ->join('kiosks', 'kiosks.id', '=', 'toys.kiosk_id')
         ->join('users', 'users.id', '=' ,'kiosks.user_id')
-        ->where('toys.status', 1)
         ->where('users.id', Auth::user()->id)
         ->get();
         return view('toys.list')->with('toys', $toys);
@@ -28,7 +27,6 @@ class ToyController extends Controller
     public function listToys(){
         $toys = Toy::join('kiosks', 'kiosks.id', '=', 'toys.kiosk_id')
         ->join('users', 'users.id', '=' ,'kiosks.user_id')
-        ->where('status', 1)
         ->where('users.id', Auth::user()->id)
         ->get();
         return response()->json($toys);
@@ -136,13 +134,15 @@ class ToyController extends Controller
 
         // get current time and append the upload file extension to it,
         // then put that name to $photoName variable.
-        $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
-        /*
-        talk the select file and move it public directory and make avatars
-        folder if doesn't exsit then give it that unique name.
-        */
-        $request->file("image")->move(public_path('images/toys-img'), $toy_img);
-        $toy->image = $toy_img;
+        if($request->file("image")){
+            $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
+            /*
+            talk the select file and move it public directory and make avatars
+            folder if doesn't exsit then give it that unique name.
+            */
+            $request->file("image")->move(public_path('images/toys-img'), $toy_img);
+            $toy->image = $toy_img;
+        }
 
         $toy->save();
         return redirect('toy');
@@ -154,8 +154,14 @@ class ToyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function toogle($id)
     {
-        //
+        $toy = Toy::find($id);
+        if($toy->status)
+            $toy->status = 0;
+        else
+            $toy->status = 1;
+        $toy->save();
+        return redirect('toy');
     }
 }

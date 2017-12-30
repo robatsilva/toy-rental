@@ -18,6 +18,7 @@
                         <tr>
                             <th>Tempo</th>
                             <th>Valor</th>
+                            <th>Status</th>
                             <th>Quiosque</th>
                             <th>Ação</th>
                         </tr>
@@ -27,13 +28,18 @@
                             <tr>
                                 <td>{{ $period->time }}</td>
                                 <td>{{ $period->value }}</td>
+                                <td>{{ $period->status_period? "Ativo" : "Inativo" }}</td>
                                 <td>{{ $period->kiosk->name }}</td>
                                 <td>
                                     <a href="/period/{{$period->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
                                     </a>
-                                    <a href="/period/remove/{{$period->id}}" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-remove" title="Excluir" aria-hidden="true"></span>
+                                    <a href="/period/toogle/{{$period->id}}" class="btn btn-default">
+                                        @if($period->status_period)
+                                        <i class="fa fa-toggle-on" title="Desativar" aria-hidden="true"></i>
+                                        @else
+                                        <i class="fa fa-toggle-off" title="Ativar" aria-hidden="true"></i>
+                                        @endif
                                     </a>
                                 </td>
                             </tr>

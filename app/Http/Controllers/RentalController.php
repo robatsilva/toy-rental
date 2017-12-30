@@ -35,6 +35,10 @@ class RentalController extends Controller
     public function home()
     {
         $user = Employe::find(Auth::user()->id);
+        $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1);
+        if(!$kiosks)
+            return redirect('cadastro');
+
         if($user->kiosk_id)
             $kiosk_id = $user->kiosk_id;
         else{
@@ -45,19 +49,15 @@ class RentalController extends Controller
             ->first()->id;
         }
         $reasons = Reason::where("kiosk_id", $kiosk_id)->get();
-        $kiosks = Kiosk::where('user_id', Auth::user()->id)->where('status', 1);
         $periods = Period::where("kiosk_id", $kiosk_id)
         ->where('status', 1)
         ->orderBy('time', "asc")
         ->get();
 
-        if($kiosks)
-            return view('rentals.list')
-                ->with('kiosk_id', $kiosk_id)
-                ->with('reasons', $reasons)
-                ->with('periods', json_encode($periods->toArray()));
-        else
-            return redirect('cadastro');
+        return view('rentals.list')
+            ->with('kiosk_id', $kiosk_id)
+            ->with('reasons', $reasons)
+            ->with('periods', json_encode($periods->toArray()));
     }
     /**
      * Display a listing of the resource.
@@ -69,7 +69,7 @@ class RentalController extends Controller
         $kiosk = Kiosk::find($kiosk_id);
         $toys = Toy::
         where('toys.kiosk_id', $kiosk_id)
-        ->where('status', 1)
+        ->where('toys.status', 1)
         ->with("kiosk")
         ->with(["rental" => function($query) use ($kiosk_id){
             $query->selectRaw("*, 
@@ -126,7 +126,6 @@ class RentalController extends Controller
         }])
         ->orderBy("toys.id")
         ->get();
-
         if($request->header('Content-Type') == 'JSON')
             return response()->json($toys);
         return view('rentals.rentals-toys')
@@ -339,7 +338,7 @@ class RentalController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function toogle($id)
     {
         //
     }

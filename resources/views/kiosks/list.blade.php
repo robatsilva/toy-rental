@@ -19,6 +19,7 @@
                             <th>Nome</th>
                             <th>Tolerância</th>
                             <th>R$ minuto extra</th>
+                            <th>Status</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
@@ -28,17 +29,24 @@
                                 <td>{{ $kiosk->name }}</td>
                                 <td>{{ $kiosk->tolerance }}</td>
                                 <td>{{ $kiosk->extra_value }}</td>
+                                <td>{{ $kiosk->status?"Ativo" : "Inativo" }}</td>
                                 <td>
                                     <a href="/kiosk/{{$kiosk->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
                                     </a>
-                                    <a href="/kiosk/remove/{{$kiosk->id}}" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-remove" title="Excluir" aria-hidden="true"></span>
+                                    @if(!$kiosk->default)
+                                    <a href="/kiosk/toogle/{{$kiosk->id}}" class="btn btn-default">
+                                        @if($kiosk->status)
+                                        <i class="fa fa-toggle-on" title="Desativar" aria-hidden="true"></i>
+                                        @else
+                                        <i class="fa fa-toggle-off" title="Ativar" aria-hidden="true"></i>
+                                        @endif
                                     </a>
-                                    @if($kiosk->default != 1)
-                                        <a href="/kiosk/default/{{$kiosk->id}}" class="btn btn-default">
-                                            <span class="glyphicon glyphicon-star" title="Principal" aria-hidden="true"></span>
-                                        </a>
+                                    @if($kiosk->status)
+                                    <a href="/kiosk/default/{{$kiosk->id}}" class="btn btn-default">
+                                        <span class="glyphicon glyphicon-star" title="Principal" aria-hidden="true"></span>
+                                    </a>
+                                    @endif
                                     @endif
                                 </td>
                             </tr>

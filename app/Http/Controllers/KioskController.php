@@ -20,7 +20,6 @@ class KioskController extends Controller
     public function index(Request $request)
     {
         $kiosks = Kiosk::where('user_id', Auth::user()->id)
-            ->where('status', 1)
             ->orderBy("default", "desc")
             ->get();
         if($request->header('Content-Type') == 'JSON')
@@ -122,10 +121,14 @@ class KioskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function toogle($id)
     {
         $kiosk = Kiosk::find($id);
-        $kiosk->delete();
+        if($kiosk->status)
+            $kiosk->status = 0;
+        else
+            $kiosk->status = 1;
+        $kiosk->save();
         return redirect('kiosk');
     }
 
