@@ -1,5 +1,13 @@
 <style>
     div.card-container {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    }
+    div.card-container {
         margin-top: 15px;
     }
     div.card {
@@ -39,6 +47,10 @@
     .toy-row{
         padding:5px 0 0 0;
     }
+    .toy-row div{
+        padding: 0px;
+        text-align: center;
+    }
     .toy-description{
         margin-top: 5px;
     }
@@ -48,13 +60,13 @@
         display: inline-block;
     }
     .btn-pay{
-        width: 32%;
+        width: 31%;
     }
     .toy-bottom {
         background-color: #AAA;
         padding: 5px;
     }
-    .btn-customer:hover, .btn-status:hover, .btn-period:hover, .btn-time:hover, .btn-extra-time:hover{
+    .btn-customer:hover, .btn-status:hover, .btn-period:hover, .btn-time:hover, .btn-extra-time:hover, .btn-value:hover{
         cursor: pointer;
         background: #ccc;
     }
@@ -76,25 +88,25 @@
                 <div class="text-center">{{ $toy->description }}</div> 
                 @if($toy->rental)
                     <div class="btn-customer text-center"><b>{{ $toy->rental->customer->name }}</b></div> 
-                    <div class="btn-period col-md-6 toy-row">
-                        <div class="col-md-12"><b>Período</b></div>
-                        <div class="col-md-12"> {{ $toy->rental->period->time }} min</div>
+                    <div class="btn-period col-xs-6 toy-row">
+                        <div class="col-xs-12"><b>Período</b></div>
+                        <div class="col-xs-12"> {{ $toy->rental->period->time }} min</div>
                     </div> 
-                    <div class="btn-time col-md-6 toy-row">
-                        <div class="col-md-12 toy-end"><b>Retorno</b></div>
-                        <div class="col-md-12 toy-init"><b>Inicio</b></div>
-                        <div class="col-md-12 toy-end"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->addMinutes($toy->rental->extra_time)->format('H:i') }} </div>
-                        <div class="col-md-12 toy-init"> {{ Carbon\Carbon::parse($toy->rental->init)->format('H:i') }} </div>
+                    <div class="btn-time col-xs-6 toy-row">
+                        <div class="col-xs-12 toy-end"><b>Retorno</b></div>
+                        <div class="col-xs-12 toy-init"><b>Inicio</b></div>
+                        <div class="col-xs-12 toy-end"> {{ Carbon\Carbon::parse($toy->rental->init)->addMinutes($toy->rental->period->time)->addMinutes($toy->rental->extra_time)->format('H:i') }} </div>
+                        <div class="col-xs-12 toy-init"> {{ Carbon\Carbon::parse($toy->rental->init)->format('H:i') }} </div>
                     </div> 
-                    <div class="btn-extra-time col-md-6 toy-row">
-                        <div class="col-md-12"><b>Tempo</b></div>
-                        <div class="col-md-12"> {{ $toy->rental->time_diff }} +
+                    <div class="btn-extra-time col-xs-6 toy-row">
+                        <div class="col-xs-12"><b>Tempo</b></div>
+                        <div class="col-xs-12"> {{ $toy->rental->time_diff }} +
                             <span>{{ $toy->rental->extra_time }}</span>
                         </div>
                     </div> 
-                    <div class="col-md-6 toy-row">
-                        <div class="col-md-12"><b>Valor</b></div>
-                        <div class="col-md-12"> 
+                    <div class="btn-value col-xs-6 toy-row">
+                        <div class="col-xs-12"><b>Valor</b></div>
+                        <div class="col-xs-12"> 
                             {{ $toy->rental->value_to_pay }}  
                         </div>
                     </div> 
@@ -210,6 +222,14 @@
             $("#btn-save-extra-time").val(id);
             $("#extra-time").html(toy.rental.extra_time);
             $("#modal-extra-time").modal('show');
+        });
+        
+        $(".btn-value").dblclick(function(){
+            toy = $(this).parent().parent().parent().attr("data-rental");
+            toy = JSON.parse(toy);
+            debugger;
+            $("#value-total").html(toy.rental.value_to_pay);
+            $("#modal-payment").modal('show');
         });
 
         $(".btn-close").click(function(){

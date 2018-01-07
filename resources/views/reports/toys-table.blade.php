@@ -26,11 +26,11 @@
         @endif
             <div class="form-group col-md-4">
                 <label for="init">Data de:</label>
-                <input type='text' name="init" value="{{ $input?$input['init']:'' }}" class="form-control" id='init'/>
+                <input type='text' name="init" value="{{ $input?$input['init']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='init'/>
             </div>
             <div class="form-group col-md-4">
                 <label for="end">Data até:</label>
-                <input type='text' name="end" value="{{ $input?$input['end']:'' }}" class="form-control" id='end'/>
+                <input type='text' name="end" value="{{ $input?$input['end']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='end'/>
             </div>
         </div>
         <div class="row">
@@ -68,13 +68,7 @@
 @section('scripts')
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#init').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-        $('#end').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-        
+        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
         //loaders
         initLoaders();
     });
@@ -91,7 +85,6 @@
         $.get("/kiosk/list", function(data){
             hideLoader();
             kioskResponse(data);
-            loadToys();
         });
     }
 

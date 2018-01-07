@@ -112,7 +112,6 @@
             showLoader();
             $.get("/rental/cancel/" + id, function(data){
                 loadRentals();
-                loadToys();
                 hideLoader();
             });
         });

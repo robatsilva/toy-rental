@@ -35,10 +35,9 @@ class RentalController extends Controller
     public function home()
     {
         $user = Employe::find(Auth::user()->id);
-        $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1);
-        if(!$kiosks)
+        $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1)->get();
+        if($kiosks->isEmpty())
             return redirect('cadastro');
-
         if($user->kiosk_id)
             $kiosk_id = $user->kiosk_id;
         else{
@@ -257,12 +256,18 @@ class RentalController extends Controller
         $rental = Rental::find($request->input('id'));
         
         $calc = $this->calculeRental($rental->id)->getData();
-        if($request->input('payment_way') == "cc")
-            $rental->value_cc = $calc->valueTotal;
-        if($request->input('payment_way') == "cd")
-            $rental->value_cd = $calc->valueTotal;
-        if($request->input('payment_way') == "di")
-            $rental->value_di = $calc->valueTotal;
+        if($request->input('payment_way')){
+            if($request->input('payment_way') == "cc")
+                $rental->value_cc = $calc->valueTotal;
+                if($request->input('payment_way') == "cd")
+                $rental->value_cd = $calc->valueTotal;
+                if($request->input('payment_way') == "di")
+                $rental->value_di = $calc->valueTotal;
+            } else {
+                $rental->value_cc = $request->input('value_cc');
+                $rental->value_cd = $request->input('value_cd');
+                $rental->value_di = $request->input('value_di');
+        }
         $rental->period_id = $calc->period->id;
         $rental->status = "Encerrado";
         $rental->employe_id = $user->id;

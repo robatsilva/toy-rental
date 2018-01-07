@@ -11,7 +11,6 @@
     }
 </style>
 <div class="container">
-<div class="row">
     <form id="rental-form" action="/report/payment-way" method="post">
         {!! csrf_field() !!}
         <div class="row">
@@ -26,11 +25,11 @@
         @endif
             <div class="form-group col-md-4">
                 <label for="init">Data de:</label>
-                <input type='text' name="init" value="{{ $input?$input['init']:'' }}" class="form-control" id='init'/>
+                <input type='text' name="init" value="{{ $input?$input['init']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='init'/>
             </div>
             <div class="form-group col-md-4">
                 <label for="end">Data até:</label>
-                <input type='text' name="end" value="{{ $input?$input['end']:'' }}" class="form-control" id='end'/>
+                <input type='text' name="end" value="{{ $input?$input['end']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='end'/>
             </div>
         </div>
         <div class="row">
@@ -40,38 +39,32 @@
         </div>
 
     </form>
-</div>
     <div class="row">
-    <table class="table">
-        <thead>
-        <tr>
-            <th class="text-center">Forma de pagamento</th>
-            <th class="text-center">Valor total (R$)</th>
-        </tr>
-        </thead>
-        <tbody id="rental-body">
-        @if($rentals)
-            @foreach($rentals as $rental)
-            <tr class="text-center" id="{{$rental->id}}"> 
-                <td>{{ $rental->payment_way }}</td> 
-                <td>{{ $rental->total_pay }}</td>
-            </tr>       
-            @endforeach
-        @endif
-        </tbody>
-    </table>
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="text-center">Forma de pagamento</th>
+                <th class="text-center">Valor total (R$)</th>
+            </tr>
+            </thead>
+            <tbody id="rental-body">
+            @if($rentals)
+                @foreach($rentals as $rental)
+                <tr class="text-center" id="{{$rental->id}}"> 
+                    <td>{{ $rental->payment_way }}</td> 
+                    <td>{{ $rental->total_pay }}</td>
+                </tr>       
+                @endforeach
+            @endif
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection
 @section('scripts')
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#init').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-        $('#end').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
+        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
         
         //loaders
         initLoaders();
@@ -89,7 +82,6 @@
         $.get("/kiosk/list", function(data){
             hideLoader();
             kioskResponse(data);
-            loadToys();
         });
     }
 

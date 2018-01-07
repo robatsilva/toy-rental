@@ -105,6 +105,51 @@ class ReportController extends Controller
             ->with('input', $request->input());
     }
     /**
+     * get cash and cash-flow registers
+     */
+    public function reportByCash(Request $request)
+    {
+        $user = Employe::find(Auth::user()->id);
+
+        $total = Rental::
+            whereDate('init', '<=', Carbon::createFromFormat('d-m-Y', str_replace('/', '-', $request->input('init'))))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
+            ->sum("value_cd");
+        $total += Rental::
+        whereDate('init', '<=', Carbon::createFromFormat('d-m-Y', str_replace('/', '-', $request->input('init'))))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
+            ->sum("value_cc");
+        $total += Rental::
+        whereDate('init', '<=', Carbon::createFromFormat('d-m-Y', str_replace('/', '-', $request->input('init'))))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
+            ->sum("value_di");
+
+        $cash['total'] = $total;
+        $cash['rentals'] = $total;
+        $cash['registers'] = [];
+        $cash['cash_flows'] = [];
+        $cash['input'] = 0;
+        $cash['output'] = 0;
+        return view('reports.cash-flow')
+            ->with('cash', $cash)
+            ->with('input', $request->input());
+    }
+    /**
      * get total of rentals group by payment way
      */
     public function reportByPaymentWay(Request $request)
@@ -152,6 +197,13 @@ class ReportController extends Controller
     {
         return view('reports.toys-table')
             ->with('rentals', null)
+            ->with('input', null);
+    }
+    
+    public function cash()
+    {
+        return view('reports.cash-flow')
+            ->with('cash', null)
             ->with('input', null);
     }
     

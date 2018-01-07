@@ -17,6 +17,43 @@
     <div id="rentals-toys" class="row form-group">
     </div>
 
+    <!-- Modal payment-->
+    <div id="modal-payment" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mais de uma forma de pagamento</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="payment-form">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="value_di">Dinheiro:</label>
+                                <input name="value_di" class="form-control money" id="value_di" placeholder="Dinheiro" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="value_cd">Cartão de débito:</label>
+                                <input name="value_cd" class="form-control money" id="value_cd" placeholder="Débito" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="value_cc">Cartão de crédito:</label>
+                                <input name="value_cc" class="form-control money" id="value_cc" placeholder="Crédito" required>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <h2>Valor a pagar: <span id="value-total"></span></h2>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    <buttom class="btn btn-primary btn-save-payment">Receber</buttom>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Modal extra-time-->
     <div id="modal-extra-time" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -105,8 +142,8 @@
         </div>
     </div>
 
-    <!-- Modal payment-->
-    <div id="modal-payment" class="modal fade" role="dialog">
+    <!-- Modal-->
+    <div class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -143,7 +180,7 @@
                             </div>
                             <div class="form-group col-md-12 text-center">
                                 <h5><b>Valor a pagar:</b></h5>
-                                <h6><span>R$</span> <span id="value-total">0,00</span></h6>
+                                <h6><span>R$</span> <span>0,00</span></h6>
                             </div>
                         </div>
                         <div class="row">
@@ -168,6 +205,8 @@
 
     
 </div>
+
+<!-- TODO remove this -->
 <div class="container" style="display: none;">
     <!--form-->
     <div class="row">
@@ -228,13 +267,13 @@
     var kiosk_id = {{ $kiosk_id }};
     var toys;
     var toy;
-    var customer;
+    var customer = {id: "", name: "", cpf: ""};
     var periods = JSON.parse(`{!! $periods !!}`);
 
     
     $(document).ready(function(){
+        $('.money').mask("#,##", {reverse: true});
         $('#cpf').mask('000.000.000-00', {reverse: true});
-        //$('#extra-time').mask('00', {reverse: true});
         $('#cpf').focus();
 
         // $('#toys').select2({
@@ -275,8 +314,7 @@
     //         toyResponse(data);
     //     });
     // }
-    function loadRentals()
-    {
+    function loadRentals() {
         //$.get("/rental/" + $("#kiosks").val(), function(data){
         $.get("/rental/" + kiosk_id, function(data){
             rentalsResponse(data);
@@ -324,7 +362,7 @@
     }
     function nameChange(){
         $("#name").on('blur', function() {
-            // validateCustomer();
+            customer.name = $("#name").val();
         });
     }
 
@@ -354,8 +392,41 @@
         });
     });
 
+    $(".money").focus(function(){
+        var cc = Number($('#value_cc').val());
+        var cd = Number($('#value_cd').val());
+        var di = Number($('#value_di').val());
+        var total = cc + cd + di;
+        if(total != Number(toy.rental.value_to_pay) && total != 0){
+            $(this).val(toy.rental.value_to_pay - cc - cd - di);
+        }
+    });
+
+    $(".btn-save-payment").click(function(){    
+        showLoader();
+        var cc = Number($('#value_cc').val());
+        var cd = Number($('#value_cd').val());
+        var di = Number($('#value_di').val());
+        var total = cc + cd + di;
+
+        if(total != Number(toy.rental.value_to_pay)){
+            alert('A soma dos pagamentos deve ser igual a R$' + toy.rental.value_to_pay);
+            return;
+        }
+        toy.rental.payment_way = undefined;
+        toy.rental.value_cd = $('#value_cd').val();
+        toy.rental.value_cc = $('#value_cc').val();
+        toy.rental.value_di = $('#value_di').val();
+        toy.rental._token = "{{ csrf_token() }}";
+        showLoader();
+        $.post("/rental/finish", toy.rental, function(){
+            loadRentals();
+            $("#modal-payment").modal('hide');
+            hideLoader();
+        });
+    });
+
     $(".btn-save-cancel").click(function(){
-        debugger;
         if(!$("#reason-cancel :selected").val() 
             && !$("#reason-cancel-other").val()){
             alert("Selecione um motivo");
@@ -374,15 +445,6 @@
             hideLoader();
         });
     });
-    // function toysChange(){
-    //     $("#toys").on('change', function() {
-    //         setTimeout(function() {
-    //             $("#period").focus();
-    //             $("#period").select();
-    //         }, 0);  
-    //         validateCustomer();
-    //     });
-    // }
     
     // function periodChange(){
     //     $("#period").on('change', function() {
@@ -470,18 +532,18 @@
 
     function cpfResponse(data){
         $("#customer").show();
+        customer.cpf = $("#cpf").val();
         if(data.name !== undefined){
             if(data.id){
                 customer = data;
-                customer.cpf = $("#cpf").val();
                 $("#id").val(data.id);
-                $("#name").val(data.name);
                 $("#name").val(data.name);
                 $("#name").attr("disabled", true);
                 // toysFocus();
             }
         }
         else{
+            customer.id = undefined;
             $("#name").attr("disabled", false);
             $("#name").attr("placeholder", "Insira um nome");
             $("#name").focus();

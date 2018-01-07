@@ -26,11 +26,11 @@
         @endif
             <div class="form-group col-md-4">
                 <label for="init">Data de:</label>
-                <input type='text' name="init" value="{{ $input?$input['init']:'' }}" class="form-control" id='init'/>
+                <input type='text' name="init" value="{{ $input?$input['init']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='init'/>
             </div>
             <div class="form-group col-md-4">
                 <label for="end">Data até:</label>
-                <input type='text' name="end" value="{{ $input?$input['end']:'' }}" class="form-control" id='end'/>
+                <input type='text' name="end" value="{{ $input?$input['end']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='end'/>
             </div>
         </div>
         <div class="row">
@@ -64,6 +64,7 @@
             <th class="text-center">Motivo tempo adicional</th>
             <th class="text-center">Valor (R$)</th>
             <th class="text-center">Recebido por</th>
+            <th class="text-center">Motivo do cancelamento</th>
             <th class="text-center">Status</th>
         </tr>
         </thead>
@@ -84,6 +85,7 @@
                 <td>{{ $rental->reason_extra_time }}</td> 
                 <td>{{ $rental->total_pay }}</td> 
                 <td>{{ $rental->employe->name }}</td> 
+                <td>{{ $rental->reason_cancel }}</td> 
                 <td>{{ $rental->rental_status }}</td> 
             </tr>       
             @endforeach
@@ -96,13 +98,7 @@
 @section('scripts')
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#init').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-        $('#end').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-        
+        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
         //loaders
         initLoaders();
     });
