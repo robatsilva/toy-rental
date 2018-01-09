@@ -114,14 +114,6 @@ class ReportController extends Controller
         $user = Employe::find(Auth::user()->id);
 
         $total = Rental::
-            whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
-            ->where("kiosk_id", $request->input("kiosk_id"))
-            ->sum("value_cd");
-        $total += Rental::
-        whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
-            ->where("kiosk_id", $request->input("kiosk_id"))
-            ->sum("value_cc");
-        $total += Rental::
         whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
             ->where("kiosk_id", $request->input("kiosk_id"))
             ->sum("value_di");
