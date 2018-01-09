@@ -79,15 +79,17 @@ class ToyController extends Controller
         $toy->description = $request->input('description');
         $toy->kiosk_id = $request->input('kiosk_id');
 
-        // get current time and append the upload file extension to it,
-        // then put that name to $photoName variable.
-        $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
-        /*
-        talk the select file and move it public directory and make avatars
-        folder if doesn't exsit then give it that unique name.
-        */
-        $request->file("image")->move(public_path('images/toys-img'), $toy_img);
-        $toy->image = $toy_img;
+        if($request->file("image")){
+            // get current time and append the upload file extension to it,
+            // then put that name to $photoName variable.
+            $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
+            /*
+            talk the select file and move it public directory and make avatars
+            folder if doesn't exsit then give it that unique name.
+            */
+            $request->file("image")->move(public_path('images/toys-img'), $toy_img);
+            $toy->image = $toy_img;
+        }
         $toy->save();
         return redirect('toy');
     }

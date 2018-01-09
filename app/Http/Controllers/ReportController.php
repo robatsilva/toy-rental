@@ -11,6 +11,8 @@ use DB;
 use Auth;
 use App\Models\Rental;
 use App\Models\Employe;
+use App\Models\Cash;
+use App\Models\CashFlow;
 
 class ReportController extends Controller
 {
@@ -112,39 +114,53 @@ class ReportController extends Controller
         $user = Employe::find(Auth::user()->id);
 
         $total = Rental::
-            whereDate('init', '<=', Carbon::createFromFormat('d-m-Y', str_replace('/', '-', $request->input('init'))))
+            whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
             ->where("kiosk_id", $request->input("kiosk_id"))
-            ->where( function($query) use ($user) {
-                if($user->kiosk_id){
-                    $query->where("employe_id", $user->id);
-                }
-            })
             ->sum("value_cd");
         $total += Rental::
-        whereDate('init', '<=', Carbon::createFromFormat('d-m-Y', str_replace('/', '-', $request->input('init'))))
+        whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
             ->where("kiosk_id", $request->input("kiosk_id"))
-            ->where( function($query) use ($user) {
-                if($user->kiosk_id){
-                    $query->where("employe_id", $user->id);
-                }
-            })
             ->sum("value_cc");
         $total += Rental::
-        whereDate('init', '<=', Carbon::createFromFormat('d-m-Y', str_replace('/', '-', $request->input('init'))))
+        whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
             ->where("kiosk_id", $request->input("kiosk_id"))
-            ->where( function($query) use ($user) {
-                if($user->kiosk_id){
-                    $query->where("employe_id", $user->id);
-                }
-            })
             ->sum("value_di");
+        
+        $date = Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d');
 
-        $cash['total'] = $total;
+        $cashes = Cash::where("kiosk_id", $request->input("kiosk_id"))
+        ->whereBetween(DB::raw('date(created_at)'), array($date, $date))
+        ->where( function($query) use ($user) {
+            if($user->kiosk_id){
+                $query->where("employe_id", $user->id);
+            }
+        })
+        ->with('employe')
+        ->get();
+        $cashFlows = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
+        ->whereBetween(DB::raw('date(created_at)'), array($date, $date))
+        ->where( function($query) use ($user) {
+            if($user->kiosk_id){
+                $query->where("employe_id", $user->id);
+            }
+        })
+        ->with('employe')
+        ->get();
+        
+        $input = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
+        ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
+        ->sum('input');
+        
+        $output = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
+        ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
+        ->sum('output');
+
         $cash['rentals'] = $total;
-        $cash['registers'] = [];
-        $cash['cash_flows'] = [];
-        $cash['input'] = 0;
-        $cash['output'] = 0;
+        $cash['cashes'] = $cashes;
+        $cash['cash_flows'] = $cashFlows;
+        $cash['input'] = $input;
+        $cash['output'] = $output;
+        $cash['total'] = $input - $output + $total;
         return view('reports.cash-flow')
             ->with('cash', $cash)
             ->with('input', $request->input());

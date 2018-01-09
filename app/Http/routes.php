@@ -67,7 +67,10 @@ Route::post('/report/cash', 'ReportController@reportByCash');
 Route::get('/report/payment-way', 'ReportController@paymentWay');
 Route::post('/report/payment-way', 'ReportController@reportByPaymentWay');
 
-    
+Route::post('/cash-flow', 'CashController@registerCashFlow');
+Route::post('/cash', 'CashController@registerCash');
+Route::get('/cash-flow/delete/{id}', 'CashController@deleteCashFlow');
+Route::get('/cash/delete/{id}', 'CashController@deleteCash');
 
 Route::get('/period', 'PeriodController@index');
 Route::post('/period', 'PeriodController@store');

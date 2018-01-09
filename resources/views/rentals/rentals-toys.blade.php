@@ -227,7 +227,6 @@
         $(".btn-value").dblclick(function(){
             toy = $(this).parent().parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
-            debugger;
             $("#value-total").html(toy.rental.value_to_pay);
             $("#modal-payment").modal('show');
         });
