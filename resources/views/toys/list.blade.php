@@ -33,7 +33,7 @@
                         @foreach ($toys as $toy)
                             <tr>
                                 <td><img style="max-height: 100px;"
-                                    src="{{ $toy->image ? '/images/toys-img/' . $toy->image : '/images/Imagem_Indisponível.png' }}" 
+                                    src="{{ $toy->image ? '/images/toys-img/' . $toy->image : '/images/imagem_indisponivel.png' }}" 
                                 /></td>
                                 <td>{{ $toy->code }}</td>
                                 <td>{{ $toy->description }}</td>

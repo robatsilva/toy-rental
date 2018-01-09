@@ -68,7 +68,7 @@
                             <input type="text" class="form-control" readonly>
                         </div>
                         <img id='img-upload' 
-                            src="{{ $toy && $toy->image ? '/images/toys-img/' . $toy->image : '/images/Imagem_Indisponível.png' }}" 
+                            src="{{ $toy && $toy->image ? '/images/toys-img/' . $toy->image : '/images/imagem_indisponivel.png' }}" 
                         />
                     </div>
                     <button type="submit" class="btn btn-primary">Salvar</button>

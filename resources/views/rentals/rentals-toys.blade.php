@@ -83,7 +83,7 @@
         <div class="card" @if($toy->rental && $toy->rental->period->time < $toy->rental->time_diff) style="background-color: #ffa1a1" @endif>
             <div class="toy-data"> 
                 <img 
-                    src="{{ $toy->image ? '/images/toys-img/' . $toy->image : '/images/Imagem_Indisponível.png' }}" 
+                    src="{{ $toy->image ? '/images/toys-img/' . $toy->image : '/images/imagem_indisponivel.png' }}" 
                     class="img-responsive center-block toy-img"/>
                 <div class="text-center">{{ $toy->description }}</div> 
                 @if($toy->rental)
