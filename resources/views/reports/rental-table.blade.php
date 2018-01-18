@@ -9,6 +9,10 @@
     td{
         vertical-align: middle !important;
     }
+
+    .Cancelado{
+        background: #FAA;
+    }
 </style>
 <div class="container">
 <div class="row">
@@ -71,7 +75,7 @@
         <tbody id="rental-body">
         @if($rentals)
             @foreach($rentals as $rental)
-            <tr class="text-center" id="{{$rental->id}}"> 
+            <tr class="text-center {{ $rental->rental_status }}" id="{{$rental->id}}"> 
                 <td>{{ Carbon\Carbon::parse($rental->init)->format('d/m/Y') }}</td> 
                 <td>{{ $rental->toy->description }}</td> 
                 <td>{{ $rental->customer->name }}</td> 
@@ -98,7 +102,7 @@
 @section('scripts')
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' });
         //loaders
         initLoaders();
     });

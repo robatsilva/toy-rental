@@ -149,6 +149,8 @@ class RentalController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Employe::find(Auth::user()->id);
+
         if(!$request->input('customer.id'))
         {
             $cpf = $request->input('customer.cpf');
@@ -168,6 +170,7 @@ class RentalController extends Controller
         $rental = Rental::where("customer_id", $customer->id)->where("status", "Alugado")->first();
         if($rental){
             $rental->toy_id = $request->input('toy_id');
+            $user = Employe::find(Auth::user()->id);
         } else {
             $rental = new Rental;
             $rental->customer_id = $customer->id;
@@ -177,6 +180,7 @@ class RentalController extends Controller
             $rental->tolerance = $kiosk->tolerance;
             $rental->extra_time = 0;
             $rental->extra_value = $kiosk->extra_value;
+            $rental->employe_id = $user->id;
             $rental->init = Carbon::now();
             $rental->status = "Alugado";
         }

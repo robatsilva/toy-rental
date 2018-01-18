@@ -68,7 +68,7 @@
 @section('scripts')
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' });
         //loaders
         initLoaders();
     });

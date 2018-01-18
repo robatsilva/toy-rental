@@ -73,6 +73,16 @@
     .toy-init, .label-init{
         display: none;
     }
+
+    .Alugado {
+        background: #AAF;
+    }
+    .Pausado {
+        background: #FFA;
+    }
+    .Disponivel {
+        background: #AFA;
+    }
 </style>
 
 @foreach($toys as $toy)
@@ -117,8 +127,8 @@
                     </div>
                 @endif
             </div>    
-            <div class="toy-bottom text-center btn-status"> 
-                <b>{{ $toy->rental? $toy->rental->status : "Disponível" }}</b> 
+            <div class="toy-bottom text-center btn-status {{ $toy->rental ? $toy->rental->status : 'Disponivel' }}"> 
+                <b>{{ $toy->rental ? $toy->rental->status : "Disponível" }}</b> 
             </div>
         </div>
     </div>   
