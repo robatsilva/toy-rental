@@ -13,7 +13,9 @@
 
 
 
-Route::get('/', 'RentalController@home');
+Route::get('/', 'HomeController@index');
+
+Route::get('/login', 'RentalController@login');
 
 Route::auth();
 

@@ -73,7 +73,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Rental Toys
+                    Toy Rental
                 </a>
             </div>
             
