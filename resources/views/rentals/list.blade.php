@@ -295,6 +295,9 @@
     function loadPeriods(){
         $.get("/period/getByKioskId/" + kiosk_id, function(data){
             periodResponse(data);
+        })
+        .fail(function(xhr, status, error) {
+            alert(status + ' - ' + error);
         });
     }
     // function loadKiosks()
@@ -318,6 +321,9 @@
         //$.get("/rental/" + $("#kiosks").val(), function(data){
         $.get("/rental/" + kiosk_id, function(data){
             rentalsResponse(data);
+        })
+        .fail(function(xhr, status, error) {
+            debugger;
         });
     }
     function loadCpf(){
@@ -326,6 +332,9 @@
             $.get("/customer/" + {{ $kiosk_id }} + "/" + $("#cpf").val(), function(data){
                 cpfResponse(data);
                 //validateCustomer();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         }
         else{
@@ -389,6 +398,9 @@
                 $("#extra-time").html(Number($("#extra-time").html()) + Number(extra_time));
             hideLoader();
             loadRentals();
+        })
+        .fail(function(xhr, status, error) {
+            alert(status + ' - ' + error);
         });
     });
 
@@ -423,6 +435,9 @@
             loadRentals();
             $("#modal-payment").modal('hide');
             hideLoader();
+        })
+        .fail(function(xhr, status, error) {
+            alert(status + ' - ' + error);
         });
     });
 
@@ -443,6 +458,9 @@
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
             hideLoader();
+        })
+        .fail(function(xhr, status, error) {
+            alert(status + ' - ' + error);
         });
     });
     

@@ -82,6 +82,9 @@
         $.get("/kiosk/list", function(data){
             hideLoader();
             kioskResponse(data);
+        })
+        .fail(function(xhr, status, error) {
+            alert(status + ' - ' + error);
         });
     }
 

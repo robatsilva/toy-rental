@@ -176,6 +176,9 @@
                 $(".clear").text("");
                 // validateCustomer();
                 hideLoader();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         }
         $(".btn-period").dblclick(function(){
@@ -185,6 +188,9 @@
             $.post("/rental/next-period/" + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(){
                 loadRentals();
                 hideLoader();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
 
         });
@@ -210,6 +216,9 @@
                 $.post(endPoint + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(data){
                     hideLoader();
                     loadRentals();
+                })
+                .fail(function(xhr, status, error) {
+                    alert(status + ' - ' + error);
                 });
             }
         });
@@ -223,6 +232,9 @@
             $.post("/rental/finish", toy.rental, function(){
                 loadRentals();
                 hideLoader();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         });
 

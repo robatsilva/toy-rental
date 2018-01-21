@@ -36,7 +36,7 @@ class RentalController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
         $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1)->get();
-        if($kiosks->isEmpty())
+        if($kiosks->isEmpty() && !$user->kiosk_id)
             return redirect('cadastro');
         if($user->kiosk_id)
             $kiosk_id = $user->kiosk_id;

@@ -269,11 +269,17 @@
         $('.delete_cash_flow').click(function(){
             $.get('/cash-flow/delete/' + $(this).attr('value'), function(data){
                 $('#cash-form').submit();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         });
         $('.delete_cash').click(function(){
             $.get('/cash/delete/' + $(this).attr('value'), function(data){
                 $('#cash-form').submit();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         });
     }
@@ -290,6 +296,9 @@
         $.get("/kiosk/list", function(data){
             hideLoader();
             kioskResponse(data);
+        })
+        .fail(function(xhr, status, error) {
+            alert(status + ' - ' + error);
         });
     }
 
@@ -310,11 +319,11 @@
                         console.log(error);
                     }
                 });
-                @if(isset($cash_save) || !$cash)
-                $('#cash-form').submit();
-                @endif
-                hideLoader();
             }
+            @if(isset($cash_save) || !$cash)
+            $('#cash-form').submit();
+            @endif
+            hideLoader();
         }
         catch(error){console.log(error);}
     }

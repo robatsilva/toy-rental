@@ -72,7 +72,7 @@
                 </button>
 
                 <!-- Branding Image -->
-                <a class="navbar-brand" href="{{ url('/rental/home') }}">
+                <a class="navbar-brand" href="{{ url('/sistema') }}">
                     Toy Rental
                 </a>
             </div>

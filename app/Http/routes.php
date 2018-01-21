@@ -48,9 +48,9 @@ Route::get('/toy/getByKioskId/{kiosk_id}', 'ToyController@getByKioskId');
 Route::post('/toy/update/{id}', 'ToyController@update');
 Route::get('/toy/toogle/{id}', 'ToyController@toogle');
 
+Route::get('/sistema', 'RentalController@home');
 Route::get('/rental', 'RentalController@index');
 Route::post('/rental', 'RentalController@store');
-Route::get('/rental/home', 'RentalController@home');
 Route::post('/rental/finish', 'RentalController@finish');
 Route::get('/rental/{kiosk_id}', 'RentalController@index');
 Route::post('/rental/extra-time', 'RentalController@extraTime');

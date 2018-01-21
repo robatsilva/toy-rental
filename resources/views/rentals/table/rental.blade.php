@@ -88,6 +88,9 @@
             $.get("/rental/pause/" + id, function(data){
                 hideLoader();
                 loadRentals();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         });
 
@@ -104,6 +107,9 @@
                 $("#value-total").text(data.valueTotal);
                 $("#modal-payment").modal('show');
                 hideLoader();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         });
 
@@ -113,6 +119,9 @@
             $.get("/rental/cancel/" + id, function(data){
                 loadRentals();
                 hideLoader();
+            })
+            .fail(function(xhr, status, error) {
+                alert(status + ' - ' + error);
             });
         });
     }
