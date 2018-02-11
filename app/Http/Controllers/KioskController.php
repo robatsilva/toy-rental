@@ -44,6 +44,7 @@ class KioskController extends Controller
     public function create()
     {
         return view('kiosks/form')
+            ->with('user', Auth::user())
             ->with('kiosk', null);
     }
 

@@ -11,7 +11,7 @@
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                            <label for="name" class="col-md-4 control-label">Name</label>
+                            <label for="name" class="col-md-4 control-label">Nome completo</label>
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}">
@@ -23,9 +23,36 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="form-group{{ $errors->has('birth') ? ' has-error' : '' }}">
+                            <label for="birth" class="col-md-4 control-label">Data de Nascimento</label>
+
+                            <div class="col-md-6">
+                                <input id="birth" type="text" class="form-control" name="birth" value="{{ old('birth') }}">
+
+                                @if ($errors->has('birth'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('birth') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <div class="form-group{{ $errors->has('cnpj') ? ' has-error' : '' }}">
+                            <label for="cnpj" class="col-md-4 control-label">CNPJ</label>
+
+                            <div class="col-md-6">
+                                <input id="cnpj" type="text" class="form-control" name="cnpj" value="{{ old('cnpj') }}">
+
+                                @if ($errors->has('cnpj'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('cnpj') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
 
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+                            <label for="email" class="col-md-4 control-label">E-Mail</label>
 
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}">
@@ -79,4 +106,12 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(document).ready(function(){
+        $('#birth').mask('00/00/0000');
+        $('#cnpj').mask('00.000.000/0000-00');
+    });
+</script>
 @endsection
