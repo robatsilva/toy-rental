@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use Auth;
+use Carbon\Carbon;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -49,11 +50,15 @@ class AuthController extends Controller
      */
     protected function validator(array $data)
     {
+        $data['phone'] = str_replace(' ', '', $data['phone']);
+        $data['date'] = date("Y-m-d", strtotime( $data['birth']));
         return Validator::make($data, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'birth' => 'required|date',
             'cnpj' => 'required|min:18|max:18',
+            'area_code' => 'required|min:2|max:3',
+            'phone' => 'required|min:8|max:9',
             'password' => 'required|min:6|confirmed',
         ]);
     }
@@ -66,10 +71,14 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
+        $data['phone'] = str_replace(' ', '', $data['phone']);
+        $data['birth'] = Carbon::createFromFormat('d/m/Y', $data['birth']);
         return User::create([
             'name' => $data['name'],
             'birth' => $data['birth'],
             'cnpj' => $data['cnpj'],
+            'area_code' => $data['area_code'],
+            'phone' => $data['phone'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);

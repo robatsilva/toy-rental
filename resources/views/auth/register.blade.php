@@ -65,8 +65,36 @@
                             </div>
                         </div>
 
+                        <div class="form-group{{ $errors->has('area_code') ? ' has-error' : '' }}">
+                            <label for="area_code" class="col-md-4 control-label">DDD</label>
+
+                            <div class="col-md-6">
+                                <input id="area_code" type="area_code" class="form-control" name="area_code" value="{{ old('area_code') }}">
+
+                                @if ($errors->has('area_code'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('area_code') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                            <label for="phone" class="col-md-4 control-label">Telefone</label>
+
+                            <div class="col-md-6">
+                                <input id="phone" type="phone" class="form-control" name="phone" value="{{ old('phone') }}">
+
+                                @if ($errors->has('phone'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('phone') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
+                            <label for="password" class="col-md-4 control-label">Senha</label>
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control" name="password">
@@ -80,7 +108,7 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-                            <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
+                            <label for="password-confirm" class="col-md-4 control-label">Confirme sua senha</label>
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation">
@@ -96,7 +124,7 @@
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-user"></i> Register
+                                    <i class="fa fa-btn fa-user"></i> Registrar
                                 </button>
                             </div>
                         </div>
@@ -112,6 +140,8 @@
     $(document).ready(function(){
         $('#birth').mask('00/00/0000');
         $('#cnpj').mask('00.000.000/0000-00');
+        $('#area_code').mask('00');
+        $('#phone').mask('000000000');
     });
 </script>
 @endsection

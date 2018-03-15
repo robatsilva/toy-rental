@@ -22,7 +22,7 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="cnpj">CNPJ:</label>
-                        <input name="cnpj" class="form-control" value="{{$kiosk?$kiosk->cnpj:'88789465000114'}}" id="cnpj">
+                        <input name="cnpj" class="form-control" value="{{$kiosk?$kiosk->cnpj:$user->cnpj}}" id="cnpj">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="tolerance">Tolerância:</label>
@@ -57,44 +57,58 @@
                         <input name="postalcode" class="form-control" value="{{$kiosk?$kiosk->postalcode:''}}" id="postalcode">
                     </div>
                     <hr>
-                    <h2>Dados para pagamento</h2>
-                    <input type="hidden" id="hash" name="hash">
-                    <input type="hidden" id="token" name="card_token">
-                    <h3>Dados do titular do cartão</h3>
-                    <div class="form-group col-md-6">
-                        <label for="card_name">Nome impresso no cartão</label>
-                        <input class="form-control" id="card_name" name="card_name" value="{{$kiosk?$kiosk->cnpj:$user->name}}">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="card_doc">Documento:</label>
-                        <input name="card_doc" class="form-control" value="{{$kiosk?$kiosk->cnpj:$user->cnpj}}" id="card_doc">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="card_birth">Data de nascimento:</label>
-                        <input name="card_birth" class="form-control" value="{{$kiosk?$kiosk->birth:$user->birth}}" id="card_birth">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="card_phone">Telefone:</label>
-                        <input name="card_phone" class="form-control" value="{{$kiosk?$kiosk->area_code . $kiosk->phone:$user->area_code . $user->phone}}" id="card_phone">
-                    </div>
-                    <h3>Dados do cartão</h3>
-                    <div class="form-group col-md-4">
-                        <label for="card_number">Número do cartão</label>
-                        <input class="form-control" id="card_number" name="card_number" placeholder="xxxx xxxx xxxx xxxx">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="card_date">Data de validade</label>
-                        <input class="form-control" id="card_date" name="card_date" placeholder="mm/yyyy">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="card_ccv">Cõdigo de segurança</label>
-                        <input class="form-control" id="card_ccv" name="card_ccv"placeholder="xxxx">
-                    </div>
                     <div class="form-group col-md-12">
-                        <img id="card_img"></img>
+                        <h2>Pagamento</h2>
+                        <h5>Será cobrado o valor mensal de R$ 120,00 por quiosque cadastrado</h5>
+                        <input type="hidden" id="hash" name="hash">
+                        <input type="hidden" id="token" name="card_token">
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Titular do cartão</h3>
+                        <div class="form-group">
+                            <label for="card_name">Nome impresso no cartão</label>
+                            <input class="form-control" id="card_name" name="card_name" value="{{$kiosk?$kiosk->cnpj:$user->name}}">
+                        </div>
+                        <div class="form-group">
+                            <label for="card_doc">CNPJ:</label>
+                            <input name="card_doc" class="form-control" value="{{$kiosk?$kiosk->cnpj:$user->cnpj}}" id="card_doc">
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="card_birth">Data de nascimento:</label>
+                                <input name="card_birth" class="form-control" value="{{$kiosk?Carbon\Carbon::parse($kiosk->birth)->format('d/m/Y'):Carbon\Carbon::parse($user->birth)->format('d/m/Y')}}" id="card_birth">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="card_phone">Telefone:</label>
+                                <input id="card_phone" name="card_phone" class="form-control" value="{{$kiosk?$kiosk->area_code . $kiosk->phone:$user->area_code . $user->phone}}" id="card_phone">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Cartão de crédito</h3>
+                        <div class="form-group">
+                            <label for="card_number">Número do cartão</label>
+                            <input class="form-control" id="card_number" name="card_number" placeholder="xxxx xxxx xxxx xxxx">
+                        </div>
+                        <div class="form-group">
+                            <label for="card_date">Data de validade</label>
+                            <input class="form-control" id="card_date" name="card_date" placeholder="mm/yyyy">
+                        </div>
+                        <div class="form-group">
+                            <label for="card_ccv">Cõdigo de segurança</label>
+                            <input class="form-control" id="card_ccv" name="card_ccv"placeholder="xxxx">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <img id="card_img"></img>
+                        </div>
                     </div>
                 </form>
-                <button class="btn btn-primary" id="salvar">Salvar</button>
+                <div class="form-group col-md-12">
+                    <button class="btn btn-primary" id="salvar">Salvar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -113,6 +127,8 @@
         $('#card_ccv').mask('0000');
         $('.integer').mask('#');
         $('.decimal').mask('000.000,00', {reverse: true});
+        $('#area_code').mask('00');
+        $('#card_phone').mask('00 000000000');
         showLoader();
         $.get('/payment/session', function(data){
             PagSeguroDirectPayment.setSessionId(data.id);
