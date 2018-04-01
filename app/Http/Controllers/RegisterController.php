@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 
+use App\Models\Kiosk;
+use Auth;
+
 class RegisterController extends Controller
 {
     /**
@@ -24,6 +27,8 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        return view('register');
+        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->count();
+        return view('register')
+        ->with('kiosks', $kiosks);
     }
 }

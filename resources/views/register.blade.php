@@ -11,15 +11,16 @@
                         <h3>Quiosques</h3>
                     </a>
                 </div>
-
+                @if($kiosks)
                 <div class="col-xs-6 text-center">
                     <a href="employe">
                         <img src="/images/customer.jpeg" class="img-responsive center-block">
                         <h3>Funcionários</h3>
                     </a>
                 </div>
-
+                @endif
             </div>
+            @if($kiosks)
             <div class="row" style="margin-top: 50px;">
                 <div class="col-xs-6 text-center">
                     <a href="toy">
@@ -34,6 +35,7 @@
                     </a>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>

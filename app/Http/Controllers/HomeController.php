@@ -49,7 +49,6 @@ class HomeController extends Controller
             ->where('default', "1")
             ->first()->id;
         }
-            dd($kiosk_id);
         return view('rental.list')->with('kiosk_id', $kiosk_id);
     }
 }

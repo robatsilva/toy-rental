@@ -182,7 +182,7 @@
                     console.log(response);
                     $.post('/payment/pre-approvals', body ,function(data){
                         hideLoader();
-                        alert();
+                        $("#form-kiosk").submit();
                     })
                     .fail(function(xhr, status, error) {
                         hideLoader();
@@ -191,7 +191,8 @@
                     
                 },
                 error: function(response) {
-                    alert(JSON.stringfy(response));
+                    alert(JSON.stringify(response));
+                    hideLoader();
                     console.log("error");
                     console.log(response);
 
