@@ -12,10 +12,17 @@
             <input class="form-control clear" name="name" id="name" placeholder="Nome" disabled required>
         </div>
     </div>
-    
-    <!--Grid-->
-    <div id="rentals-toys" class="row form-group">
-    </div>
+    @if(!$kiosk_id)
+        <h2>Para começar você deve cadastrar pelo menos um <a href="kiosk">Quiosque</a></h2>
+    @else
+        @if($periods == '[]')
+            <h2>Para começar você deve cadastrar pelo menos um <a href="period">Período</a></h2>
+        @else
+            <!--Grid-->
+            <div id="rentals-toys" class="row form-group">
+            </div>
+        @endif
+    @endif
 
     <!-- Modal payment-->
     <div id="modal-payment" class="modal fade" role="dialog">

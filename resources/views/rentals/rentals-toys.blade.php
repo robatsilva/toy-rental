@@ -84,7 +84,9 @@
         background: #AFA;
     }
 </style>
-
+@if(count($toys) == 0)
+    <h2>Para começar você deve cadastrar pelo menos um <a href="toy">Brinquedo</a></h2>
+@endif
 @foreach($toys as $toy)
     <div class="col-md-2 col-sm-3 col-xs-6 card-container" data-rental="{{ $toy }}">
         @if($toy->rental != null) 
