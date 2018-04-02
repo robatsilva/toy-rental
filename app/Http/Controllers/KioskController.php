@@ -64,7 +64,16 @@ class KioskController extends Controller
         $kiosk->user_id = Auth::user()->id;
         $kiosk->name = $request->input('name');
         $kiosk->tolerance = $request->input('tolerance');
+        $kiosk->cnpj = $request->input('cnpj');
         $kiosk->extra_value = $request->input('extra-value');
+        $kiosk->address = $request->input('address');
+        $kiosk->address_number = $request->input('address_number');
+        $kiosk->address_district = $request->input('address_district');
+        $kiosk->address_city = $request->input('address_city');
+        $kiosk->address_state = $request->input('address_state');
+        $kiosk->postalcode = $request->input('postalcode');
+        if($request->input('payment_code'))
+            $kiosk->payment_code = $request->input('payment_code');
         $kiosk->default = 1;
         $kiosk->save();
         
@@ -96,6 +105,7 @@ class KioskController extends Controller
     {
         $kiosk = Kiosk::find($id);
         return view('kiosks/form')
+            ->with('user', Auth::user())
             ->with("kiosk", $kiosk);
     }
 
@@ -111,7 +121,14 @@ class KioskController extends Controller
         $kiosk = Kiosk::find($id);
         $kiosk->name = $request->input('name');
         $kiosk->tolerance = $request->input('tolerance');
+        $kiosk->cnpj = $request->input('cnpj');
         $kiosk->extra_value = $request->input('extra-value');
+        $kiosk->address = $request->input('address');
+        $kiosk->address_number = $request->input('address_number');
+        $kiosk->address_district = $request->input('address_district');
+        $kiosk->address_city = $request->input('address_city');
+        $kiosk->address_state = $request->input('address_state');
+        $kiosk->postalcode = $request->input('postalcode');
         $kiosk->save();
         return redirect('kiosk');
     }

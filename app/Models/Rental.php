@@ -23,7 +23,7 @@ class Rental extends Model
 
     public function customer()
     {
-        return $this->belongsTo('App\Models\Customer');
+        return $this->belongsTo('App\Models\Customers');
     }
 
     public function period()

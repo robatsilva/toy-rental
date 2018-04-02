@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Session;
 
-use App\Models\Customer;
+use App\Models\Customers;
 
 class CustomerController extends Controller
 {
@@ -40,7 +40,7 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $customer = new Customer;
+        $customer = new Customers;
         $customer->name = $request->input('name');
         $customer->cpf = $request->input('cpf');
         $customer->kiosk_id = $request->input('kiosk_id');
@@ -58,7 +58,8 @@ class CustomerController extends Controller
     {
         $cpf = str_replace('.', '', $cpf);
         $cpf = str_replace('-', '', $cpf);
-        $customer = Customer::where("cpf", $cpf)
+        
+        $customer = Customers::where("cpf", $cpf)
                             ->where("kiosk_id", $kiosk_id)
                             ->first();
 

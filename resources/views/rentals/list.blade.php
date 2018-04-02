@@ -330,7 +330,8 @@
             rentalsResponse(data);
         })
         .fail(function(xhr, status, error) {
-            debugger;
+            hideLoader();
+            alert(error)
         });
     }
     function loadCpf(){
@@ -341,6 +342,8 @@
                 //validateCustomer();
             })
             .fail(function(xhr, status, error) {
+                hideLoader();
+                cpfResponse('');
                 alert(status + ' - ' + error);
             });
         }

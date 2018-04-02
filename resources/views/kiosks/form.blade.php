@@ -22,7 +22,7 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="cnpj">CNPJ:</label>
-                        <input name="cnpj" class="form-control" value="{{$kiosk?$kiosk->cnpj:$user->cnpj}}" id="cnpj">
+                        <input name="cnpj" class="cnpj form-control" value="{{$kiosk?$kiosk->cnpj:$user->cnpj}}" id="cnpj">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="tolerance">Tolerância:</label>
@@ -50,39 +50,70 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label for="address_state">Estado:</label>
-                        <input name="address_state" class="form-control" value="{{$kiosk?$kiosk->address_state:''}}" id="address_state">
+                        <select name="address_state" class="form-control" value="{{$kiosk?$kiosk->address_state:''}}" id="address_state">
+                            <option>Selecione...</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
                     </div>
                     <div class="form-group col-md-3">
                         <label for="postalcode">CEP:</label>
                         <input name="postalcode" class="form-control" value="{{$kiosk?$kiosk->postalcode:''}}" id="postalcode">
                     </div>
                     <hr>
+                    @if(!$kiosk)
                     <div class="form-group col-md-12">
                         <h2>Pagamento</h2>
                         <h5>Será cobrado o valor mensal de R$ 120,00 por quiosque cadastrado</h5>
                         <input type="hidden" id="hash" name="hash">
                         <input type="hidden" id="token" name="card_token">
+                        <input type="hidden" id="payment_code" name="payment_code">
                     </div>
                     <div class="col-md-6">
                         <h3>Titular do cartão</h3>
                         <div class="form-group">
                             <label for="card_name">Nome impresso no cartão</label>
-                            <input class="form-control" id="card_name" name="card_name" value="{{$kiosk?$kiosk->cnpj:$user->name}}">
+                            <input class="form-control" id="card_name" name="card_name" value="{{$user->name}}">
                         </div>
                         <div class="form-group">
                             <label for="card_doc">CNPJ:</label>
-                            <input name="card_doc" class="form-control" value="{{$kiosk?$kiosk->cnpj:$user->cnpj}}" id="card_doc">
+                            <input name="card_doc" class="cnpj form-control" value="{{$user->cnpj}}" id="card_doc">
                         </div>
 
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="card_birth">Data de nascimento:</label>
-                                <input name="card_birth" class="form-control" value="{{$kiosk?Carbon\Carbon::parse($kiosk->birth)->format('d/m/Y'):Carbon\Carbon::parse($user->birth)->format('d/m/Y')}}" id="card_birth">
+                                <input name="card_birth" class="form-control" value="{{Carbon\Carbon::parse($user->birth)->format('d/m/Y')}}" id="card_birth">
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="card_phone">Telefone:</label>
-                                <input id="card_phone" name="card_phone" class="form-control" value="{{$kiosk?$kiosk->area_code . $kiosk->phone:$user->area_code . $user->phone}}" id="card_phone">
+                                <input id="card_phone" name="card_phone" class="form-control" value="{{$user->area_code . $user->phone}}" id="card_phone">
                             </div>
                         </div>
 
@@ -105,6 +136,7 @@
                             <img id="card_img"></img>
                         </div>
                     </div>
+                    @endif
                 </form>
                 <div class="form-group col-md-12">
                     <button class="btn btn-primary" id="salvar">Salvar</button>
@@ -122,6 +154,7 @@
     var creditCardBrands;
     var creditCardBrand;
     $(document).ready(function(){
+        $('.cnpj').mask('00.000.000/0000-00');
         $('#card_number').mask('0000 0000 0000 0000');
         $('#card_date').mask('00/0000');
         $('#card_ccv').mask('0000');
@@ -129,6 +162,7 @@
         $('.decimal').mask('000.000,00', {reverse: true});
         $('#area_code').mask('00');
         $('#card_phone').mask('00 000000000');
+        $('#postalcode').mask('00000-000');
         showLoader();
         $.get('/payment/session', function(data){
             PagSeguroDirectPayment.setSessionId(data.id);
@@ -169,6 +203,7 @@
 
         $("#salvar").click(function(){
             showLoader();
+            @if(!$kiosk)
             var param = {
                 cardNumber: $("input#card_number").val().replace(new RegExp(" ", 'g'), ""),
                 cvv: $("input#card_ccv").val(),
@@ -182,6 +217,22 @@
                     console.log(response);
                     $.post('/payment/pre-approvals', body ,function(data){
                         hideLoader();
+                        if(JSON.parse(data).error){
+                            var erros = "";
+                            Object.values(JSON.parse(data).errors).forEach(function(erro){
+                                erros +=  " - " + erro;
+                            })
+                            alert(erros);
+                            return;
+                        }
+                        if(JSON.parse(data).code){
+                            $("#payment_code").val(JSON.parse(data).code);
+                            alert('Cadastro efetuado com sucesso!');
+                        }
+                        else{
+                            alert('Ocorreu um erro desconhecido no pagamento');
+                            alert('Seu quiosque será cadastrado e entraremos em contato para combinar o pagamento');
+                        }
                         $("#form-kiosk").submit();
                     })
                     .fail(function(xhr, status, error) {
@@ -200,6 +251,9 @@
             }
 
             PagSeguroDirectPayment.createCardToken(param);
+            @else
+                $("#form-kiosk").submit();
+            @endif
 
         });
     });

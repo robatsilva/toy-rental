@@ -32,7 +32,7 @@ class PayController extends Controller
               "documents"=> [
                 [
                     "type"=> "CNPJ",
-                    "value"=> $request->input("cnpj"),
+                    "value"=> $this->limpaSpecialChar($request->input("cnpj")),
                 ]
               ],
               "address"=> [
@@ -43,7 +43,7 @@ class PayController extends Controller
                 "city"=> $request->input("address_city"),
                 "state"=> $request->input("address_state"),
                 "country"=> "BRA",
-                "postalCode"=> $request->input("postalcode"),
+                "postalCode"=> $this->limpaSpecialChar($request->input("postalcode")),
               ]
             ],
             "paymentMethod"=> [
@@ -55,13 +55,13 @@ class PayController extends Controller
                   "birthDate"=> date("d/m/Y", strtotime($request->input("card_birthdate"))),
                   "documents"=> [
                     [
-                        "type"=> $request->input("doc_type"),
-                        "value"=> $request->input("card_cnpj"),
+                        "type"=> "CNPJ",
+                        "value"=> $this->limpaSpecialChar($request->input("card_doc")),
                     ]
                   ],
                   "phone"=> [
-                    "areaCode"=> $request->input("card_area_code"),
-                    "number"=> $request->input("card_phone")
+                    "areaCode"=> substr($request->input("card_phone"), 0, 2),
+                    "number"=> substr($request->input("card_phone"), 3)
                   ]
                 ]
               ]
@@ -102,4 +102,13 @@ class PayController extends Controller
         $array =  json_decode($json,TRUE);
         return response()->json($array);
     }
+
+    function limpaSpecialChar($valor){
+      $valor = trim($valor);
+      $valor = str_replace(".", "", $valor);
+      $valor = str_replace(",", "", $valor);
+      $valor = str_replace("-", "", $valor);
+      $valor = str_replace("/", "", $valor);
+      return $valor;
+     }
 }

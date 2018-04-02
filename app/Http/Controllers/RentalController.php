@@ -10,7 +10,7 @@ use Auth;
 use DB;
 
 use App\Models\Rental;
-use App\Models\Customer;
+use App\Models\Customers;
 use App\Models\Toy;
 use App\Models\Kiosk;
 use App\Models\Period;
@@ -156,14 +156,14 @@ class RentalController extends Controller
             $cpf = $request->input('customer.cpf');
             $cpf = str_replace('.', '', $cpf);
             $cpf = str_replace('-', '', $cpf);
-            $customer = new Customer;
+            $customer = new Customers;
             $customer->name = $request->input('customer.name');   
             $customer->cpf = $cpf;
             $customer->kiosk_id = $request->input('kiosk_id');
             $customer->save();
         }
         else{
-            $customer = Customer::find($request->input('customer.id'));
+            $customer = Customers::find($request->input('customer.id'));
         }
         $kiosk = Kiosk::find($request->input('kiosk_id'));
 
