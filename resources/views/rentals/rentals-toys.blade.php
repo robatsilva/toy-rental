@@ -81,11 +81,11 @@
         background: #FFA;
     }
     .Disponivel {
-        background: #AFA;
+        background: #AFA
     }
 </style>
 @if(count($toys) == 0)
-    <h2>Para começar você deve cadastrar pelo menos um <a href="toy">Brinquedo</a></h2>
+    <h2>Para começar você deve cadastrar pelo menos um <a href="toy">Brinquedo</a> para o quiosque "{{ $kiosk->name }}"</h2>(<a href="kiosk">Trocar quiosque</a>)
 @endif
 @foreach($toys as $toy)
     <div class="col-md-2 col-sm-3 col-xs-6 card-container" data-rental="{{ $toy }}">
@@ -162,6 +162,7 @@
             toy = $(this).parent().parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
             customer = toy.rental.customer;
+            customer.change_toy = true;
             $('#name').val(customer.name);
             $('#id').val(customer.id);
             $('#cpf').val(customer.cpf);
@@ -174,8 +175,8 @@
             $.post("/rental", toy.rental, function(data){
                 //reload toys and rentals
                 loadRentals();
-                $(".clear").val("");
-                $(".clear").text("");
+                // $(".clear").val("");
+                // $(".clear").text("");
                 // validateCustomer();
                 hideLoader();
             })

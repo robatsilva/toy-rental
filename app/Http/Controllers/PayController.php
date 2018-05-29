@@ -55,7 +55,7 @@ class PayController extends Controller
                   "birthDate"=> date("d/m/Y", strtotime($request->input("card_birthdate"))),
                   "documents"=> [
                     [
-                        "type"=> "CNPJ",
+                        "type"=> $request->input("card_type_doc"),
                         "value"=> $this->limpaSpecialChar($request->input("card_doc")),
                     ]
                   ],

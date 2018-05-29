@@ -16,7 +16,7 @@
         <h2>Para começar você deve cadastrar pelo menos um <a href="kiosk">Quiosque</a></h2>
     @else
         @if($periods == '[]')
-            <h2>Para começar você deve cadastrar pelo menos um <a href="period">Período</a></h2>
+            <h2>Para começar você deve cadastrar pelo menos um <a href="period">Período</a> para o quiosque "{{ $kiosk->name }}"</h2>(<a href="kiosk">Trocar quiosque</a>)
         @else
             <!--Grid-->
             <div id="rentals-toys" class="row form-group">
@@ -577,6 +577,7 @@
             $("#name").focus();
             $("#name").select();
         }
+        customer.change_toy = false;
         // validateCustomer();
         hideLoader();
     }

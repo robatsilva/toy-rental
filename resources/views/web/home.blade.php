@@ -132,7 +132,7 @@
     <section id="price" class="bg-dark text-white">
       <div class="container text-center">
         <h2 class="mb-4">Cadastre-se e comece agora mesmo!</h2>
-        <h2 class="mb-4">R$ 120,00<sup>*</sup>/mês por quiosque.</h2> 
+        <h2 class="mb-4">R$ 150,00<sup>*</sup>/mês por quiosque.</h2> 
         <br/>
         <a class="btn btn-light btn-xl sr-button" href="/register">Cadastre-se</a>
       </div>

@@ -89,7 +89,7 @@
                     @if(!$kiosk)
                     <div class="form-group col-md-12">
                         <h2>Pagamento</h2>
-                        <h5>Será cobrado o valor mensal de R$ 120,00 por quiosque cadastrado</h5>
+                        <h5>Será cobrado o valor mensal de R$ 150,00 por quiosque cadastrado</h5>
                         <input type="hidden" id="hash" name="hash">
                         <input type="hidden" id="token" name="card_token">
                         <input type="hidden" id="payment_code" name="payment_code">
@@ -100,9 +100,19 @@
                             <label for="card_name">Nome impresso no cartão</label>
                             <input class="form-control" id="card_name" name="card_name" value="{{$user->name}}">
                         </div>
-                        <div class="form-group">
-                            <label for="card_doc">CNPJ:</label>
-                            <input name="card_doc" class="cnpj form-control" value="{{$user->cnpj}}" id="card_doc">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="card_type_doc">Tipo Doc.:</label>
+                                <select name="card_type_doc" class="form-control" id="card_type_doc">
+                                    <option value="CNPJ" selected>CNPJ</option>
+                                    <option value="CPF">CPF</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label for="card_doc">Número:</label>
+                                <input name="card_doc" class="form-control" value="{{$user->cnpj}}" id="card_doc">
+                            </div>
+
                         </div>
 
                         <div class="row">
@@ -155,6 +165,7 @@
     var creditCardBrand;
     $(document).ready(function(){
         $('.cnpj').mask('00.000.000/0000-00');
+        $('#card_doc').mask('00.000.000/0000-00');
         $('#card_number').mask('0000 0000 0000 0000');
         $('#card_date').mask('00/0000');
         $('#card_ccv').mask('0000');
@@ -173,7 +184,7 @@
                 creditCardBrands = $.map(response.paymentMethods.CREDIT_CARD.options, function(el) { return el });
             },
             error: function(response) {
-                alert(response);
+                alert(JSON.stringify(response));
                 //tratamento do erro
             }
         },'JSON');
@@ -201,6 +212,13 @@
             }
         });
 
+        $("#card_type_doc").change(function(){
+            if($(this).val() == 'CNPJ'){
+                $('#card_doc').mask('00.000.000/0000-00');
+            } else {
+                $('#card_doc').mask('000.000.000-98');
+            }
+        });
         $("#salvar").click(function(){
             showLoader();
             @if(!$kiosk)
@@ -217,19 +235,24 @@
                     console.log(response);
                     $.post('/payment/pre-approvals', body ,function(data){
                         hideLoader();
-                        if(JSON.parse(data).error){
-                            var erros = "";
-                            Object.values(JSON.parse(data).errors).forEach(function(erro){
-                                erros +=  " - " + erro;
-                            })
-                            alert(erros);
-                            return;
-                        }
-                        if(JSON.parse(data).code){
-                            $("#payment_code").val(JSON.parse(data).code);
-                            alert('Cadastro efetuado com sucesso!');
-                        }
-                        else{
+                        try{
+                            if(JSON.parse(data).error){
+                                var erros = "";
+                                Object.values(JSON.parse(data).errors).forEach(function(erro){
+                                    erros +=  " - " + erro;
+                                })
+                                alert(erros);
+                                return;
+                            }
+                            if(JSON.parse(data).code){
+                                $("#payment_code").val(JSON.parse(data).code);
+                                alert('Cadastro efetuado com sucesso!');
+                            }
+                            else{
+                                alert('Ocorreu um erro desconhecido no pagamento');
+                                alert('Seu quiosque será cadastrado e entraremos em contato para combinar o pagamento');
+                            }
+                        } catch(e){
                             alert('Ocorreu um erro desconhecido no pagamento');
                             alert('Seu quiosque será cadastrado e entraremos em contato para combinar o pagamento');
                         }

@@ -47,6 +47,7 @@ class RentalController extends Controller
             ->where('default', "1")
             ->first()->id;
         }
+        $kiosk = Kiosk::find($kiosk_id);
         $reasons = Reason::where("kiosk_id", $kiosk_id)->get();
         $periods = Period::where("kiosk_id", $kiosk_id)
         ->where('status', 1)
@@ -54,6 +55,7 @@ class RentalController extends Controller
         ->get();
 
         return view('rentals.list')
+            ->with('kiosk', $kiosk)
             ->with('kiosk_id', $kiosk_id)
             ->with('reasons', $reasons)
             ->with('periods', json_encode($periods->toArray()));
@@ -128,6 +130,7 @@ class RentalController extends Controller
         if($request->header('Content-Type') == 'JSON')
             return response()->json($toys);
         return view('rentals.rentals-toys')
+            ->with('kiosk', $kiosk)
             ->with('toys', $toys);
     }
     
@@ -168,9 +171,8 @@ class RentalController extends Controller
         $kiosk = Kiosk::find($request->input('kiosk_id'));
 
         $rental = Rental::where("customer_id", $customer->id)->where("status", "Alugado")->first();
-        if($rental){
+        if($rental && $request->input('customer.change_toy') == 'true'){
             $rental->toy_id = $request->input('toy_id');
-            $user = Employe::find(Auth::user()->id);
         } else {
             $rental = new Rental;
             $rental->customer_id = $customer->id;

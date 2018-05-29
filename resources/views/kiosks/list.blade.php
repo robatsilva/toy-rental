@@ -9,10 +9,11 @@
                     <h1>Quiosques Cadastrados</h1>
                 </div>
                 <div class="col-md-12 text-right">
-                <a href="kiosk/create" class="btn btn-primary" id="btn-new-kiosk" class="btn btn-primary">Novo</a>
+                    <a href="kiosk/create" class="btn btn-primary" id="btn-new-kiosk" class="btn btn-primary">Novo</a>
                 </div>
             </div>
             <div class="row">
+                Clique na <span class="glyphicon glyphicon-star" title="Principal" aria-hidden="true"></span> para trocar o quiosque operado
                 <table class="table">
                     <thead>
                         <tr>
