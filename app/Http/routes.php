@@ -17,6 +17,8 @@ Route::get('/', 'HomeController@index');
 
 Route::get('/login', 'RentalController@login');
 
+Route::get('/toy/check/{id}', 'ToyController@check');
+
 Route::auth();
 
 Route::get('/cadastro', 'RegisterController@index');

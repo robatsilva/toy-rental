@@ -10,6 +10,7 @@ use DB;
 use Carbon\Carbon;
 
 use App\Models\Toy;
+use App\Models\Rental;
 use App\Models\Kiosk;
 
 class ToyController extends Controller
@@ -165,5 +166,18 @@ class ToyController extends Controller
             $toy->status = 1;
         $toy->save();
         return redirect('toy');
+    }
+
+    /**
+     * check status of toy
+     */
+    public function check($id){
+        $rental = Rental::where('toy_id', $id)
+        ->where('status', 'Alugado')
+        ->first();
+        if($rental)
+            return response()->json("brinquedo ligar");
+        else
+            return response()->json("brinquedo desligar");
     }
 }
