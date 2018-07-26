@@ -1,98 +1,182 @@
 #include <SoftwareSerial.h>
+#include <LiquidCrystal_I2C.h>
 
+// Inicializa o display no endereco 0x27
+LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7,3, POSITIVE);
+
+//////////////////////// Variáveis do wifi
 const byte rxPin = 2; 
 const byte txPin = 3; 
-String ssid = "toy";
-String password = "12345678";
+String ssid = "bloco doce";
+String password = "kira2017";
 SoftwareSerial esp8266 (rxPin, txPin);
 String path = "/toy/check/13";
 String server = "sistema.dionellybrinquedos.com.br";
-String getRequest = "GET " + path + " HTTP/1.0\r\n" + "Host: " + server + "\r\n\r\n";
+String getRequest = "GET " + path + " HTTP/1.1\r\n" + "Host: " + server + "\r\nConnection: keep-alive\r\n\r\n";
 String getRequestLength = String(getRequest.length());
 String response="";
-String c = "x";
+/////////////////////////
+
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
+  setLCD();
+  pinMode(LED_BUILTIN, OUTPUT); // placa
+  pinMode(12, OUTPUT); // motor
+
+  pinMode(4, INPUT); // cartão
+  pinMode(5, INPUT); // sensor
+
   Serial.begin(9600);
   esp8266.begin(9600);
-  delay(1000);
+  delay(5000);
+  Serial.flush();
   reset();
   //setMode("1");
   connectWifi();
   }
 
 void loop() {
-  httpGet(); 
-  delay(10000);
+  // SE NÃO ESTÁ LIGADO MANUALMENTE, VERIFICA EM SISTEMA
+  if(digitalRead(4) == HIGH){
+    httpGet();
+  }
+  lerInputs();
+  delay(100);
+}
+
+void setLCD(){
+  lcd.begin (16,2);
+  lcd.setBacklight(HIGH);
+}
+
+void escreverLCD(String mensagemAcima, String mensagemAbaixo){
+  lcd.setCursor(0,0);
+  lcd.print("                 ");
+  lcd.setCursor(0,0);
+  lcd.print(mensagemAcima);
+  lcd.setCursor(0,1);
+  lcd.print("                 ");
+  lcd.setCursor(0,1);
+  lcd.print(mensagemAbaixo);
+}
+
+String nivelBateria(){
+  int valor = analogRead(0); // Ler valor analógico
+  double volt = (valor/1023.0) * 5.0; // Apenas verdade se vcc for igual a 5V
+  // Imprimindo o nível de carga da bateria
+  return "Bateria: " + String(volt); 
 }
 
 ///////////////WI FI AREA/////////////////////////////
 void httpGet(){
-    espSend("AT+CIPSTART=\"TCP\",\"" + server + "\",80");
-    esp8266.println("AT+CIPSEND=" + getRequestLength);
-    if(esp8266.find(">")) {
-      Serial.print("");
-      esp8266.print(getRequest);
-      }
-    if(esp8266.find("SEND OK")) Serial.print("");
-    delay(1000);
-  
-    espRead();
-    
-    Serial.print("");
-    if(c.indexOf("brinquedo desligar") != -1) {
-      Serial.println("desligar");
-      digitalWrite(LED_BUILTIN, LOW);
-    }
-    if(c.indexOf("brinquedo ligar") != -1) {
-      Serial.println("ligar");
-      digitalWrite(LED_BUILTIN, HIGH);
-    }
-    Serial.println(millis());
-    c = "x";
-}
-
-void espSend(String cmd) {
-  espClear();
-  esp8266.println(cmd);
-  delay(1000);
-  while(esp8266.available()) {
-    esp8266.readString();
-    Serial.println("");
-  }
+    response = "";
+    if(!esp8266.available()){
+      esp8266.println("AT+CIPSTART=\"TCP\",\"" + server + "\",80");
+      if(esp8266.find("OK") || esp8266.find("ALREADY CONNECTED")) {
+        esp8266.println("AT+CIPSEND=" + getRequestLength);
+        if(esp8266.find(">") || esp8266.find("ALREADY CONNECTED")) {
+          esp8266.print(getRequest);
+          if(esp8266.find("SEND OK")){
+            espRead();
+            if(response.indexOf("brinquedo desligar") != -1) {
+              digitalWrite(LED_BUILTIN, LOW);
+              escreverLCD("Disponivel", nivelBateria());
+            } else if(response.indexOf("brinquedo ligar") != -1) {
+              escreverLCD("Alugado", "Retorno " + response.substring(36,41));
+              digitalWrite(LED_BUILTIN, HIGH);
+            } else {
+              Serial.println(response);  
+            }
+            Serial.println(millis());
+            Serial.println(response);
+            
+//            esp8266.println("AT+CIPCLOSE");
+//            if(esp8266.find("OK")) Serial.println("Connection close"); 
+            
+          } else Serial.println("sent fail - " + response);
+        } else Serial.println("sending fail - " + response);
+      } else Serial.println("Conection fail - " + response);
+    } else espClear();
 }
 
 void espRead() {
-  while(esp8266.available()) {
-    c = esp8266.readString();
+  response = "";
+
+  boolean ctrl = false;
+  
+  while(!esp8266.available()){}
+
+  long int time = millis();
+  
+  while ( (time + 2000) > millis())
+  {
+    while (esp8266.available())
+    {
+      // The esp has data so display its output to the serial window
+      char c = esp8266.read(); // read the next character.
+      if(c == '{') ctrl = true;
+
+      if(ctrl) response += c;
+
+      if(c == '}') ctrl = false;
+    }
   }
 }
 
 void espClear() {
-  while(esp8266.available()) {
-    esp8266.read();
-    }
+  while (esp8266.available())
+  {
+    esp8266.read(); // read the next character.;
+  }
 }
 
 void reset() {
-  Serial.println("Resetting WiFi");
-  esp8266.println("AT+RST");
+  escreverLCD("Iniciando...", "");
   delay(1000);
-  if(esp8266.find("OK")) Serial.println("Reset!");
+  esp8266.println("AT+RST");
+  if(esp8266.find("OK")) escreverLCD("Iniciando", "Passo 2");
+  delay(1000);
 }
 
 void connectWifi() {
   espClear();
-  Serial.println("Connecting...");
+  escreverLCD("Conectando...", "");
   String CMD = "AT+CWJAP=\"" +ssid+"\",\"" + password + "\"";
-  espSend(CMD);
-  delay(10000);
-  Serial.println(esp8266.readString());
+  esp8266.println(CMD);
+  delay(5000);
+  if(esp8266.find("OK")) escreverLCD("Conectado!!!!", "");
+  else connectWifi();
+}
+/////////////////////////////////////////////////////////////
+////////////////////////////////Inputs Area /////////////////
+void lerInputs(){
+  lerCartao();
+  lerSensor();
 }
 
-void setMode(String mode) {
-    Serial.println("Setting Mode = " + mode);
-    esp8266.println("AT+CWMODE=" + mode);
-    delay(1000);
-    espRead();
+// pino 4
+void lerCartao(){
+  if(digitalRead(4) == LOW){
+    digitalWrite(13, HIGH);
+    escreverLCD("Ligado", "xx vez");
+  } else {
+    digitalWrite(13, LOW);
+    escreverLCD("Desligado", "");
+  }
 }
+
+// pino 5
+void lerSensor(){
+  if(digitalRead(13) == HIGH){
+    if(digitalRead(5) == LOW){
+      digitalWrite(12, HIGH);
+      escreverLCD("Parado", "Obstaculo");
+    } else {
+      digitalWrite(12, LOW);
+      escreverLCD("Liberado", "");
+    }
+  }
+}
+
+
+
+

@@ -174,10 +174,11 @@ class ToyController extends Controller
     public function check($id){
         $rental = Rental::where('toy_id', $id)
         ->where('status', 'Alugado')
+        ->with('period')
         ->first();
         if($rental)
-            return response()->json("brinquedo ligar");
+            return response()->json(["status" => "brinquedo ligar", "time" => Carbon::parse($rental->init)->addMinutes($rental->period->time)->format('H:i') ]);
         else
-            return response()->json("brinquedo desligar");
+            return response()->json(["status"=>"brinquedo desligar"]);
     }
 }
