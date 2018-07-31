@@ -24,7 +24,8 @@ boolean wifiAtivo = false;
 boolean cartaoAtivo = false;
 boolean criaNovoLog = true;
 
-int tempoUso = 0;
+unsigned long tempoUso = 0;
+unsigned long tempoLog = 0;
 String ultimaMensagem = "";
 
 ///////////////////////// Variaveis EEPROM
@@ -42,13 +43,11 @@ int oMotor = 12;
 /////////////////////////
 
 void setup() {
-    
   setLCD();
   pinMode(LED_BUILTIN, OUTPUT); // placa
   pinMode(oMotor, OUTPUT); // motor
   pinMode(7, OUTPUT); // 5 VOLTS PARA TESTE
   digitalWrite(7, HIGH);
-  Serial.println(digitalRead(7));
   
   pinMode(iCartao, INPUT); // cartão / Interruptor da placa
   pinMode(iSensor, INPUT); // sensor
@@ -61,11 +60,17 @@ void setup() {
   reset();
   //setMode("1");
   connectWifi();
+//  gravaInteiro(endId, 0);
+//    gravaInteiro(endQtd, 0);
+//    gravaInteiro(endTempo, 0);  
+  Serial.println("tempo eeprom");
+  Serial.println(leInteiro(endTempo));
+  delay(5000);
   }
 
 void loop() {
   // SE WIFI HABILITADO, BUSCA NO SISTEMA
-  if(digitalRead(iWifi) == LOW){
+  if(digitalRead(iWifi) == HIGH){
     Serial.println("lendo wifi");
     if(!wifiAtivo){
       wifiAtivo = true;
@@ -79,7 +84,6 @@ void loop() {
     httpGet();
     myDelay(4000);
   } else {
-    Serial.println("lendo inputs");
     wifiAtivo = false;
     lerInputs();
   }
@@ -121,6 +125,7 @@ void httpGet(){
       esp8266.println("AT+CIPSEND=" + getRequestLength);
       if(esp8266.find(">") || esp8266.find("ALREADY CONNECTED")) {
         esp8266.print(getRequest);
+        Serial.println(getRequest);
         if(esp8266.find("SEND OK")){
           espRead();
           if(response.indexOf("brinquedo desligar") != -1) {
@@ -188,7 +193,6 @@ void reset() {
 }
 
 void connectWifi() {
-  if(digitalRead(iWifi) == HIGH) return;
   espClear();
   escreverLCD("Conectando...", "");
   String CMD = "AT+CWJAP=\"" +ssid+"\",\"" + password + "\"";
@@ -205,22 +209,25 @@ void connectWifi() {
 ////////////////////////////////Inputs Area /////////////////
 void lerInputs(){
   lerCartao();
-  if(digitalRead(iCartao) == LOW) lerSensor();
+  if(digitalRead(iCartao) == HIGH) lerSensor();
 }
 
 // pino 4
 void lerCartao(){
-  if(digitalRead(iCartao) == LOW){
+  if(digitalRead(iCartao) == HIGH){
     if(!cartaoAtivo){
+      Serial.println("cartão ativo");
       cartaoAtivo = true;
       digitalWrite(LED_BUILTIN, HIGH);
       tempoUso = millis();  
+      tempoLog = tempoUso;
       
       int qtd = leInteiro(endQtd);
       qtd++;
       gravaInteiro(endQtd, qtd);
-      
-      escreverLCD("Ligacao manual", qtd + " vez(es)");  
+      Serial.println("quantidade");
+      Serial.println(qtd);
+      escreverLCD("Ligacao manual", String(qtd) + " vez(es)");  
       delay(2000);
     }
     salvaTempoUso(false);
@@ -238,8 +245,8 @@ void lerCartao(){
 
 // pino 5
 void lerSensor(){
-  if(digitalRead(LED_BUILTIN) == LOW){
-    if(digitalRead(iSensor) == LOW){
+  if(digitalRead(LED_BUILTIN) == HIGH){
+    if(digitalRead(iSensor) == HIGH){
       sensorAtivo = true;
       digitalWrite(oMotor, HIGH);
       escreverLCD("Parado", "Obstaculo");
@@ -257,11 +264,13 @@ void lerSensor(){
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////EEPROM
 void salvaTempoUso(boolean salvarAgora){
-  int tempo = (millis() - tempoUso) / 1000 / 60;
-  if(tempo > 5 || salvarAgora){
+  int tempo = (millis() - tempoLog) / 1000 / 60;
+  int tempoLigado = (millis() - tempoUso) / 1000 / 60;
+  escreverLCD("Tempo de uso:", String(tempoLigado) + " min");
+  if((tempo >= 5) || salvarAgora){
     int ultimoTempo = leInteiro(endTempo);
-    gravaInteiro(endTempo, tempo + ultimoTempo);
-    tempoUso = millis();
+    gravaInteiro(endTempo, tempo + ultimoTempo);  
+    tempoLog = millis();
   }
 }
 
@@ -283,8 +292,10 @@ void gravaInteiro(int p, int numero){
 void criaNovoLogFunction(){
   if(criaNovoLog){
     criaNovoLog = false;
+    
     int id = leInteiro(endId);
-    gravaInteiro(endId, id++);
+    gravaInteiro(endId, ++id);
+    
     gravaInteiro(endQtd, 0);
     gravaInteiro(endTempo, 0);  
   }
@@ -292,8 +303,8 @@ void criaNovoLogFunction(){
 /////////////////////////////////////AUXILIARES /////////////////
 
 void myDelay(int _delay){
-  long int time = millis();
-  while ( (time + _delay) > millis()){
+  unsigned long tempo = millis();
+  while ( (tempo + _delay) > millis()){
     lerSensor();
   }
 }
