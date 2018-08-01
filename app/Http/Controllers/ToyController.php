@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Models\Toy;
 use App\Models\Rental;
 use App\Models\Kiosk;
+use App\Models\ToyLog;
 
 class ToyController extends Controller
 {
@@ -171,7 +172,19 @@ class ToyController extends Controller
     /**
      * check status of toy
      */
-    public function check($id){
+    public function check(Request $request, $id){
+        $log = ToyLog::where('toy_id', $id)
+        ->where('log_id', $request->input('id'))
+        ->first();
+        if(!$log){
+            $log = new ToyLog();
+            $log->log_id = $request->input('id');
+            $log->toy_id = $id;
+        }
+        $log->qtd = $request->input('qtd');
+        $log->tempo = $request->input('tempo');
+        $log->save();
+
         $rental = Rental::where('toy_id', $id)
         ->where('status', 'Alugado')
         ->with('period')
