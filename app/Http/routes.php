@@ -13,7 +13,7 @@
 
 
 
-Route::get('/', 'HomeController@index');
+Route::get('/', 'RentalController@home');
 
 Route::get('/login', 'RentalController@login');
 
@@ -67,6 +67,7 @@ Route::post('/report', 'ReportController@reportByDate');
 Route::get('/report/toys', 'ReportController@toys');
 Route::post('/report/toys', 'ReportController@reportByToys');
 Route::get('/report/cash', 'ReportController@cash');
+Route::get('/report/cash/close', 'ReportController@cashClose');
 Route::post('/report/cash', 'ReportController@reportByCash');
 Route::get('/report/payment-way', 'ReportController@paymentWay');
 Route::post('/report/payment-way', 'ReportController@reportByPaymentWay');

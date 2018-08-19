@@ -16,6 +16,7 @@ use App\Models\Kiosk;
 use App\Models\Period;
 use App\Models\Employe;
 use App\Models\Reason;
+use App\Models\Cash;
 
 class RentalController extends Controller
 {
@@ -36,8 +37,14 @@ class RentalController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
         $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1)->get();
+        $cash = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->get();
+        
         if($kiosks->isEmpty() && !$user->kiosk_id)
             return redirect('cadastro');
+
+        if($cash->isEmpty())
+            return redirect('report/cash');
+
         if($user->kiosk_id)
             $kiosk_id = $user->kiosk_id;
         else{
@@ -73,53 +80,9 @@ class RentalController extends Controller
         ->where('toys.status', 1)
         ->with("kiosk")
         ->with(["rental" => function($query) use ($kiosk_id){
-            $query->selectRaw("*, 
-            (select time 
-                from periods
-                where periods.kiosk_id = " . $kiosk_id . "
-                order by time asc 
-            limit 1) as min_period,
+            $query->selectRaw("*,
             
-            (select value 
-                from periods
-                where periods.kiosk_id = " . $kiosk_id . "
-                and periods.id = period_id
-                order by time asc 
-            limit 1) as period_value_selected,
-
-            (select time 
-                from periods
-                where periods.kiosk_id = " . $kiosk_id . "
-                and periods.id = period_id
-                order by time asc 
-            limit 1) as period_selected,
-            
-            TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
-            
-            ((select time_diff) - (if(extra_time > (select time_diff), 0, extra_time))) as time_considered,            
-            (
-                SELECT TIME
-                FROM periods
-                WHERE TIME <= if(time_considered < min_period, min_period, time_considered)
-                and periods.kiosk_id = " . $kiosk_id . "
-                ORDER BY TIME DESC
-                LIMIT 1) AS period_calculated,
-                
-            
-            if((select time_considered) <= ((select period_calculated) + tolerance), 0,
-                ((select time_considered) - (select period_calculated))) AS time_exceded,
-
-            (
-            SELECT VALUE + ((select time_exceded) * extra_value)
-            FROM periods
-            WHERE TIME <= if(time_considered < min_period, min_period, time_considered)
-            and periods.kiosk_id = " . $kiosk_id . "
-            ORDER BY TIME DESC
-            LIMIT 1)as period_value_calculated,
-
-            if(((select period_value_selected) < (select period_value_calculated)) and ((select period_calculated) < (select period_selected)), 
-                (select period_selected), 
-                (select period_value_calculated)) as value_to_pay")
+                    TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff")
             ->where("kiosk_id", $kiosk_id)
             ->whereRaw('(status = "Pausado" or status = "Alugado")')
             ->with("period")
@@ -127,12 +90,106 @@ class RentalController extends Controller
         }])
         ->orderBy("toys.id")
         ->get();
+
+        foreach($toys as $toy){
+            if($toy->rental){
+                $calc = $this->calculeRental($toy->rental->id)->getData();
+                $toy->rental['value_to_pay'] = $calc->valueTotal;
+            }
+        }
+
         if($request->header('Content-Type') == 'JSON')
             return response()->json($toys);
         return view('rentals.rentals-toys')
             ->with('kiosk', $kiosk)
             ->with('toys', $toys);
     }
+    // public function index(Request $request, $kiosk_id)
+    // {
+    //     $kiosk = Kiosk::find($kiosk_id);
+    //     $toys = Toy::
+    //     where('toys.kiosk_id', $kiosk_id)
+    //     ->where('toys.status', 1)
+    //     ->with("kiosk")
+    //     ->with(["rental" => function($query) use ($kiosk_id){
+    //         $query->selectRaw("*,
+            
+    //         TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
+
+    //         (select time 
+    //             from periods
+    //             where periods.kiosk_id = " . $kiosk_id . "
+    //             and periods.time <= (select time_diff)
+    //             or periods.time >= (select time_diff)
+    //             order by time asc 
+    //         limit 1) as min_period,
+
+    //         (select time 
+    //             from periods
+    //             where periods.kiosk_id = " . $kiosk_id . "
+    //             and periods.time <= (select time_diff)
+    //             or periods.time >= (select time_diff)
+    //             order by time desc 
+    //         limit 1) as max_period,
+            
+    //         (select value 
+    //             from periods
+    //             where periods.kiosk_id = " . $kiosk_id . "
+    //             and periods.id = period_id
+    //             order by time asc 
+    //         limit 1) as period_value_selected,
+
+    //         (select time 
+    //             from periods
+    //             where periods.kiosk_id = " . $kiosk_id . "
+    //             and periods.id = period_id
+    //             order by time asc 
+    //         limit 1) as period_selected,
+            
+    //         ((select time_diff) - (if(extra_time > (select time_diff), 0, extra_time))) as time_considered,
+
+    //         (
+    //             SELECT TIME
+    //             FROM periods
+    //             WHERE TIME <= if(time_considered < min_period, min_period, (if(time_considered > time_considered, max_period, time_considered)))
+    //             and periods.kiosk_id = " . $kiosk_id . "
+    //             ORDER BY TIME DESC
+    //             LIMIT 1
+    //         ) AS period_calculated,
+                
+            
+    //         if((select time_considered) <= ((select period_calculated) + tolerance), 0,
+    //             ((select time_considered) - (select period_calculated))) AS time_exceded,
+            
+    //         (
+    //             SELECT VALUE + ((select time_exceded) * extra_value)
+    //             FROM periods
+    //             WHERE TIME <= if(time_considered < min_period, min_period, (if(time_considered > time_considered, max_period, time_considered)))
+    //             and periods.kiosk_id = " . $kiosk_id . "
+    //             ORDER BY TIME DESC
+    //             LIMIT 1
+    //         )as period_value_calculated,
+
+    //         if(
+    //             (
+    //                 (select period_value_selected) < (select period_value_calculated)) and ((select period_calculated) < (select period_selected)), 
+    //             (select period_selected), 
+    //             (select period_value_calculated)
+    //         ) as value_to_pay")
+    //         ->where("kiosk_id", $kiosk_id)
+    //         ->whereRaw('(status = "Pausado" or status = "Alugado")')
+    //         ->with("period")
+    //         ->with("customer");
+    //     }])
+    //     ->orderBy("toys.id")
+    //     ->get();
+
+    //     if($request->header('Content-Type') == 'JSON')
+    //         return response()->json($toys);
+    //     return view('rentals.rentals-toys')
+    //         ->with('kiosk', $kiosk)
+    //         ->with('toys', $toys);
+    // }
     
     /**
      * Show the form for creating a new resource.
@@ -370,20 +427,34 @@ class RentalController extends Controller
             ->where('kiosk_id', $rental->kiosk_id)
             ->orderBy('time', 'desc')
             ->first();
-        if(!$period)
-            $period = Period::
-                        where('kiosk_id', $rental->kiosk_id)
-                        ->orderBy('time', 'asc')->first();
+
+        // if(!$period)
+        //     $period = Period::
+        //                 where('kiosk_id', $rental->kiosk_id)
+        //                 ->orderBy('time', 'asc')->first();
+
+        $next_period = Period::where('time', '>=', $time_considered)
+            ->where('kiosk_id', $rental->kiosk_id)
+            ->orderBy('time', 'asc')
+            ->first();
 
         $timeExceeded = 0;
         $valueExceeded = 0;
 
-        if($time_considered > ($rental->tolerance + $period->time)){
-            $timeExceeded = $time_considered - $period->time;
-            $valueExceeded = $timeExceeded * $rental->extra_value;
+        if($period){
+            if($time_considered > ($rental->tolerance + $period->time)){
+                $timeExceeded = $time_considered - $period->time;
+                $valueExceeded = $timeExceeded * $rental->extra_value;
+            }
+            
+            $valueTotal = $period->value + $valueExceeded;
+        } else {
+            $valueTotal = $valueExceeded;
         }
-        
-        $valueTotal = $period->value + $valueExceeded;
+
+        if($next_period && ($valueTotal > $next_period->value))
+            $valueTotal = $next_period->value;
+
         $data["rental"] = $rental;
         $data["timeTotal"] = $time_total;
         $data["timeConsidered"] = $time_considered;

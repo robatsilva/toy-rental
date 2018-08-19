@@ -621,7 +621,7 @@
             {
                 alert('CPF inválido: ' + cpf);
 
-                $('#cpf').val('');
+                // $('#cpf').val('');
                 $('#cpf').focus();
                 return false;
             }

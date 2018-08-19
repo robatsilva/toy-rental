@@ -11,7 +11,7 @@
         margin-top: 15px;
     }
     div.card {
-        height: 300px;
+        height: 320px;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
     }
     .btn-close {
@@ -41,7 +41,7 @@
         max-height: 80px;
     }
     .toy-data{
-        height: 270px;
+        height: 290px;
         padding: 10px;
     }
     .toy-row{

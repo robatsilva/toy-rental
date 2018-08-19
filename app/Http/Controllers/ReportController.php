@@ -147,6 +147,16 @@ class ReportController extends Controller
         ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
         ->sum('output');
 
+        $isCashOpen = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->get();
+
+        $haveCashOpen = null;
+
+        if($request->input("close_cash")){
+            $haveCashOpen = Cash::where('employe_id', $user->id)
+                ->whereRaw("updated_at = created_at")
+                ->first();
+        }
+
         $cash['rentals'] = $total;
         $cash['cashes'] = $cashes;
         $cash['cash_flows'] = $cashFlows;
@@ -155,7 +165,9 @@ class ReportController extends Controller
         $cash['total'] = $input - $output + $total;
         return view('reports.cash-flow')
             ->with('cash', $cash)
-            ->with('input', $request->input());
+            ->with('input', $request->input())
+            ->with('show_cash', $isCashOpen->isEmpty())
+            ->with('close_cash', $haveCashOpen);
     }
     /**
      * get total of rentals group by payment way
@@ -212,7 +224,22 @@ class ReportController extends Controller
     {
         return view('reports.cash-flow')
             ->with('cash', null)
-            ->with('input', null);
+            ->with('input', null)
+            ->with('showCash', false);
+    }
+    public function cashClose()
+    {
+        $user = Employe::find(Auth::user()->id);
+        $cash = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->get();
+        if(!$cash->isEmpty()){
+            return view('reports.cash-flow')
+                ->with('cash', null)
+                ->with('input', null)
+                ->with('showCash', false)
+                ->with('closeCash', true);
+        }
+        
+        return redirect('/logout');
     }
     
     public function paymentWay()

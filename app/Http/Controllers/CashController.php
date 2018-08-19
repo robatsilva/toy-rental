@@ -57,10 +57,37 @@ class CashController extends Controller
             $cash->kiosk_id = $request->input('kiosk_id');
             $cash->employe_id = $user->id;
             $cash->created_at = Carbon::createFromFormat('d/m/Y', $request->input('created_at'));
-            $cash->value_open = str_replace(",",".", str_replace(".","",$request->input('value_open')));
+            $cash->value_open = $request->input('value_open');
+            $cash->a005 = $request->input('a005');
+            $cash->a010 = $request->input('a010');
+            $cash->a025 = $request->input('a025');
+            $cash->a050 = $request->input('a050');
+            $cash->a1 = $request->input('a1');
+            $cash->a2 = $request->input('a2');
+            $cash->a5 = $request->input('a5');
+            $cash->a10 = $request->input('a10');
+            $cash->a20 = $request->input('a20');
+            $cash->a50 = $request->input('a50');
+            $cash->a100 = $request->input('a100');
         }
-        $cash->value_close = str_replace(",",".", str_replace(".","",$request->input('value_close')));
+        $cash->value_close = $request->input('value_close');
+        $cash->f005= $request->input('f005');
+        $cash->f010 = $request->input('f010');
+        $cash->f025 = $request->input('f025');
+        $cash->f050 = $request->input('f050');
+        $cash->f1 = $request->input('f1');
+        $cash->f2 = $request->input('f2');
+        $cash->f5 = $request->input('f5');
+        $cash->f10 = $request->input('f10');
+        $cash->f20 = $request->input('f20');
+        $cash->f50 = $request->input('f50');
+        $cash->f100 = $request->input('f100');
+        
         $cash->save();
+
+        if($request->input('close_cash'))
+            return redirect('/logout');
+
         return view('reports.cash-flow')
         ->with('cash', null)
         ->with('input', ['init' => $request->input('created_at')])

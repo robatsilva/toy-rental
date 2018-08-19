@@ -36,6 +36,9 @@
             @else
                 <input type="hidden" name="kiosk_id" id="kiosks" value="{{ Auth::user()->kiosk_id }}">
             @endif
+            @if(isset($closeCash))
+                <input type="hidden" name="close_cash" value="{{ $closeCash }}">
+            @endif
                 <div class="form-group col-md-4">
                     <label for="init">Data</label>
                     <input type='text' name="init" value="{{ $input?$input['init']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='init'/>
@@ -186,27 +189,123 @@
                 <h4 class="modal-title">Abrir/Fechar caixa</h4>
             </div>
             <div class="modal-body">
-                <form id="rental-form" action="/cash" method="post">
-                    {!! csrf_field() !!}
-                    <div class="row">
-                        <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
-                        <input type='hidden' name="created_at" id="created_at_cash"class="form-control"/>
-                        <input type='hidden' name="id" id="id_cash"class="form-control"/>
-                        <div class="form-group col-md-6">
-                            <label for="value_open">Abertura</label>
-                            <input type='text' name="value_open" class="form-control" id='value_open'/>
+                <div class="row">
+                    <form id="rental-form" class="form-inline" action="/cash" method="post">
+                        {!! csrf_field() !!}
+                            <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
+                            <input type='hidden' name="created_at" id="created_at_cash"class="form-control"/>
+                            <input type='hidden' name="id" id="id_cash"class="form-control"/>
+                            <input type='hidden' name="close_cash" value="{{ isset($close_cash) ? $close_cash : ''  }}" class="form-control"/>
+                            <div class="form-group col-md-6">
+                                <div><b>Abertura</b></div>
+                                <input type='hidden' name="value_open" class="form-control" id='value_open'/>
+
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,05</div>
+                                    <input type="text" class="form-control valores_abertura" peso="0.05" id="a005" name="a005" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,10</div>
+                                    <input type="text" class="form-control valores_abertura" peso="0.1" id="a010" name="a010" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,25</div>
+                                    <input type="text" class="form-control valores_abertura" peso="0.25" id="a025" name="a025" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,50</div>
+                                    <input type="text" class="form-control valores_abertura" peso="0.5" id="a050" name="a050" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 1,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="1" id="a1" name="a1" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 2,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="2" id="a2" name="a2" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 5,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="5" id="a5" name="a5" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp 10,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="10" id="a10" name="a10" class="form-control">
+                                </div>
+                                <label class="sr-only" for="a20">R$ 20,00</label>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp 20,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="20" id="a20" name="a20" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp 50,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="50" id="a50" name="a50" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ 100,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="100" id="a100" name="a100" class="form-control">
+                                </div>
+
+                                <div><b>Total: R$ <span id='valor_abertura'></span></b></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div><b>Fechamento</b></div>
+                                <input type='hidden' name="value_close" class="form-control" id='value_close'/>
+                                
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,05</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="0.05" id="f005" name="f005" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,10</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="0.1" id="f010" name="f010" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,25</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="0.25" id="f025" name="f025" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 0,50</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="0.5" id="f050" name="f050" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 1,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="1" id="f1" name="f1" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 2,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="2" id="f2" name="f2" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp&nbsp&nbsp&nbsp 5,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="5" id="f5" name="f5" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp 10,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="10" id="f10" name="f10" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp 20,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="20" id="f20" name="f20" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ &nbsp&nbsp 50,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="50" id="f50" name="f50" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ 100,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="100" id="f100" name="f100" class="form-control">
+                                </div>
+
+                                <div><b>Total: R$ <span id='valor_fechamento'></span></b></div>
+                            </div>
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="value_close">Fechamento</label>
-                            <input disabled type='text' name="value_close" class="form-control" id='value_close'/>
-                        </div>
-                    </div>
+                </div>
+                <div class="modal-footer">
                     <button class="btn btn-primary">Salvar</button>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-            </div>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -217,6 +316,7 @@
     $(document).ready(function(){
         $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' });
         $('#input, #output, #value_open, #value_close').mask('000.000,00', {reverse: true});
+        $('.valores_abertura, .valores_fechamento').mask('#', {reverse: true});
 
         //loaders
         initLoaders();
@@ -245,25 +345,12 @@
         });
 
         $('#new_cash').click(function(){
-            $('.kiosk_id').val($('#kiosks').val());
-            $('#created_at_cash').val($('#init').val());
-            $('#id_cash').val("");
-            $('#value_open').prop("disabled", "");
-            $('#value_close').prop("disabled", "disabled");
-
-            $('#modal_cash').modal('show');
+            modalCashOpen();
         });
 
         $('.close_cash').click(function(){
             var cash = JSON.parse($(this).attr('value'));
-            $('.kiosk_id').val($('#kiosks').val());
-            $('#created_at_cash').val($('#init').val());
-            $('#id_cash').val(cash.id);
-            $('#value_open').val(cash.value_open);
-            $('#value_open').prop("disabled", "disabled");
-            $('#value_close').prop("disabled", "");
-
-            $('#modal_cash').modal('show');
+            modalCashClose(cash);
         });
 
         $('.delete_cash_flow').click(function(){
@@ -282,8 +369,59 @@
                 alert(status + ' - ' + error);
             });
         });
+        $('.valores_abertura').keyup(function(){
+            var total = 0;
+            $('.valores_abertura').each(function(){
+                var valor = Number($(this).val());
+                if (!isNaN(valor)) total += valor * $(this).attr('peso');
+            });
+            $('#valor_abertura').html(total.toFixed(2).replace('.', ','));
+            $('#value_open').val(total);
+        });
+        $('.valores_fechamento').keyup(function(){
+            var total = 0;
+            $('.valores_fechamento').each(function(){
+                var valor = Number($(this).val());
+                if (!isNaN(valor)) total += valor * $(this).attr('peso');
+            });
+            $('#valor_fechamento').html(total.toFixed(2).replace('.', ','));
+            $('#value_close').val(total);
+        });
     }
 
+    function modalCashOpen(){
+        $('.kiosk_id').val($('#kiosks').val());
+        $('#created_at_cash').val($('#init').val());
+        $('#id_cash').val("");
+        $('.valores_abertura').prop("disabled", "");
+        $('.valores_fechamento').prop("disabled", "disabled");
+
+        $('#modal_cash').modal('show');
+    }
+
+    function modalCashClose(cash){
+        $('.kiosk_id').val($('#kiosks').val());
+        $('#created_at_cash').val($('#init').val());
+        $('#id_cash').val(cash.id);
+        $('#value_open').val(cash.value_open);
+        $('#valor_abertura').html(cash.value_open);
+
+        $('#a005').val(cash.a005);
+        $('#a010').val(cash.a010);
+        $('#a025').val(cash.a025);
+        $('#a050').val(cash.a050);
+        $('#a1').val(cash.a1);
+        $('#a2').val(cash.a2);
+        $('#a5').val(cash.a5);
+        $('#a10').val(cash.a10);
+        $('#a20').val(cash.a20);
+        $('#a50').val(cash.a50);
+        $('#a100').val(cash.a100);
+        $('.valores_abertura').prop("disabled", "disabled");
+        $('.valores_fechamento').prop("disabled", "");
+
+        $('#modal_cash').modal('show');
+    }
     ////////////////////////Loaders
     function initLoaders(){
         //loadPeriods();
@@ -320,10 +458,20 @@
                     }
                 });
             }
+            
             @if(isset($cash_save) || !$cash)
-            $('#cash-form').submit();
+                $('#cash-form').submit();
             @endif
+            
+            @if(isset($show_cash) && $show_cash)
+                modalCashOpen();
+            @endif
+            @if(isset($close_cash))
+                modalCashClose(JSON.parse( '{!! $close_cash !!}' ));
+            @endif
+
             hideLoader();
+            
         }
         catch(error){console.log(error);}
     }
