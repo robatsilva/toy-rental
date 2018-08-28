@@ -42,7 +42,7 @@ class RentalController extends Controller
         if($kiosks->isEmpty() && !$user->kiosk_id)
             return redirect('cadastro');
 
-        if($cash->isEmpty())
+        if($cash->isEmpty() && $user->employe_id)
             return redirect('report/cash');
 
         if($user->kiosk_id)
@@ -283,6 +283,24 @@ class RentalController extends Controller
         $rental->save();
         return;
     }
+    /**
+     * Change the status of rental to rental
+     * @param int $id is the id of rental
+     * @return call the index to update rental list
+     */
+    public function start(Request $request, $id){
+        $rental = Rental::find($id);
+        $rental->status = "Alugado";
+        
+        $time_paused = (new Carbon($rental->end))->diffInMinutes(Carbon::now());
+        $rental->extra_time += $time_paused;
+        
+        $rental->reason_extra_time .= " / Pausado pelo sistema";
+
+        $rental->end = null;
+        $rental->save();
+        return;
+    }
 
     /**
      * Change the status of rental to cancel
@@ -352,14 +370,14 @@ class RentalController extends Controller
         else
             $rental->extra_time += $request->input('extra_time');
 
-        $rental->reason_extra_time = $request->input('reason_extra_time');
+        $rental->reason_extra_time .= " / " . $request->input('reason_extra_time');
         
         if(!$rental->reason_extra_time){
             $reason = new Reason();
             $reason->text = $request->input('reason_extra_time_other');
             $reason->kiosk_id = $rental->kiosk_id;
             $reason->save();
-            $rental->reason_extra_time = $request->input('reason_extra_time_other');
+            $rental->reason_extra_time .= " / " . $request->input('reason_extra_time_other');
         }
         $rental->save();
     }
@@ -449,7 +467,7 @@ class RentalController extends Controller
             
             $valueTotal = $period->value + $valueExceeded;
         } else {
-            $valueTotal = $valueExceeded;
+            $valueTotal = $time_considered * $rental->extra_value;
         }
 
         if($next_period && ($valueTotal > $next_period->value))
@@ -461,7 +479,7 @@ class RentalController extends Controller
         $data["valueExceeded"] = $valueExceeded;
         $data["timeExceeded"] = $timeExceeded;
         $data["valueTotal"] = $valueTotal;
-        $data["period"] = $period;
+        $data["period"] = $period ? $period : $next_period;
         
         return response()->json($data);
     }

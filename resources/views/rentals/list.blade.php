@@ -3,6 +3,21 @@
 @section('content')
 <div class="container">
     <!--form-->
+    <div class="row text-center" style="margin-bottom: 20px;">
+        <div class="col-xs-12 col-md-12">
+            <buttom data-value="0"class="btn btn-primary btn-digit">0</buttom>
+            <buttom data-value="1" class="btn btn-primary btn-digit">1</buttom>
+            <buttom data-value="2"class="btn btn-primary btn-digit">2</buttom>
+            <buttom data-value="3"class="btn btn-primary btn-digit">3</buttom>
+            <buttom data-value="4"class="btn btn-primary btn-digit">4</buttom>
+            <buttom data-value="5"class="btn btn-primary btn-digit">5</buttom>
+            <buttom data-value="6"class="btn btn-primary btn-digit">6</buttom>
+            <buttom data-value="7"class="btn btn-primary btn-digit">7</buttom>
+            <buttom data-value="8"class="btn btn-primary btn-digit">8</buttom>
+            <buttom data-value="9"class="btn btn-primary btn-digit">9</buttom>
+            <buttom class="btn btn-primary btn-limpar"><-</buttom>
+        </div>
+    </div>
     <div class="row">
         <div class="form-group col-xs-6 col-md-3">
             <input name="cpf" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" class="form-control clear" id="cpf" placeholder="CPF" required>
@@ -385,6 +400,20 @@
         });
     }
 
+    $(".btn-digit").click(function(){
+        var digit = $(this).attr("data-value");
+        $("#cpf").val($("#cpf").val() + digit);
+        $("#cpf").trigger('input');
+        if(validateCpf(false)){
+            loadCpf();
+        }
+    });
+
+    $(".btn-limpar").click(function(){
+        var texto = $("#cpf").val();
+        $("#cpf").val(texto.substr(0, texto.length - 1));
+    });
+
     $(".btn-save-extra-time").click(function(){
         if(!$("#reason-extra-time :selected").val() 
             && !$("#reason-extra-time-other").val()
@@ -595,7 +624,7 @@
     //         $("#btn-register-rental").attr("disabled", false);
 	// }
  
-    function validateCpf(){
+    function validateCpf(showMessage){
         var cpf = $('#cpf').val().replace(/[^0-9]/g, '').toString();
 
         if( cpf.length == 11 )
@@ -619,20 +648,24 @@
             //Retorna Verdadeiro se os dígitos de verificação são os esperados.
             if ( (v[0] != cpf[9]) || (v[1] != cpf[10]) )
             {
-                alert('CPF inválido: ' + cpf);
+                if(showMessage){
+                    alert('CPF inválido: ' + cpf);
 
-                // $('#cpf').val('');
-                $('#cpf').focus();
+                    // $('#cpf').val('');
+                    $('#cpf').focus();
+                }
                 return false;
             }
             return true;
         }
         else
         {
-            alert('CPF inválido: ' + cpf);
-            
-            $('#cpf').val('');
-            $('#cpf').focus();
+            if(showMessage){
+                alert('CPF inválido: ' + cpf);
+
+                // $('#cpf').val('');
+                $('#cpf').focus();
+            }
             return false;
         }
     }

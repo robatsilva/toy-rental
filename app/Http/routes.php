@@ -59,6 +59,7 @@ Route::post('/rental/extra-time', 'RentalController@extraTime');
 Route::get('/rental/edit/{rental_id}', 'RentalController@edit');
 Route::post('/rental/next-period/{rental_id}', 'RentalController@nextPeriod');
 Route::post('/rental/pause/{rental_id}', 'RentalController@pause');
+Route::post('/rental/start/{rental_id}', 'RentalController@start');
 Route::post('/rental/cancel/{rental_id}', 'RentalController@cancel');
 Route::post('/rental/calcule/{rental_id}', 'RentalController@calculeRental');
 

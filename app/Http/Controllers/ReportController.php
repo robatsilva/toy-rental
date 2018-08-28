@@ -188,9 +188,7 @@ class ReportController extends Controller
                 }
             })
             ->orderBy("init", "desc")
-            ->groupBy("value_cc")
-            ->groupBy("value_cd")
-            ->groupBy("value_di");
+            ->groupBy("payment_way");
         
         $rentals = $rentals
                 ->get();
@@ -230,6 +228,9 @@ class ReportController extends Controller
     public function cashClose()
     {
         $user = Employe::find(Auth::user()->id);
+        if(!$user->employe_id){
+            return redirect('/logout');
+        }
         $cash = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->get();
         if(!$cash->isEmpty()){
             return view('reports.cash-flow')

@@ -7,11 +7,9 @@
 LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7,3, POSITIVE);
 
 //////////////////////// Variáveis do wifi
-const byte rxPin = 2; //WIFI 
-const byte txPin = 3; // WIFI
 String ssid = "bloco doce";
 String password = "kira2017";
-SoftwareSerial esp8266 (rxPin, txPin);
+SoftwareSerial esp8266 (2, 3); //WIFI
 String path = "/toy/check/13";
 String server = "sistema.dionellybrinquedos.com.br";
 String getRequest = "GET " + path + " HTTP/1.1\r\n" + "Host: " + server + "\r\nConnection: keep-alive\r\n\r\n";
@@ -23,6 +21,7 @@ boolean sensorAtivo = false;
 boolean wifiAtivo = false;
 boolean cartaoAtivo = false;
 boolean criaNovoLog = true;
+boolean conectado = false;
 
 unsigned long tempoUso = 0;
 unsigned long tempoLog = 0;
@@ -34,11 +33,10 @@ int endQtd = 2;
 int endTempo = 4;
 
 ///////////////////////// Variáveis I/O
-int iCartao = 4;
-int iSensor = 5;
-int iWifi = 6;
+short iSensor = 5;
+short iWifi = 6;
 
-int oMotor = 12;
+short oMotor = 12;
 
 /////////////////////////
 
@@ -49,7 +47,7 @@ void setup() {
   pinMode(7, OUTPUT); // 5 VOLTS PARA TESTE
   digitalWrite(7, HIGH);
   
-  pinMode(iCartao, INPUT); // cartão / Interruptor da placa
+  pinMode(4, INPUT); // cartão / Interruptor da placa
   pinMode(iSensor, INPUT); // sensor
   pinMode(iWifi, INPUT); // HABILITA WIFI
 
@@ -58,12 +56,10 @@ void setup() {
   delay(5000);
   Serial.flush();
   reset();
-  //setMode("1");
   connectWifi();
 //  gravaInteiro(endId, 0);
 //    gravaInteiro(endQtd, 0);
 //    gravaInteiro(endTempo, 0);  
-  Serial.println("tempo eeprom");
   Serial.println(leInteiro(endTempo));
   delay(5000);
   }
@@ -71,7 +67,6 @@ void setup() {
 void loop() {
   // SE WIFI HABILITADO, BUSCA NO SISTEMA
   if(digitalRead(iWifi) == HIGH){
-    Serial.println("lendo wifi");
     if(!wifiAtivo){
       wifiAtivo = true;
       int qtd = leInteiro(endQtd);
@@ -118,14 +113,15 @@ String nivelBateria(){
 
 ///////////////WI FI AREA/////////////////////////////
 void httpGet(){
-    Serial.println("inicio wifi");
+    if(!conectado){
+      connectWifi();
+    }
     response = "";
     esp8266.println("AT+CIPSTART=\"TCP\",\"" + server + "\",80");
     if(esp8266.find("OK") || esp8266.find("ALREADY CONNECTED")) {
       esp8266.println("AT+CIPSEND=" + getRequestLength);
       if(esp8266.find(">") || esp8266.find("ALREADY CONNECTED")) {
         esp8266.print(getRequest);
-        Serial.println(getRequest);
         if(esp8266.find("SEND OK")){
           espRead();
           if(response.indexOf("brinquedo desligar") != -1) {
@@ -136,11 +132,7 @@ void httpGet(){
             escreverLCD("Alugado", "Retorno " + response.substring(36,41));
             digitalWrite(LED_BUILTIN, HIGH);
             criaNovoLogFunction();
-          } else {
-            Serial.println(response);  
           }
-          Serial.println(millis());
-          Serial.println(response);
           
 //            esp8266.println("AT+CIPCLOSE");
 //            if(esp8266.find("OK")) Serial.println("Connection close"); 
@@ -193,12 +185,16 @@ void reset() {
 }
 
 void connectWifi() {
+  if(digitalRead(iWifi) == LOW) return;
   espClear();
   escreverLCD("Conectando...", "");
   String CMD = "AT+CWJAP=\"" +ssid+"\",\"" + password + "\"";
   esp8266.println(CMD);
   delay(5000);
-  if(esp8266.find("OK")) escreverLCD("Conectado!!!!", "");
+  if(esp8266.find("OK")) {
+    escreverLCD("Conectado!!!!", "");
+    conectado = true;
+  }
   else {
     connectWifi();
     return;
@@ -209,14 +205,13 @@ void connectWifi() {
 ////////////////////////////////Inputs Area /////////////////
 void lerInputs(){
   lerCartao();
-  if(digitalRead(iCartao) == HIGH) lerSensor();
+  if(digitalRead(4) == HIGH) lerSensor();
 }
 
 // pino 4
 void lerCartao(){
-  if(digitalRead(iCartao) == HIGH){
+  if(digitalRead(4) == HIGH){
     if(!cartaoAtivo){
-      Serial.println("cartão ativo");
       cartaoAtivo = true;
       digitalWrite(LED_BUILTIN, HIGH);
       tempoUso = millis();  
@@ -225,8 +220,6 @@ void lerCartao(){
       int qtd = leInteiro(endQtd);
       qtd++;
       gravaInteiro(endQtd, qtd);
-      Serial.println("quantidade");
-      Serial.println(qtd);
       escreverLCD("Ligacao manual", String(qtd) + " vez(es)");  
       delay(2000);
     }
@@ -250,11 +243,12 @@ void lerSensor(){
       sensorAtivo = true;
       digitalWrite(oMotor, HIGH);
       escreverLCD("Parado", "Obstaculo");
+      while(digitalRead(iSensor) == HIGH){}
     } else {
       if(sensorAtivo){
         escreverLCD("Liberado", "");
-        delay(2000);
         digitalWrite(oMotor, LOW);
+        delay(2000);
         sensorAtivo = false;
       }
     }

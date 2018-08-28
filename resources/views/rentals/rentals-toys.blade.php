@@ -224,6 +224,19 @@
                     alert(status + ' - ' + error);
                 });
             }
+
+            if(toy.rental && toy.rental.status.indexOf('Pausado') != -1)
+            {
+                endPoint = "/rental/start/";
+                showLoader();
+                $.post(endPoint + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(data){
+                    hideLoader();
+                    loadRentals();
+                })
+                .fail(function(xhr, status, error) {
+                    alert(status + ' - ' + error);
+                });
+            }
         });
 
         $(".btn-pay").dblclick(function(){

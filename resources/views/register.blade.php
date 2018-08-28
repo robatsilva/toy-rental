@@ -30,12 +30,12 @@
             @if($kiosks)
             <div class="row" style="margin-top: 50px;">
             <!-- TODO - DESCOMENTAR QUANDO COMERCIALIZAR -->
-               <!-- <div class="col-xs-6 text-center">
+               <div class="col-xs-6 text-center">
                     <a href="toy">
                         <img src="/images/cars.jpeg" class="img-responsive center-block">
                         <h3>Brinquedos</h3>
                     </a>
-                </div>  -->
+                </div> 
                 <!-- <div class="col-xs-6 text-center">
                     <a href="period">
                         <img src="/images/time.png" class="img-responsive center-block">
