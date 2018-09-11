@@ -114,7 +114,12 @@ class ReportController extends Controller
         $user = Employe::find(Auth::user()->id);
 
         $total = Rental::
-        whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
+        whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->sum("value_di");
+        
+        $totalDay = Rental::
+        whereDate('init', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
             ->where("kiosk_id", $request->input("kiosk_id"))
             ->sum("value_di");
         
@@ -140,11 +145,19 @@ class ReportController extends Controller
         ->get();
         
         $input = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
-        ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
+        ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
         ->sum('input');
         
         $output = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
-        ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init'))))
+        ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+        ->sum('output');
+        
+        $inputDay = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
+        ->whereDate('created_at', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+        ->sum('input');
+        
+        $outputDay = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
+        ->whereDate('created_at', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
         ->sum('output');
 
         $isCashOpen = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->get();
@@ -158,15 +171,19 @@ class ReportController extends Controller
         }
 
         $cash['rentals'] = $total;
+        $cash['rentals_day'] = $totalDay;
         $cash['cashes'] = $cashes;
         $cash['cash_flows'] = $cashFlows;
         $cash['input'] = $input;
         $cash['output'] = $output;
         $cash['total'] = $input - $output + $total;
+        $cash['input_day'] = $inputDay;
+        $cash['output_day'] = $outputDay;
+        $cash['total_day'] = $inputDay - $outputDay + $totalDay;
         return view('reports.cash-flow')
             ->with('cash', $cash)
             ->with('input', $request->input())
-            ->with('show_cash', $isCashOpen->isEmpty())
+            ->with('show_cash', $isCashOpen->isEmpty() && $user->kiosk_id)
             ->with('close_cash', $haveCashOpen);
     }
     /**
@@ -228,7 +245,7 @@ class ReportController extends Controller
     public function cashClose()
     {
         $user = Employe::find(Auth::user()->id);
-        if(!$user->employe_id){
+        if(!$user->kiosk_id){
             return redirect('/logout');
         }
         $cash = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->get();

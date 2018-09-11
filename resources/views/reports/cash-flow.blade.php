@@ -51,21 +51,21 @@
         <div class="col-xs-3 card-container">
             <div class="card card-value">
                 <h3>Entradas</h3>
-                <p> R$ {{ $cash?$cash['input']:"" }}</p>
+                <p> R$ {{ $cash?$cash['input_day']:"" }}</p>
                 <a id="new_input">Novo</a>
             </div>
         </div>
         <div class="col-xs-3 card-container">
             <div class="card card-value">
                 <h3>Saídas</h3>
-                <p> R$ {{ $cash?$cash['output']:"" }}</p>
+                <p> R$ {{ $cash?$cash['output_day']:"" }}</p>
                 <a id="new_output">Novo</a>
             </div>
         </div>
         <div class="col-xs-3 card-container">
             <div class="card card-value">
                 <h3>Aluguéis</h3>
-                <p> R$ {{ $cash?$cash['rentals']:"" }}</p>
+                <p> R$ {{ $cash?$cash['rentals_day']:"" }}</p>
             </div>
         </div>
         <div class="col-xs-3 card-container">

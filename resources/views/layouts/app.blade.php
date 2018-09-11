@@ -72,8 +72,10 @@
                 </button>
 
                 <!-- Branding Image -->
+                <!-- <span><img width="96px" src="/images/logo.jpeg"></img></span> -->
                 <a class="navbar-brand" href="{{ url('/sistema') }}">
-                    Toy Rental
+                    <span><img style="max-width:84px; margin-top: -9px;"
+                        src="/images/logo.jpeg"></span>
                 </a>
             </div>
             

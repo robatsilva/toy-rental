@@ -37,13 +37,9 @@ class RentalController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
         $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1)->get();
-        $cash = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->get();
         
         if($kiosks->isEmpty() && !$user->kiosk_id)
             return redirect('cadastro');
-
-        if($cash->isEmpty() && $user->employe_id)
-            return redirect('report/cash');
 
         if($user->kiosk_id)
             $kiosk_id = $user->kiosk_id;
@@ -54,7 +50,15 @@ class RentalController extends Controller
             ->where('default', "1")
             ->first()->id;
         }
+
         $kiosk = Kiosk::find($kiosk_id);
+        
+        $cash = Cash::where('employe_id', $user->id)
+        ->whereRaw('updated_at = created_at')->get();
+        
+        if($cash->isEmpty() && $user->kiosk_id)
+            return redirect('report/cash');
+
         $reasons = Reason::where("kiosk_id", $kiosk_id)->get();
         $periods = Period::where("kiosk_id", $kiosk_id)
         ->where('status', 1)
@@ -482,5 +486,35 @@ class RentalController extends Controller
         $data["period"] = $period ? $period : $next_period;
         
         return response()->json($data);
+    }
+
+    public function send($id){
+        $rentals = Rental::where("kiosk_id", $id)
+        ->get();
+
+        $ch = curl_init();
+        
+
+        curl_setopt($ch, CURLOPT_URL,"http://localhost:8000/rental/receive");
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $rentals->toArray());
+        
+            // // // Receive server response ...
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $server_output = curl_exec($ch);
+        
+        curl_close ($ch);
+        
+        // // Further processing ...
+        return $server_output;
+        
+
+        
+    }
+
+    public function receive(Request $request){
+        return $request->input();
     }
 }

@@ -13,11 +13,14 @@
 
 
 
-Route::get('/', 'RentalController@home');
 
 Route::get('/login', 'RentalController@login');
 
 Route::get('/toy/check/{id}', 'ToyController@check');
+Route::get('/toy/check/{id}', 'ToyController@check');
+Route::get('/rental/send/{id}', 'RentalController@send');
+Route::post('/rental/receive', 'RentalController@receive');
+Route::get('/', 'RentalController@home');
 
 Route::auth();
 
