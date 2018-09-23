@@ -305,6 +305,18 @@ class RentalController extends Controller
         $rental->save();
         return;
     }
+    
+    public function back($id){
+        $rental = Rental::where('toy_id', $id)
+        ->orderBy("end", "desc")
+        ->first();
+        $rental->status = "Pausado";
+        $rental->value_cc = 0;
+        $rental->value_cd = 0;
+        $rental->value_di = 0;
+        $rental->save();
+        return;
+    }
 
     /**
      * Change the status of rental to cancel
@@ -374,14 +386,16 @@ class RentalController extends Controller
         else
             $rental->extra_time += $request->input('extra_time');
 
-        $rental->reason_extra_time .= " / " . $request->input('reason_extra_time');
         
-        if(!$rental->reason_extra_time){
+        
+        if(!$request->input('reason_extra_time')){
             $reason = new Reason();
             $reason->text = $request->input('reason_extra_time_other');
             $reason->kiosk_id = $rental->kiosk_id;
             $reason->save();
             $rental->reason_extra_time .= " / " . $request->input('reason_extra_time_other');
+        } else {
+            $rental->reason_extra_time .= " / " . $request->input('reason_extra_time');
         }
         $rental->save();
     }

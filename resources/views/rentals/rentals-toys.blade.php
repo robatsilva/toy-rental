@@ -85,7 +85,7 @@
     }
 </style>
 @if(count($toys) == 0)
-    <h2>Para começar você deve cadastrar pelo menos um <a href="toy">Brinquedo</a> para o quiosque "{{ $kiosk->name }}"</h2>(<a href="kiosk">Trocar quiosque</a>)
+    <h2>Para começar você deve cadastrar pelo menos um <a href="toy">Brinquedo</a> para o quiosque "{{ $kiosk->name }}"</h2><!--(<a href="kiosk">Trocar quiosque</a>)-->
 @endif
 @foreach($toys as $toy)
     <div class="col-md-2 col-sm-3 col-xs-6 card-container" data-rental="{{ $toy }}">
@@ -209,6 +209,7 @@
             }
         });
         $(".btn-status").dblclick(function(){
+            debugger;
             toy = $(this).parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
             var endPoint = "";
@@ -223,6 +224,7 @@
                 .fail(function(xhr, status, error) {
                     alert(status + ' - ' + error);
                 });
+                return;
             }
 
             if(toy.rental && toy.rental.status.indexOf('Pausado') != -1)
@@ -236,7 +238,18 @@
                 .fail(function(xhr, status, error) {
                     alert(status + ' - ' + error);
                 });
+                return;
             }
+            endPoint = "/rental/back/";
+                showLoader();
+                $.get(endPoint + toy.id, {_token: "{{ csrf_token() }}"}, function(data){
+                    hideLoader();
+                    loadRentals();
+                })
+                .fail(function(xhr, status, error) {
+                    alert(status + ' - ' + error);
+                });
+
         });
 
         $(".btn-pay").dblclick(function(){

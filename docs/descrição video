@@ -1,0 +1,70 @@
+Agora que já temos os cadastros prontos, podemos iniciar a operação dos alugueis. Para isso basta clicar na imagem
+da dionelly na parte de cima na esquerda
+
+A tela que irá abrir é a tela para realizar os alugueis, nela temos:
+
+Um teclado numérico para facilitar a digitação do cpf em tablets
+Um campo cpf e um campo nome onde será preenchidos dados do cliente
+E, para cada carrinho cadastrado haverá uma caixa com a imagem e o status, note que o carrinho que cadastramos
+aparece nessa caixa.
+
+
+Agora vamos realizar um aluguel. Vou digitar o cpf...
+Ao digitar o nome, o sistema esta pronto para realizar o aluguel. Para finalizar é só clicar duas vezes
+na imagem do carrinho. O sitema muda o stats para alugado e exibe as seguintes informações do aluguel:
+Nome do cliente, período, horário do retorno, tempo de permanência e valor a ser cobrado.
+Nos próximos vídeos irei explicar cada campo e a ação que ele possui.
+
+Para trocar o período é preciso clicar duas vezes na palavra período. O sistema irá passar para o próximo período do cadastros
+Como nesse exemplo temos apenas dois períodos cadastrados, seu eu der mais dois cliques ele voltará para o primeiro
+Se houvessem mais períodos cadastrados, a cada dois cliques ele iria passando para o próximo e no final voltaria para
+o primeiro
+
+Para ver o horário que o cliente iniciou o aluguel, clicamos duas vezes na palavra retorno.
+Ao clicar duas vezes na palavra início, ele irá voltar a exibir o tempo de retorno.
+
+O campo tempo possui duas informações, separadas pelo sinal de mais.
+A primeira informação é o tempo que passou desde que o aluguel é iniciado, e a segunda informação é a quantidade
+de tempo adicional fornecido.
+O tempo adicional é um tempo que você pode conceder ao cliente, em casos de necessidade, exemplo a troca de
+bateria.
+Para fornecer o tempo adicional, clicamos duas vezes na palavra tempo, é exibido um poup up para selecionar o
+motivo para o tempo adicional (se você selecionar ooutro como motivo, é possível digitar o motivo, e esse 
+motivo ficará salvo para as próximas vezes), e os botões de tempo adicional. Ao clicar nos botões, o sistema 
+vai somando os tempos e salvando automaticamente.
+
+Para finalizar o aluguel, é necessário indicar qual a forma de pagamento, escolhendo um dos três botoes que
+representam:
+Cartão de Débito
+Cartão de Cŕedito
+Dinheiro
+Quando o cliente retornar com o carrinho você informa qual o valor a ser pago, pergunta a forma de pagamento 
+e clica duas vezes na forma de pagamento correspondente.
+O sistema encerra esse aluguel e altera o status do carrinho para disponível.
+
+Vou realizar outro aluguel para demonstrar como finalizar o aluguel com mais de uma forma de pagamento
+Vou inserir o cpf
+Ao digitar um cpf que já está na base, o sistema preenche o nome do cliente automaticamente. 
+Vou pausar o vídeo e retornar quando passar alguns minutos.
+Vou demonstrar como receber com mais de uma forma de pagamento.
+Clicando duas vezes na palavra "valor" é exibido um poup up para indicar os valores de cada forma de pagamento
+nesse exemplo vou receber 6 reais em dinheiro e o restante no cartão de cŕedito.
+Clicando em salvar o sistema encerra o aluguel e altera o status do carrinho para disponível
+
+Para cancelar um aluguel basta clicar no X, selecionar o motivo no poup up que será exibido e clicar em salvar.
+O sistema altera o status para disponível
+
+Uma funcionalidade interessante é a opção de pausar um aluguel.
+Essa é uma opção interessante quando o cliente retorna ao quiosque e vocẽ não pode atendê-lo de imediato, por exemplo
+por estar atendendo outro cliente, então vocẽ clica na palavra alugado. O sistema interrompe o tempo
+e altera o status do aluguel para pausado. O cliente não será
+cobrado pelo tempo que está em pausa.
+Caso deseje retornar o aluguel, basta clicar duas vezes na palavra pausado
+
+Se um cliente iniciou o aluguel em um carrinho, e deseja trocar para outro carrinho, é possível fazer a troca 
+do carrinho no sistema. 
+Para isso é preciso clicar duas vezes no nome do cliente, o nomne será exibido no campo Nome acima, e agora é
+só clicar no outro carrinho desejado que o sistema fará a troca
+
+Para alugar dois carrinhos para o mesmo cliente (por ex um pai com dois filhos),
+no momento que selecionar o primeiro carrinho, basta clicar duas vezes no outro carrinho desejado

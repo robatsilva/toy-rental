@@ -113,6 +113,18 @@ class ReportController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
 
+        $total_cc = Rental::
+        whereDate('init', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->sum("value_cc");
+        
+        $total_cd = Rental::
+        whereDate('init', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->sum("value_cd");
+        
+        $total_cartao = $total_cc + $total_cd;
+
         $total = Rental::
         whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
             ->where("kiosk_id", $request->input("kiosk_id"))
@@ -180,6 +192,7 @@ class ReportController extends Controller
         $cash['input_day'] = $inputDay;
         $cash['output_day'] = $outputDay;
         $cash['total_day'] = $inputDay - $outputDay + $totalDay;
+        $cash['total_cartao'] = $total_cartao;
         return view('reports.cash-flow')
             ->with('cash', $cash)
             ->with('input', $request->input())
@@ -193,7 +206,7 @@ class ReportController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
 
-        $rentals = Rental::selectRaw("*, if(value_cc, 'Cartão de crédito', if(value_cd, 'Cartão de débito', if(value_di, 'Dinheiro', ''))) as payment_way,
+        $rentals = Rental::selectRaw("*, date(init) as data_inicio, if(value_cc, 'Cartão de crédito', if(value_cd, 'Cartão de débito', if(value_di, 'Dinheiro', ''))) as payment_way,
                 sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay
                     ")
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
@@ -205,7 +218,7 @@ class ReportController extends Controller
                 }
             })
             ->orderBy("init", "desc")
-            ->groupBy("payment_way");
+            ->groupBy("payment_way", DB::raw("date(init)"));
         
         $rentals = $rentals
                 ->get();

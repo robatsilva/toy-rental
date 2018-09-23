@@ -33,6 +33,10 @@ class HomeController extends Controller
     {
         return view('web.home');
     }
+    public function tutorials()
+    {
+        return view('tutorials.tutorials');
+    }
     /**
      * Show the application dashboard.
      *

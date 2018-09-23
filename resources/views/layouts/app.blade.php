@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -86,6 +86,7 @@
                         @if (!Auth::guest() && !Auth::user()->kiosk_id)
                             <li><a href="{{ url('/cadastro') }}">Cadastros</a></li>
                         @endif
+                        <li><a href="{{ url('/tutorials') }}">Tutorial</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 Relatórios<span class="caret"></span>
@@ -114,7 +115,8 @@
                             </a>
 
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url('/report/cash/close') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
+                                <li><a href="{{ url('/user') }}"><i class="fa fa-btn fa-key"></i>Trocar senha</a></li>
+                                <li><a href="{{ url('/report/cash/close') }}"><i class="fa fa-btn fa-sign-out"></i>Sair</a></li>
                             </ul>
                         </li>
                     @endif

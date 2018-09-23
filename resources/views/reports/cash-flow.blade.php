@@ -48,30 +48,36 @@
         </form>
     </div>
     <div class="row">
-        <div class="col-xs-3 card-container">
+        <div class="col-xs-4 col-md-2 card-container">
             <div class="card card-value">
                 <h3>Entradas</h3>
                 <p> R$ {{ $cash?$cash['input_day']:"" }}</p>
                 <a id="new_input">Novo</a>
             </div>
         </div>
-        <div class="col-xs-3 card-container">
+        <div class="col-xs-4 col-md-2 card-container">
             <div class="card card-value">
                 <h3>Saídas</h3>
                 <p> R$ {{ $cash?$cash['output_day']:"" }}</p>
                 <a id="new_output">Novo</a>
             </div>
         </div>
-        <div class="col-xs-3 card-container">
+        <div class="col-xs-4 col-md-2 card-container">
             <div class="card card-value">
                 <h3>Aluguéis</h3>
                 <p> R$ {{ $cash?$cash['rentals_day']:"" }}</p>
             </div>
         </div>
-        <div class="col-xs-3 card-container">
+        <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
-                <h3>Valor em caixa</h3>
+                <h3>Caixa</h3>
                 <p> R$ {{ $cash?$cash['total']:"" }}</p>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-3 card-container">
+            <div class="card card-value">
+                <h3>Cartões</h3>
+                <p> R$ {{ $cash?$cash['total_cartao']:"" }}</p>
             </div>
         </div>
     </div>
@@ -99,7 +105,8 @@
                                 @if($register->value_close == 0)
                                 <a value="{{ $register }}" class="close_cash">Fechar</a>
                                 @endif
-                                <a value="{{ $register->id }}" class="delete_cash">excluir</a>
+                                <a value="{{ $register }}" class="see_cash">Ver</a>
+                                <a value="{{ $register->id }}" class="delete_cash">Excluir</a>
                             </td>
                         </tr>       
                         @endforeach
@@ -131,7 +138,7 @@
                             <td>{{ $flow->description }}</td>
                             <td>{{ $flow->input != 0? 'Entrada' : 'Saída' }}</td>
                             <td><a href="/files/{{ $flow->file }}">{{ $flow->file }}</a></td>
-                            <td><a value="{{ $flow->id }}" class="delete_cash_flow">excluir</a></td>
+                            <td><a value="{{ $flow->id }}" class="delete_cash_flow">Excluir</a></td>
                         </tr>       
                         @endforeach
                     @endif
@@ -190,7 +197,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <form id="rental-form" class="form-inline" action="/cash" method="post">
+                    <form id="cash-open-close-form" class="form-inline" action="/cash" method="post">
                         {!! csrf_field() !!}
                             <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
                             <input type='hidden' name="created_at" id="created_at_cash"class="form-control"/>
@@ -302,7 +309,7 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary">Salvar</button>
+                    <button id="save_cash" class="btn btn-primary">Salvar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
                 </div>
             </form>
@@ -352,7 +359,38 @@
             var cash = JSON.parse($(this).attr('value'));
             modalCashClose(cash);
         });
+        
+        $('.see_cash').click(function(){
+            var cash = JSON.parse($(this).attr('value'));
+            modalCashSee(cash);
+        });
+        
+        $('#cash-open-close-form').submit(function(e){
+            if( $('#id_cash').val() ){
+                if( $('#value_close').val() == {!! $cash['total'] ? $cash['total'] : '0'; !!})
+                    return;
+                else
+                {   
+                    if($('#value_open').val() > {!! $cash['total'] ? $cash['total'] : '0'; !!})
+                        alert('Valor informado MAIOR do que o valor em caixa de R$ {!! $cash['total']; !!}. Verifique se é necessário realizar lançamentos de ENTRADA');
+                    else
+                        alert('Valor informado MENOR do que o valor em caixa de R$ {!! $cash['total']; !!}. Verifique se é necessário realizar lançamentos de SAÍDA');
+                }
+            } else {
+                if( $('#value_open').val() ==  {!! $cash['total'] ? $cash['total'] : '0'; !!})
+                    return;
+                else
+                {   
+                    if($('#value_open').val() > {!! $cash['total'] ? $cash['total'] : '0'; !!})
+                        alert('Valor informado MAIOR do que o valor em caixa de R$ {!! $cash['total'] ? $cash['total'] : '0'; !!}. Verifique se é necessário realizar lançamentos de ENTRADA');
+                    else 
+                        alert('Valor informado MENOR do que o valor em caixa de R$ {!! $cash['total'] ? $cash['total'] : '0'; !!}. Verifique se é necessário realizar lançamentos de SAÍDA');
+                }
+            }
 
+            e.preventDefault()
+        });
+        
         $('.delete_cash_flow').click(function(){
             $.get('/cash-flow/delete/' + $(this).attr('value'), function(data){
                 $('#cash-form').submit();
@@ -395,6 +433,7 @@
         $('#id_cash').val("");
         $('.valores_abertura').prop("disabled", "");
         $('.valores_fechamento').prop("disabled", "disabled");
+        $('#save_cash').prop("disabled", "");
 
         $('#modal_cash').modal('show');
     }
@@ -419,6 +458,41 @@
         $('#a100').val(cash.a100);
         $('.valores_abertura').prop("disabled", "disabled");
         $('.valores_fechamento').prop("disabled", "");
+        $('#save_cash').prop("disabled", "");
+
+        $('#modal_cash').modal('show');
+    }
+    function modalCashSee(cash){
+        $('#value_open').val(cash.value_open);
+        $('#valor_abertura').html(cash.value_open);
+        $('#valor_fechamento').html(cash.value_close);
+
+        $('#a005').val(cash.a005);
+        $('#a010').val(cash.a010);
+        $('#a025').val(cash.a025);
+        $('#a050').val(cash.a050);
+        $('#a1').val(cash.a1);
+        $('#a2').val(cash.a2);
+        $('#a5').val(cash.a5);
+        $('#a10').val(cash.a10);
+        $('#a20').val(cash.a20);
+        $('#a50').val(cash.a50);
+        $('#a100').val(cash.a100);
+
+        $('#f005').val(cash.f005);
+        $('#f010').val(cash.f010);
+        $('#f025').val(cash.f025);
+        $('#f050').val(cash.f050);
+        $('#f1').val(cash.f1);
+        $('#f2').val(cash.f2);
+        $('#f5').val(cash.f5);
+        $('#f10').val(cash.f10);
+        $('#f20').val(cash.f20);
+        $('#f50').val(cash.f50);
+        $('#f100').val(cash.f100);
+        $('.valores_abertura').prop("disabled", "disabled");
+        $('.valores_fechamento').prop("disabled", "disabled");
+        $('#save_cash').prop("disabled", "disabled");
 
         $('#modal_cash').modal('show');
     }

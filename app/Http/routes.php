@@ -14,6 +14,7 @@
 
 
 
+
 Route::get('/login', 'RentalController@login');
 
 Route::get('/toy/check/{id}', 'ToyController@check');
@@ -23,6 +24,8 @@ Route::post('/rental/receive', 'RentalController@receive');
 Route::get('/', 'RentalController@home');
 
 Route::auth();
+
+Route::get('/tutorials', 'HomeController@tutorials');
 
 Route::get('/cadastro', 'RegisterController@index');
 
@@ -36,6 +39,9 @@ Route::get('/kiosk/toogle/{id}', 'KioskController@toogle');
 Route::get('/kiosk/default/{id}', 'KioskController@setDefault');
 
 Route::get('/customer/{kiosk_id}/{cpf}', 'CustomerController@show');
+
+Route::get('/user', 'UserController@edit');
+Route::post('/user/update', 'UserController@update');
 
 Route::get('/employe', 'EmployeController@index');
 Route::post('/employe', 'EmployeController@store');
@@ -56,6 +62,7 @@ Route::get('/toy/toogle/{id}', 'ToyController@toogle');
 Route::get('/sistema', 'RentalController@home');
 Route::get('/rental', 'RentalController@index');
 Route::post('/rental', 'RentalController@store');
+Route::get('/rental/back/{toy_id}', 'RentalController@back');
 Route::post('/rental/finish', 'RentalController@finish');
 Route::get('/rental/{kiosk_id}', 'RentalController@index');
 Route::post('/rental/extra-time', 'RentalController@extraTime');

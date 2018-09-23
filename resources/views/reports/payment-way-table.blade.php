@@ -43,6 +43,7 @@
         <table class="table">
             <thead>
             <tr>
+                <th class="text-center">Data</th>
                 <th class="text-center">Forma de pagamento</th>
                 <th class="text-center">Valor total (R$)</th>
             </tr>
@@ -51,6 +52,7 @@
             @if($rentals)
                 @foreach($rentals as $rental)
                 <tr class="text-center" id="{{$rental->id}}"> 
+                    <td>{{ \Carbon\Carbon::parse($rental->data_inicio)->format('d/m/Y') }}</td> 
                     <td>{{ $rental->payment_way }}</td> 
                     <td>{{ $rental->total_pay }}</td>
                 </tr>       
