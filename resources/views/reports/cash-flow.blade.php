@@ -2,6 +2,12 @@
 
 @section('content')
 <style>
+    h3.valor-caixa-title{
+        margin-bottom: 0;
+    }
+    h3.valor-caixa{
+        margin-top: 0;
+    }
     div.card-container {
         padding: 20px 10px 0 0;
 
@@ -48,36 +54,38 @@
         </form>
     </div>
     <div class="row">
-        <div class="col-xs-4 col-md-2 card-container">
+        <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
                 <h3>Entradas</h3>
                 <p> R$ {{ $cash?$cash['input_day']:"" }}</p>
                 <a id="new_input">Novo</a>
             </div>
         </div>
-        <div class="col-xs-4 col-md-2 card-container">
+        <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
                 <h3>Saídas</h3>
                 <p> R$ {{ $cash?$cash['output_day']:"" }}</p>
                 <a id="new_output">Novo</a>
             </div>
         </div>
-        <div class="col-xs-4 col-md-2 card-container">
-            <div class="card card-value">
-                <h3>Aluguéis</h3>
-                <p> R$ {{ $cash?$cash['rentals_day']:"" }}</p>
+        <div class="col-xs-12 col-md-6 card-container">
+            <div class="col-xs-6" style="padding: 0 10px 0 0;">
+                <div class="col-xs-12 card card-value">
+                    <h3>Alugueis dinheiro</h3>
+                    <p> R$ {{ $cash?$cash['rentals_day']:"" }}</p>
+
+                </div>
             </div>
-        </div>
-        <div class="col-xs-6 col-md-3 card-container">
-            <div class="card card-value">
-                <h3>Caixa</h3>
-                <p> R$ {{ $cash?$cash['total']:"" }}</p>
-            </div>
-        </div>
-        <div class="col-xs-6 col-md-3 card-container">
-            <div class="card card-value">
-                <h3>Cartões</h3>
+            <div class="col-xs-6 card card-value">
+                <h3>Alugueis cartões</h3>
                 <p> R$ {{ $cash?$cash['total_cartao']:"" }}</p>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-12 card-container">
+            <div class="card card-value">
+                <h3 class="valor-caixa-title">Valor em Caixa</h3>
+                <p> = Entradas - Saídas + Alugueis dinheiro + Valor em caixa dos dias anteriores</p>
+                <h3 class="valor-caixa"> R$ {{ $cash?$cash['total']:"" }}</h3>
             </div>
         </div>
     </div>
@@ -371,7 +379,7 @@
                     return;
                 else
                 {   
-                    if($('#value_open').val() > {!! $cash['total'] ? $cash['total'] : '0'; !!})
+                    if($('#value_close').val() > {!! $cash['total'] ? $cash['total'] : '0'; !!})
                         alert('Valor informado MAIOR do que o valor em caixa de R$ {!! $cash['total']; !!}. Verifique se é necessário realizar lançamentos de ENTRADA');
                     else
                         alert('Valor informado MENOR do que o valor em caixa de R$ {!! $cash['total']; !!}. Verifique se é necessário realizar lançamentos de SAÍDA');

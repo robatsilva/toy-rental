@@ -209,7 +209,6 @@
             }
         });
         $(".btn-status").dblclick(function(){
-            debugger;
             toy = $(this).parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
             var endPoint = "";
