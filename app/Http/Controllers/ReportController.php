@@ -84,7 +84,7 @@ class ReportController extends Controller
 
         $rentals = Rental::selectRaw("*, 
                     
-                sum( TIMESTAMPDIFF(HOUR, init, if(END is not null, END, '" . Carbon::now() . "')) ) as total_time,
+                sum( TIMESTAMPDIFF(MINUTE, init, if(end is not null, end, '" . Carbon::now() . "')) ) as total_time,
                 sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay
                     ")
             ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
