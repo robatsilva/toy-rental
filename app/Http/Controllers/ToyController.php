@@ -13,14 +13,15 @@ use App\Models\Toy;
 use App\Models\Rental;
 use App\Models\Kiosk;
 use App\Models\ToyLog;
+use App\User;
 
 class ToyController extends Controller
 {
     public function index()
     {
         $toys = Toy::selectRaw('toys.*, toys.status as status_toy')
-        ->join('kiosks', 'kiosks.id', '=', 'toys.kiosk_id')
-        ->join('users', 'users.id', '=' ,'kiosks.user_id')
+        ->join('kiosk_user', 'kiosk_user.kiosk_id', '=', 'toys.kiosk_id')
+        ->join('users', 'users.id', '=' ,'kiosk_user.user_id')
         ->where('users.id', Auth::user()->id)
         ->get();
         return view('toys.list')->with('toys', $toys);
@@ -62,7 +63,9 @@ class ToyController extends Controller
      */
     public function create()
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
+        $kiosks = User::find(Auth::user()->id)
+                ->kiosks()
+                ->where('status', 1)->get();
         return view('toys/form')
             ->with('kiosks', $kiosks)
             ->with('toy', null);
@@ -115,7 +118,9 @@ class ToyController extends Controller
      */
     public function edit($id)
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
+        $kiosks = User::find(Auth::user()->id)
+                ->kiosks()
+                ->where('status', 1)->get();
         $toy = Toy::find($id);
         return view('toys.form')
             ->with('kiosks', $kiosks)

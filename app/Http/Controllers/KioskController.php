@@ -9,6 +9,7 @@ use Session;
 use App\Http\Requests;
 
 use App\Models\Kiosk;
+use App\User;
 
 class KioskController extends Controller
 {
@@ -19,7 +20,8 @@ class KioskController extends Controller
      */
     public function index(Request $request)
     {
-        $kiosks = Kiosk::where('user_id', Auth::user()->id)
+        $kiosks = User::find(Auth::user()->id)
+            ->kiosks()
             ->orderBy("default", "desc")
             ->get();
         if($request->header('Content-Type') == 'JSON')
@@ -29,7 +31,8 @@ class KioskController extends Controller
 
     public function listKiosk(Request $request)
     {
-        $kiosks = Kiosk::where('user_id', Auth::user()->id)
+        $kiosks = User::find(Auth::user()->id)
+            ->kiosks()
             ->where('status', 1)
             ->orderBy("default", "desc")
             ->get();
@@ -56,7 +59,8 @@ class KioskController extends Controller
      */
     public function store(Request $request)
     {
-        $kioskDefault = Kiosk::where("user_id", Auth::user()->id)
+        $kioskDefault = User::find(Auth::user()->id)
+                        ->kiosks()
                         ->where("default", 1)
                         ->first();
                         
@@ -152,7 +156,8 @@ class KioskController extends Controller
 
     public function setDefault($id)
     {
-        $kioskDefault = Kiosk::where("user_id", Auth::user()->id)
+        $kioskDefault = User::find(Auth::user()->id)
+                        ->kiosks()
                         ->where("default", 1)
                         ->first();
                         

@@ -15,6 +15,7 @@ use App\Models\Toy;
 use App\Models\Kiosk;
 use App\Models\Period;
 use App\Models\Employe;
+use App\User;
 use App\Models\Reason;
 use App\Models\Cash;
 
@@ -36,7 +37,10 @@ class RentalController extends Controller
     public function home()
     {
         $user = Employe::find(Auth::user()->id);
-        $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1)->get();
+        $kiosks = User::find(Auth::user()->id)
+            ->kiosks()
+            ->get();
+        // $kiosks = Kiosk::where('user_id', $user->id)->where('status', 1)->get();
         
         if($kiosks->isEmpty() && !$user->kiosk_id)
             return redirect('cadastro');
@@ -44,8 +48,9 @@ class RentalController extends Controller
         if($user->kiosk_id)
             $kiosk_id = $user->kiosk_id;
         else{
-            $kiosk_id = Kiosk::
-            where('user_id', $user->id)
+            $kiosk_id = User::find(Auth::user()->id)
+            ->kiosks()
+            ->where('user_id', $user->id)
             ->where('status', 1)
             ->where('default', "1")
             ->first()->id;
@@ -108,92 +113,6 @@ class RentalController extends Controller
             ->with('kiosk', $kiosk)
             ->with('toys', $toys);
     }
-    // public function index(Request $request, $kiosk_id)
-    // {
-    //     $kiosk = Kiosk::find($kiosk_id);
-    //     $toys = Toy::
-    //     where('toys.kiosk_id', $kiosk_id)
-    //     ->where('toys.status', 1)
-    //     ->with("kiosk")
-    //     ->with(["rental" => function($query) use ($kiosk_id){
-    //         $query->selectRaw("*,
-            
-    //         TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
-
-    //         (select time 
-    //             from periods
-    //             where periods.kiosk_id = " . $kiosk_id . "
-    //             and periods.time <= (select time_diff)
-    //             or periods.time >= (select time_diff)
-    //             order by time asc 
-    //         limit 1) as min_period,
-
-    //         (select time 
-    //             from periods
-    //             where periods.kiosk_id = " . $kiosk_id . "
-    //             and periods.time <= (select time_diff)
-    //             or periods.time >= (select time_diff)
-    //             order by time desc 
-    //         limit 1) as max_period,
-            
-    //         (select value 
-    //             from periods
-    //             where periods.kiosk_id = " . $kiosk_id . "
-    //             and periods.id = period_id
-    //             order by time asc 
-    //         limit 1) as period_value_selected,
-
-    //         (select time 
-    //             from periods
-    //             where periods.kiosk_id = " . $kiosk_id . "
-    //             and periods.id = period_id
-    //             order by time asc 
-    //         limit 1) as period_selected,
-            
-    //         ((select time_diff) - (if(extra_time > (select time_diff), 0, extra_time))) as time_considered,
-
-    //         (
-    //             SELECT TIME
-    //             FROM periods
-    //             WHERE TIME <= if(time_considered < min_period, min_period, (if(time_considered > time_considered, max_period, time_considered)))
-    //             and periods.kiosk_id = " . $kiosk_id . "
-    //             ORDER BY TIME DESC
-    //             LIMIT 1
-    //         ) AS period_calculated,
-                
-            
-    //         if((select time_considered) <= ((select period_calculated) + tolerance), 0,
-    //             ((select time_considered) - (select period_calculated))) AS time_exceded,
-            
-    //         (
-    //             SELECT VALUE + ((select time_exceded) * extra_value)
-    //             FROM periods
-    //             WHERE TIME <= if(time_considered < min_period, min_period, (if(time_considered > time_considered, max_period, time_considered)))
-    //             and periods.kiosk_id = " . $kiosk_id . "
-    //             ORDER BY TIME DESC
-    //             LIMIT 1
-    //         )as period_value_calculated,
-
-    //         if(
-    //             (
-    //                 (select period_value_selected) < (select period_value_calculated)) and ((select period_calculated) < (select period_selected)), 
-    //             (select period_selected), 
-    //             (select period_value_calculated)
-    //         ) as value_to_pay")
-    //         ->where("kiosk_id", $kiosk_id)
-    //         ->whereRaw('(status = "Pausado" or status = "Alugado")')
-    //         ->with("period")
-    //         ->with("customer");
-    //     }])
-    //     ->orderBy("toys.id")
-    //     ->get();
-
-    //     if($request->header('Content-Type') == 'JSON')
-    //         return response()->json($toys);
-    //     return view('rentals.rentals-toys')
-    //         ->with('kiosk', $kiosk)
-    //         ->with('toys', $toys);
-    // }
     
     /**
      * Show the form for creating a new resource.
