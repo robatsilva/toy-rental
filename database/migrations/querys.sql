@@ -9,8 +9,8 @@ CREATE TABLE `kiosk_user` (
 ENGINE=InnoDB
 ;
 
-insert into kiosk_user (kiosk_id, user_id)
-select id, user_id from kiosks;
+insert into kiosk_user (kiosk_id, user_id, default)
+select id, user_id, 1 from kiosks;
 
 ALTER TABLE `kiosks`
 	DROP COLUMN `user_id`,
