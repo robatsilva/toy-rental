@@ -74,7 +74,7 @@
                 </tr>
                 </thead>
                 <tbody id="rental-body">
-                @if($days)
+                @if(isset($days))
                     @foreach($days as $day)
                     <tr class="text-center" id="{{$rental->id}}"> 
                         <td>{{ \Carbon\Carbon::parse($day->data_inicio)->format('d/m/Y') }}</td> 
