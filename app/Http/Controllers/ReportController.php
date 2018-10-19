@@ -223,8 +223,24 @@ class ReportController extends Controller
         $rentals = $rentals
                 ->get();
 
+        $days = Rental::selectRaw("*, date(init) as data_inicio, sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay")
+            ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->where("kiosk_id",$request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
+            ->orderBy("init", "desc")
+            ->groupBy(DB::raw("date(init)"));
+        
+        $days = $days
+                ->get();
+
         return view('reports.payment-way-table')
             ->with('rentals', $rentals)
+            ->with('days', $days)
             ->with('input', $request->input());
     }
 

@@ -529,7 +529,7 @@
                     try{
                         $("#kiosks").append("" +
                         "<option " +
-                            (value.default?"selected":"") + 
+                            (value.id == {!! $input?$input['kiosk_id']:0 !!} ? "selected" : "") + 
                             " data-value='" + JSON.stringify(value) + "'" + 
                             " value=" + value.id +">" +
                             value.name + 
