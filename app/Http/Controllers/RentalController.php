@@ -50,9 +50,9 @@ class RentalController extends Controller
         else{
             $kiosk_id = User::find(Auth::user()->id)
             ->kiosks()
-            ->where('user_id', $user->id)
+            ->where('kiosk_user.user_id', $user->id)
             ->where('status', 1)
-            ->where('default', "1")
+            ->where('kiosk_user.default', "1")
             ->first()->id;
         }
 

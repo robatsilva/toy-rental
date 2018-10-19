@@ -22,7 +22,7 @@ class KioskController extends Controller
     {
         $kiosks = User::find(Auth::user()->id)
             ->kiosks()
-            ->orderBy("default", "desc")
+            ->orderBy("kiosk_user.default", "desc")
             ->get();
         if($request->header('Content-Type') == 'JSON')
             return response()->json($kiosks);
@@ -34,7 +34,7 @@ class KioskController extends Controller
         $kiosks = User::find(Auth::user()->id)
             ->kiosks()
             ->where('status', 1)
-            ->orderBy("default", "desc")
+            ->orderBy("kiosk_user.default", "desc")
             ->get();
         return response()->json($kiosks);
     }
@@ -61,7 +61,7 @@ class KioskController extends Controller
     {
         $kioskDefault = User::find(Auth::user()->id)
                         ->kiosks()
-                        ->where("default", 1)
+                        ->where("kiosk_user.default", 1)
                         ->first();
                         
         $kiosk = new Kiosk;
@@ -158,7 +158,7 @@ class KioskController extends Controller
     {
         $kioskDefault = User::find(Auth::user()->id)
                         ->kiosks()
-                        ->where("default", 1)
+                        ->where("kiosk_user.default", 1)
                         ->first();
                         
         $kiosk = Kiosk::find($id);
