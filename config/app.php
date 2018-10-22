@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'timezone' => 'America/SaoSao_Paulo',
+    'timezone' => 'America/Sao_Paulo',
 
     /*
     |--------------------------------------------------------------------------
