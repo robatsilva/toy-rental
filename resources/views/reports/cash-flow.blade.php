@@ -208,6 +208,7 @@
                     <form id="cash-open-close-form" class="form-inline" action="/cash" method="post">
                         {!! csrf_field() !!}
                             <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
+                            <input type='hidden' name="init" class="init form-control"/>
                             <input type='hidden' name="created_at" id="created_at_cash"class="form-control"/>
                             <input type='hidden' name="id" id="id_cash"class="form-control"/>
                             <input type='hidden' name="close_cash" value="{{ isset($close_cash) ? $close_cash : ''  }}" class="form-control"/>
@@ -437,6 +438,7 @@
 
     function modalCashOpen(){
         $('.kiosk_id').val($('#kiosks').val());
+        $('.init').val($('#init').val());
         $('#created_at_cash').val($('#init').val());
         $('#id_cash').val("");
         $('.valores_abertura').prop("disabled", "");
@@ -448,6 +450,7 @@
 
     function modalCashClose(cash){
         $('.kiosk_id').val($('#kiosks').val());
+        $('.init').val($('#init').val());
         $('#created_at_cash').val($('#init').val());
         $('#id_cash').val(cash.id);
         $('#value_open').val(cash.value_open);

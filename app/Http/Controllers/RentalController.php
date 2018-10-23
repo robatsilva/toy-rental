@@ -153,6 +153,7 @@ class RentalController extends Controller
         $rental = Rental::where("customer_id", $customer->id)->where("status", "Alugado")->first();
         if($rental && $request->input('customer.change_toy') == 'true'){
             $rental->toy_id = $request->input('toy_id');
+            $rental->save();
         } else {
             $rental = new Rental;
             $rental->customer_id = $customer->id;
@@ -165,9 +166,9 @@ class RentalController extends Controller
             $rental->employe_id = $user->id;
             $rental->init = Carbon::now();
             $rental->status = "Alugado";
+            $rental->save();
         }
 
-        $rental->save();
         return;
     }
 
@@ -246,7 +247,7 @@ class RentalController extends Controller
         $user = Employe::find(Auth::user()->id);
         $rental = Rental::find($id);
         $rental->reason_cancel = $request->input('reason_cancel');
-        
+                
         if(!$rental->reason_cancel){
             $reason = new Reason();
             $reason->text = $request->input('reason_cancel_other');
@@ -256,7 +257,8 @@ class RentalController extends Controller
         }
         $rental->status = "Cancelado";
         $rental->employe_id = $user->id;
-        $rental->end = Carbon::now();
+        if(!$rental->end)
+            $rental->end = Carbon::now();
         $rental->save();
         return;
     }
