@@ -7,6 +7,11 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Login</div>
                 <div class="panel-body">
+                    @if ($errors->has('message1'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ $errors->first('message1') }}
+                        </div>
+                    @endif
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
                         {{ csrf_field() }}
 
