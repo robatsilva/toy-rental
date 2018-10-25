@@ -69,7 +69,6 @@
                 <thead>
                 <tr>
                     <th class="text-center">Data</th>
-                    <th class="text-center">Forma de pagamento</th>
                     <th class="text-center">Valor total (R$)</th>
                 </tr>
                 </thead>

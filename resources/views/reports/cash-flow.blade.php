@@ -99,6 +99,7 @@
                         <th class="text-center">Funcionário</th>
                         <th class="text-center">Abertura</th>
                         <th class="text-center">Fechamento</th>
+                        <th class="text-center">Data</th>
                         <th class="text-center"></th>
                     </tr>
                     </thead>
@@ -109,6 +110,7 @@
                             <td>{{ $register->employe->name }}</td> 
                             <td>{{ $register->value_open }}</td>
                             <td>{{ $register->value_close }}</td>
+                            <td>{{ $register->created_at}}</td>
                             <td>
                                 @if($register->value_close == 0)
                                 <a value="{{ $register }}" class="close_cash">Fechar</a>
