@@ -98,8 +98,9 @@
                     <tr>
                         <th class="text-center">Funcionário</th>
                         <th class="text-center">Abertura</th>
+                        <th class="text-center">Hora</th>
                         <th class="text-center">Fechamento</th>
-                        <th class="text-center">Data</th>
+                        <th class="text-center">Hora</th>
                         <th class="text-center"></th>
                     </tr>
                     </thead>
@@ -109,8 +110,9 @@
                         <tr class="text-center" id="{{$register->id}}"> 
                             <td>{{ $register->employe->name }}</td> 
                             <td>{{ $register->value_open }}</td>
-                            <td>{{ $register->value_close }}</td>
-                            <td>{{ $register->created_at}}</td>
+                            <td>{{ Carbon\Carbon::parse($register->created_at)->format('H:i') }}</td>
+                            <td>{{ $register->value_close != 0 ? $register->value_close : '' }}</td>
+                            <td>{{ $register->value_close != 0 ? Carbon\Carbon::parse($register->updated_at)->format('H:i') : ''}}</td>
                             <td>
                                 @if($register->value_close == 0)
                                 <a value="{{ $register }}" class="close_cash">Fechar</a>
@@ -132,6 +134,7 @@
                     <thead>
                     <tr>
                         <th class="text-center">Funcionário</th>
+                        <th class="text-center">Hora</th>
                         <th class="text-center">Valor</th>
                         <th class="text-center">Descrição</th>
                         <th class="text-center">Tipo</th>
@@ -144,6 +147,7 @@
                         @foreach($cash['cash_flows'] as $flow)
                         <tr class="text-center" id="{{$flow->id}}"> 
                             <td>{{ $flow->employe->name }}</td> 
+                            <td>{{ Carbon\Carbon::parse($flow->created_at)->format('H:i') }}</td>
                             <td>{{ $flow->input != 0? $flow->input : $flow->output }}</td>
                             <td>{{ $flow->description }}</td>
                             <td>{{ $flow->input != 0? 'Entrada' : 'Saída' }}</td>

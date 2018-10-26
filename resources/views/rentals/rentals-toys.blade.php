@@ -239,7 +239,8 @@
                 });
                 return;
             }
-            endPoint = "/rental/back/";
+            if (confirm('Você irá voltar o último aluguel para este carrinho, confirma?')) {
+                endPoint = "/rental/back/";
                 showLoader();
                 $.get(endPoint + toy.id, {_token: "{{ csrf_token() }}"}, function(data){
                     hideLoader();
@@ -248,6 +249,9 @@
                 .fail(function(xhr, status, error) {
                     alert(status + ' - ' + error);
                 });
+            } else {
+                // Do nothing!
+            }
 
         });
 
