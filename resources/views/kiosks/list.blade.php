@@ -44,9 +44,9 @@
                                         @endif
                                     </a>
                                     @if($kiosk->status)
-                                    <a href="/kiosk/default/{{$kiosk->id}}" class="btn btn-default">
+                                    <!-- <a href="/kiosk/default/{{$kiosk->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-star" title="Principal" aria-hidden="true"></span>
-                                    </a>
+                                    </a> -->
                                     @endif
                                     @endif
                                 </td>

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kiosk extends Model
 {
-    public function user()
+    public function users()
     {
-        return $this->belongsTo('App\user');
+        return $this->belongsToMany('App\user');
     }
 
     public function employe()
@@ -18,7 +18,7 @@ class Kiosk extends Model
 
     public function customers()
     {
-        return $this->hasMany('App\Csutomer');
+        return $this->hasMany('App\Customer');
     }
 
     public function rentals()

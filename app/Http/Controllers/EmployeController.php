@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Models\Kiosk;
-use App\Models\User;
+use App\User;
 use App\Models\Employe;
 
 class EmployeController extends Controller
@@ -19,7 +19,7 @@ class EmployeController extends Controller
     public function index()
     {
         $employes = Employe::selectRaw('users.*, users.status as status_employe')
-        ->join('kiosks', 'kiosks.id', '=', 'users.kiosk_id')
+        ->join('kiosk_user', 'kiosk_user.kiosk_id', '=', 'users.kiosk_id')
         ->where('user_id', Auth::user()->id)
         ->with('kiosk')
         ->get();
@@ -33,7 +33,9 @@ class EmployeController extends Controller
      */
     public function create()
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
+        $kiosks = User::find(Auth::user()->id)
+                ->kiosks()
+                ->where('status', 1)->get();
         return view('employes.register')
             ->with('employe', null)
             ->with('kiosks', $kiosks);
@@ -69,7 +71,9 @@ class EmployeController extends Controller
      */
     public function edit($id)
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
+        $kiosks = User::find(Auth::user()->id)
+                ->kiosks()
+                ->where('status', 1)->get();
         $employe = Employe::find($id);
         return view('employes.register')
             ->with('kiosks', $kiosks)

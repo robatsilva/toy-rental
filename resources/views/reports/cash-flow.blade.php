@@ -98,7 +98,9 @@
                     <tr>
                         <th class="text-center">Funcionário</th>
                         <th class="text-center">Abertura</th>
+                        <th class="text-center">Hora</th>
                         <th class="text-center">Fechamento</th>
+                        <th class="text-center">Hora</th>
                         <th class="text-center"></th>
                     </tr>
                     </thead>
@@ -108,7 +110,9 @@
                         <tr class="text-center" id="{{$register->id}}"> 
                             <td>{{ $register->employe->name }}</td> 
                             <td>{{ $register->value_open }}</td>
-                            <td>{{ $register->value_close }}</td>
+                            <td>{{ Carbon\Carbon::parse($register->created_at)->format('H:i') }}</td>
+                            <td>{{ $register->value_close != 0 ? $register->value_close : '' }}</td>
+                            <td>{{ $register->value_close != 0 ? Carbon\Carbon::parse($register->updated_at)->format('H:i') : ''}}</td>
                             <td>
                                 @if($register->value_close == 0)
                                 <a value="{{ $register }}" class="close_cash">Fechar</a>
@@ -130,6 +134,7 @@
                     <thead>
                     <tr>
                         <th class="text-center">Funcionário</th>
+                        <th class="text-center">Hora</th>
                         <th class="text-center">Valor</th>
                         <th class="text-center">Descrição</th>
                         <th class="text-center">Tipo</th>
@@ -142,6 +147,7 @@
                         @foreach($cash['cash_flows'] as $flow)
                         <tr class="text-center" id="{{$flow->id}}"> 
                             <td>{{ $flow->employe->name }}</td> 
+                            <td>{{ Carbon\Carbon::parse($flow->created_at)->format('H:i') }}</td>
                             <td>{{ $flow->input != 0? $flow->input : $flow->output }}</td>
                             <td>{{ $flow->description }}</td>
                             <td>{{ $flow->input != 0? 'Entrada' : 'Saída' }}</td>
@@ -208,6 +214,7 @@
                     <form id="cash-open-close-form" class="form-inline" action="/cash" method="post">
                         {!! csrf_field() !!}
                             <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
+                            <input type='hidden' name="init" class="init form-control"/>
                             <input type='hidden' name="created_at" id="created_at_cash"class="form-control"/>
                             <input type='hidden' name="id" id="id_cash"class="form-control"/>
                             <input type='hidden' name="close_cash" value="{{ isset($close_cash) ? $close_cash : ''  }}" class="form-control"/>
@@ -437,6 +444,7 @@
 
     function modalCashOpen(){
         $('.kiosk_id').val($('#kiosks').val());
+        $('.init').val($('#init').val());
         $('#created_at_cash').val($('#init').val());
         $('#id_cash').val("");
         $('.valores_abertura').prop("disabled", "");
@@ -448,6 +456,7 @@
 
     function modalCashClose(cash){
         $('.kiosk_id').val($('#kiosks').val());
+        $('.init').val($('#init').val());
         $('#created_at_cash').val($('#init').val());
         $('#id_cash').val(cash.id);
         $('#value_open').val(cash.value_open);
@@ -529,7 +538,7 @@
                     try{
                         $("#kiosks").append("" +
                         "<option " +
-                            (value.default?"selected":"") + 
+                            (value.id == {!! $input?$input['kiosk_id']:0 !!} ? "selected" : "") + 
                             " data-value='" + JSON.stringify(value) + "'" + 
                             " value=" + value.id +">" +
                             value.name + 

@@ -40,26 +40,50 @@
 
     </form>
     <div class="row">
-        <table class="table">
-            <thead>
-            <tr>
-                <th class="text-center">Data</th>
-                <th class="text-center">Forma de pagamento</th>
-                <th class="text-center">Valor total (R$)</th>
-            </tr>
-            </thead>
-            <tbody id="rental-body">
-            @if($rentals)
-                @foreach($rentals as $rental)
-                <tr class="text-center" id="{{$rental->id}}"> 
-                    <td>{{ \Carbon\Carbon::parse($rental->data_inicio)->format('d/m/Y') }}</td> 
-                    <td>{{ $rental->payment_way }}</td> 
-                    <td>{{ $rental->total_pay }}</td>
-                </tr>       
-                @endforeach
-            @endif
-            </tbody>
-        </table>
+        <div class="col-md-6 col-xs-12">
+            <h2>Totais por forma de pagamento</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-center">Data</th>
+                    <th class="text-center">Forma de pagamento</th>
+                    <th class="text-center">Valor total (R$)</th>
+                </tr>
+                </thead>
+                <tbody id="rental-body">
+                @if($rentals)
+                    @foreach($rentals as $rental)
+                    <tr class="text-center" id="{{$rental->id}}"> 
+                        <td>{{ \Carbon\Carbon::parse($rental->data_inicio)->format('d/m/Y') }}</td> 
+                        <td>{{ $rental->payment_way }}</td> 
+                        <td>{{ $rental->total_pay }}</td>
+                    </tr>       
+                    @endforeach
+                @endif
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <h2>Totais por dia</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-center">Data</th>
+                    <th class="text-center">Valor total (R$)</th>
+                </tr>
+                </thead>
+                <tbody id="rental-body">
+                @if(isset($days))
+                    @foreach($days as $day)
+                    <tr class="text-center" id="{{$rental->id}}"> 
+                        <td>{{ \Carbon\Carbon::parse($day->data_inicio)->format('d/m/Y') }}</td> 
+                        <td>{{ $day->total_pay }}</td>
+                    </tr>       
+                    @endforeach
+                @endif
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @endsection
@@ -97,7 +121,7 @@
                     try{
                         $("#kiosks").append("" +
                         "<option " +
-                            (value.default?"selected":"") + 
+                            (value.id == {!! $input?$input['kiosk_id']:0 !!} ? "selected" : "") + 
                             " data-value='" + JSON.stringify(value) + "'" + 
                             " value=" + value.id +">" +
                             value.name + 

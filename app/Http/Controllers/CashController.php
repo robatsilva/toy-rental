@@ -88,9 +88,10 @@ class CashController extends Controller
         if($request->input('close_cash'))
             return redirect('/logout');
 
+        // ->with('input', ['init' => $request->input('created_at')])
         return view('reports.cash-flow')
         ->with('cash', null)
-        ->with('input', ['init' => $request->input('created_at')])
+        ->with('input', $request->input())
         ->with('cash_save', true);
     }
 

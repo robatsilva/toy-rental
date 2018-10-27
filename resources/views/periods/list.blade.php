@@ -31,9 +31,9 @@
                                 <td>{{ $period->status_period? "Ativo" : "Inativo" }}</td>
                                 <td>{{ $period->kiosk->name }}</td>
                                 <td>
-                                    <a href="/period/{{$period->id}}" class="btn btn-default">
+                                    <!-- <a href="/period/{{$period->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
-                                    </a>
+                                    </a> -->
                                     <a href="/period/toogle/{{$period->id}}" class="btn btn-default">
                                         @if($period->status_period)
                                         <i class="fa fa-toggle-on" title="Desativar" aria-hidden="true"></i>

@@ -10,14 +10,15 @@ use DB;
 
 use App\Models\Period;
 use App\Models\Kiosk;
+use App\User;
 
 class PeriodController extends Controller
 {
     public function index()
     {
         $periods = Period::selectRaw('periods.*, periods.status as status_period')
-        ->join('kiosks', 'kiosks.id', '=', 'periods.kiosk_id')
-        ->join('users', 'users.id', '=' ,'kiosks.user_id')
+        ->join('kiosk_user', 'kiosk_user.kiosk_id', '=', 'periods.kiosk_id')
+        ->join('users', 'users.id', '=' ,'kiosk_user.user_id')
         ->where('users.id', Auth::user()->id)
         ->get();
         return view('periods.list')->with('periods', $periods);
@@ -52,7 +53,9 @@ class PeriodController extends Controller
      */
     public function create()
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
+        $kiosks = User::find(Auth::user()->id)
+                ->kiosks()
+                ->where('status', 1)->get();
         return view('periods/form')
             ->with('period', null)
             ->with('kiosks', $kiosks);
@@ -93,7 +96,9 @@ class PeriodController extends Controller
      */
     public function edit($id)
     {
-        $kiosks = Kiosk::where("user_id", Auth::user()->id)->where('status', 1)->get();
+        $kiosks = User::find(Auth::user()->id)
+                ->kiosks()
+                ->where('status', 1)->get();
         $period = Period::find($id);
         return view('periods.form')
             ->with('kiosks', $kiosks)
