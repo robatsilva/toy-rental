@@ -252,8 +252,6 @@
                 .fail(function(xhr, status, error) {
                     alert(status + ' - ' + error);
                 });
-            } else {
-                // Do nothing!
             }
 
         });
