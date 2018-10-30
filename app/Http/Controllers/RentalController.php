@@ -150,7 +150,12 @@ class RentalController extends Controller
         }
         $kiosk = Kiosk::find($request->input('kiosk_id'));
 
-        $rental = Rental::where("customer_id", $customer->id)->where("status", "Alugado")->first();
+        if($request->input('customer.change_toy')=='true'){
+ 			$rental = Rental::find($request->input('customer.rental_toy'));
+        } else {
+        	$rental = Rental::where("customer_id", $customer->id)->where("status", "Alugado")->first();
+        }
+        
         if($rental && $request->input('customer.change_toy') == 'true'){
             $rental->toy_id = $request->input('toy_id');
             $rental->save();
@@ -228,6 +233,7 @@ class RentalController extends Controller
     
     public function back($id){
         $rental = Rental::where('toy_id', $id)
+        ->where('end', '>', Carbon::now()->subMinutes(5)->toDateTimeString())
         ->orderBy("end", "desc")
         ->first();
         $rental->status = "Pausado";
@@ -453,3 +459,4 @@ class RentalController extends Controller
         return $request->input();
     }
 }
+    

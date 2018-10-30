@@ -163,6 +163,7 @@
             toy = JSON.parse(toy);
             customer = toy.rental.customer;
             customer.change_toy = true;
+            customer.rental_id = toy.rental.idç
             $('#name').val(customer.name);
             $('#id').val(customer.id);
             $('#cpf').val(customer.cpf);
