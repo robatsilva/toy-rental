@@ -26,6 +26,6 @@ class User extends Authenticatable
 
     public function kiosks()
     {
-        return $this->belongsToMany('App\Models\Kiosk');
+        return $this->belongsToMany('App\Models\Kiosk')->withPivot('default');
     }
 }

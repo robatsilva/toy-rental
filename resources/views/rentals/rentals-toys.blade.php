@@ -241,9 +241,10 @@
                 return;
             }
             if(toy.rental || $("#name").val()){
+                alert('Não é possível voltar o último aluguel enquanto houver um cpf de cliente digitado');
                 return;
             }
-            if (confirm('Você irá voltar o último aluguel para este carrinho, confirma?')) {
+            if (confirm('Você irá voltar o último aluguel para este carrinho dos últimos 5 minutos, confirma?')) {
                 endPoint = "/rental/back/";
                 showLoader();
                 $.get(endPoint + toy.id, {_token: "{{ csrf_token() }}"}, function(data){
@@ -251,7 +252,8 @@
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
-                    alert(status + ' - ' + error);
+                    hideLoader();
+                    alert(xhr.responseText);
                 });
             }
 

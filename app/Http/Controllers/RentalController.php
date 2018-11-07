@@ -236,12 +236,16 @@ class RentalController extends Controller
         ->where('end', '>', Carbon::now()->subMinutes(5)->toDateTimeString())
         ->orderBy("end", "desc")
         ->first();
-        $rental->status = "Pausado";
-        $rental->value_cc = 0;
-        $rental->value_cd = 0;
-        $rental->value_di = 0;
-        $rental->save();
-        return;
+        if($rental){
+            $rental->status = "Pausado";
+            $rental->value_cc = 0;
+            $rental->value_cd = 0;
+            $rental->value_di = 0;
+            $rental->save();
+            return response()->json($rental);
+        } else {
+            return response("Não foi encontrado registro para este carrinho nos últimos 5 minutos", 420);
+        }
     }
 
     /**
