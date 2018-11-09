@@ -206,6 +206,24 @@ class ReportController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
 
+
+        $total_cc = Rental::
+            where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->sum("value_cc");
+        
+        $total_cd = Rental::
+            where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->sum("value_cd");
+
+        $total_di = Rental::
+            where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->sum("value_di");
+        
+        $total_period = $total_cc + $total_cd + $total_di;
+        
         $rentals = Rental::selectRaw("*, date(init) as data_inicio, if(value_cc, 'Cartão de crédito', if(value_cd, 'Cartão de débito', if(value_di, 'Dinheiro', ''))) as payment_way,
                 sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay
                     ")
@@ -240,6 +258,10 @@ class ReportController extends Controller
 
         return view('reports.payment-way-table')
             ->with('rentals', $rentals)
+            ->with('total_cc', $total_cc)
+            ->with('total_cd', $total_cd)
+            ->with('total_di', $total_di)
+            ->with('total_period', $total_period)
             ->with('days', $days)
             ->with('input', $request->input());
     }
