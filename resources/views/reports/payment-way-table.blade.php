@@ -60,6 +60,7 @@
         </div>
 
     </form>
+    @if(isset($total_period))
     <div class="row row-cards">
         <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
@@ -86,6 +87,7 @@
             </div>
         </div>
     </div>
+    @endif
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <h3>Totais por dia</h3>
