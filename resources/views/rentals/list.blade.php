@@ -9,6 +9,9 @@
 <div class="container">
     <!--form-->
     <div class="row text-center" style="margin-bottom: 20px;">
+        {{$kiosk->name}}
+    </div>
+    <div class="row text-center" style="margin-bottom: 20px;">
         <div class="col-xs-12 col-md-12">
             <buttom data-value="0" class="btn btn-primary btn-digit">0</buttom>
             <buttom data-value="1" class="btn btn-primary btn-digit">1</buttom>

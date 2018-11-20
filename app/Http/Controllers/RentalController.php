@@ -149,9 +149,16 @@ class RentalController extends Controller
             $customer = Customers::find($request->input('customer.id'));
         }
         $kiosk = Kiosk::find($request->input('kiosk_id'));
+        
+        $rental = Rental::where('toy_id', $request->input('toy_id'))
+            ->where("status", "Alugado")
+            ->first();
+
+        if($rental)
+            return response("Aluguel já realizado", 420);
 
         if($request->input('customer.change_toy')=='true'){
- 			$rental = Rental::find($request->input('customer.rental_toy'));
+ 			$rental = Rental::find($request->input('customer.rental_id'));
         } else {
         	$rental = Rental::where("customer_id", $customer->id)->where("status", "Alugado")->first();
         }

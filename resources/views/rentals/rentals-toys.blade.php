@@ -163,7 +163,7 @@
             toy = JSON.parse(toy);
             customer = toy.rental.customer;
             customer.change_toy = true;
-            customer.rental_id = toy.rental.idç
+            customer.rental_id = toy.rental.id;
             $('#name').val(customer.name);
             $('#id').val(customer.id);
             $('#cpf').val(customer.cpf);
@@ -182,7 +182,8 @@
                 hideLoader();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                hideLoader();
+                alert(xhr.responseText);
             });
         }
         $(".btn-period").dblclick(function(){
@@ -194,7 +195,8 @@
                 hideLoader();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                hideLoader();
+                alert(xhr.responseText);
             });
 
         });
@@ -222,7 +224,8 @@
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
-                    alert(status + ' - ' + error);
+                    hideLoader();
+                    alert(xhr.responseText);
                 });
                 return;
             }
@@ -236,7 +239,8 @@
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
-                    alert(status + ' - ' + error);
+                    hideLoader();
+                    alert(xhr.responseText);
                 });
                 return;
             }
@@ -270,7 +274,8 @@
                 hideLoader();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                hideLoader();
+                alert(xhr.responseText);
             });
         });
 
