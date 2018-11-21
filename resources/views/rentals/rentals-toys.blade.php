@@ -167,6 +167,8 @@
             $('#name').val(customer.name);
             $('#id').val(customer.id);
             $('#cpf').val(customer.cpf);
+            $('#rental-tip').html('Clique duas vezes em um carrinho para: TROCAR');
+
             return;
         });
 
@@ -176,8 +178,11 @@
             $.post("/rental", toy.rental, function(data){
                 //reload toys and rentals
                 loadRentals();
-                // $(".clear").val("");
-                // $(".clear").text("");
+                if(customer.change_toy){
+                    $(".clear").val("");
+                    $(".clear").text("");
+                    $("#rental-tip").html("");
+                }
                 // validateCustomer();
                 hideLoader();
             })
