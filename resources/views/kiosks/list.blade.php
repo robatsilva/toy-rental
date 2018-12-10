@@ -35,7 +35,8 @@
                                     <a href="/kiosk/{{$kiosk->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
                                     </a>
-                                    @if(!$kiosk->default)
+                                    
+                                    @if(!$kiosk->pivot->default)
                                     <a href="/kiosk/toogle/{{$kiosk->id}}" class="btn btn-default">
                                         @if($kiosk->status)
                                         <i class="fa fa-toggle-on" title="Desativar" aria-hidden="true"></i>
@@ -44,9 +45,9 @@
                                         @endif
                                     </a>
                                     @if($kiosk->status)
-                                    <!-- <a href="/kiosk/default/{{$kiosk->id}}" class="btn btn-default">
+                                    <a href="/kiosk/default/{{$kiosk->id}}" class="btn btn-default">
                                         <span class="glyphicon glyphicon-star" title="Principal" aria-hidden="true"></span>
-                                    </a> -->
+                                    </a>
                                     @endif
                                     @endif
                                 </td>

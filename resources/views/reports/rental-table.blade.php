@@ -66,7 +66,9 @@
             <th class="text-center">Permanencia</th>
             <th class="text-center">Cobrado</th>
             <th class="text-center">Motivo tempo adicional</th>
-            <th class="text-center">Valor (R$)</th>
+            <th class="text-center">Valor Crédito</th>
+            <th class="text-center">Valor Débito</th>
+            <th class="text-center">Valor Dinheiro</th>
             <th class="text-center">Recebido por</th>
             <th class="text-center">Motivo do cancelamento</th>
             <th class="text-center">Status</th>
@@ -87,7 +89,9 @@
                 <td>{{ $rental->time_diff }}</td> 
                 <td>{{ $rental->time_considered }}</td> 
                 <td>{{ $rental->reason_extra_time }}</td> 
-                <td>{{ $rental->total_pay }}</td> 
+                <td>{{ $rental->value_cc }}</td> 
+                <td>{{ $rental->value_cd }}</td> 
+                <td>{{ $rental->value_di }}</td> 
                 <td>{{ $rental->employe->name }}</td> 
                 <td>{{ $rental->reason_cancel }}</td> 
                 <td>{{ $rental->rental_status }}</td> 

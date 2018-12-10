@@ -161,13 +161,16 @@ class KioskController extends Controller
                         ->where("kiosk_user.default", 1)
                         ->first();
                         
-        $kiosk = Kiosk::find($id);
-        $kiosk->default = 1;
-        $kiosk->save();
+                        
+        User::find(Auth::user()->id)
+            ->kiosks()
+            ->updateExistingPivot($id, ['default'=> 1]);
         
         if($kioskDefault){
-            $kioskDefault->default = 0;
-            $kioskDefault->save();
+            User::find(Auth::user()->id)
+                    ->kiosks()
+                    ->where("kiosk_user.default", 1)
+                    ->updateExistingPivot($kioskDefault->id, ['default'=> 0]);
         }
         return redirect('kiosk');
     }

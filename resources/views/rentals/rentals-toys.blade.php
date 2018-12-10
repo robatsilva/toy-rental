@@ -163,9 +163,12 @@
             toy = JSON.parse(toy);
             customer = toy.rental.customer;
             customer.change_toy = true;
+            customer.rental_id = toy.rental.id;
             $('#name').val(customer.name);
             $('#id').val(customer.id);
             $('#cpf').val(customer.cpf);
+            $('#rental-tip').html('Clique duas vezes em um carrinho para: TROCAR');
+
             return;
         });
 
@@ -175,13 +178,17 @@
             $.post("/rental", toy.rental, function(data){
                 //reload toys and rentals
                 loadRentals();
-                // $(".clear").val("");
-                // $(".clear").text("");
+                if(customer.change_toy){
+                    $(".clear").val("");
+                    $(".clear").text("");
+                    $("#rental-tip").html("");
+                }
                 // validateCustomer();
                 hideLoader();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                hideLoader();
+                alert(xhr.responseText);
             });
         }
         $(".btn-period").dblclick(function(){
@@ -193,7 +200,8 @@
                 hideLoader();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                hideLoader();
+                alert(xhr.responseText);
             });
 
         });
@@ -221,7 +229,8 @@
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
-                    alert(status + ' - ' + error);
+                    hideLoader();
+                    alert(xhr.responseText);
                 });
                 return;
             }
@@ -235,11 +244,16 @@
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
-                    alert(status + ' - ' + error);
+                    hideLoader();
+                    alert(xhr.responseText);
                 });
                 return;
             }
-            if (confirm('Você irá voltar o último aluguel para este carrinho, confirma?')) {
+            if(toy.rental || $("#name").val()){
+                alert('Não é possível voltar o último aluguel enquanto houver um cpf de cliente digitado');
+                return;
+            }
+            if (confirm('Você irá voltar o último aluguel para este carrinho dos últimos 5 minutos, confirma?')) {
                 endPoint = "/rental/back/";
                 showLoader();
                 $.get(endPoint + toy.id, {_token: "{{ csrf_token() }}"}, function(data){
@@ -247,7 +261,8 @@
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
-                    alert(status + ' - ' + error);
+                    hideLoader();
+                    alert(xhr.responseText);
                 });
             }
 
@@ -264,7 +279,8 @@
                 hideLoader();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                hideLoader();
+                alert(xhr.responseText);
             });
         });
 

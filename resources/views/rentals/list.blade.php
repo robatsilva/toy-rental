@@ -9,6 +9,9 @@
 <div class="container">
     <!--form-->
     <div class="row text-center" style="margin-bottom: 20px;">
+        {{$kiosk->name}}
+    </div>
+    <div class="row text-center" style="margin-bottom: 20px;">
         <div class="col-xs-12 col-md-12">
             <buttom data-value="0" class="btn btn-primary btn-digit">0</buttom>
             <buttom data-value="1" class="btn btn-primary btn-digit">1</buttom>
@@ -38,6 +41,9 @@
         @if($periods == '[]')
             <h2>Para começar você deve cadastrar pelo menos um <a href="period">Período</a> para o quiosque "{{ $kiosk->name }}"</h2><!--(<a href="kiosk">Trocar quiosque</a>)-->
         @else
+            <div class="row text-center">
+                <span id="rental-tip"></span>
+            </div>
             <!--Grid-->
             <div id="rentals-toys" class="row form-group">
             </div>
@@ -612,6 +618,7 @@
             $("#name").select();
         }
         customer.change_toy = false;
+        $('#rental-tip').html('Clique duas vezes em um carrinho para: ALUGAR');
         // validateCustomer();
         hideLoader();
     }

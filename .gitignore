@@ -1,6 +1,7 @@
 /vendor
 /node_modules
 /public/storage
+/app-pwa/node_modules
 Homestead.yaml
 Homestead.json
 .env
