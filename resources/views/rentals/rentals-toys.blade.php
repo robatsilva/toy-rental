@@ -167,7 +167,7 @@
             $('#name').val(customer.name);
             $('#id').val(customer.id);
             $('#cpf').val(customer.cpf);
-            $('#rental-tip').html('Clique duas vezes em um carrinho para: TROCAR');
+            $('#rental-tip').html('Clique duas vezes em uma imagem para: TROCAR');
 
             return;
         });

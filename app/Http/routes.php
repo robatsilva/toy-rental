@@ -16,6 +16,7 @@
 
 
 Route::get('/login', 'RentalController@login');
+Route::get('/home', 'RentalController@home');
 
 Route::get('/toy/check/{id}', 'ToyController@check');
 Route::get('/toy/check/{id}', 'ToyController@check');

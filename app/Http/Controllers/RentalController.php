@@ -90,7 +90,6 @@ class RentalController extends Controller
         ->with("kiosk")
         ->with(["rental" => function($query) use ($kiosk_id){
             $query->selectRaw("*,
-            
                     TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff")
             ->where("kiosk_id", $kiosk_id)
             ->whereRaw('(status = "Pausado" or status = "Alugado")')
@@ -399,6 +398,7 @@ class RentalController extends Controller
         
         $period = Period::where('time', '<=', $time_considered)
             ->where('kiosk_id', $rental->kiosk_id)
+            ->where('status', 1)
             ->orderBy('time', 'desc')
             ->first();
 
@@ -409,6 +409,7 @@ class RentalController extends Controller
 
         $next_period = Period::where('time', '>=', $time_considered)
             ->where('kiosk_id', $rental->kiosk_id)
+            ->where('status', 1)
             ->orderBy('time', 'asc')
             ->first();
 

@@ -618,7 +618,7 @@
             $("#name").select();
         }
         customer.change_toy = false;
-        $('#rental-tip').html('Clique duas vezes em um carrinho para: ALUGAR');
+        $('#rental-tip').html('Clique duas vezes em uma imagem para: ALUGAR');
         // validateCustomer();
         hideLoader();
     }

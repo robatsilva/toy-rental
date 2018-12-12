@@ -49,6 +49,10 @@
                     <label for="init">Data</label>
                     <input type='text' name="init" value="{{ $input?$input['init']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='init'/>
                 </div>
+                <div class="form-check col-md-12">
+                    <input type="checkbox" class="form-check-input" name="check_employe" id="check_employe" {{ isset($input['check_employe'])?'checked':'' }}>
+                    <label class="form-check-label" for="check_employe">Exibir somente meus lançamentos</label>
+                </div>
             </div>
             <button class="btn btn-primary">Gerar relatório</button>
         </form>
@@ -219,7 +223,7 @@
                             <input type='hidden' name="id" id="id_cash"class="form-control"/>
                             <input type='hidden' name="close_cash" value="{{ isset($close_cash) ? $close_cash : ''  }}" class="form-control"/>
                             <div class="form-group col-md-6">
-                                <div><b>Abertura</b></div>
+                                <div><b>Abertura</b><span id="data_abertura"></span></div>
                                 <input type='hidden' name="value_open" class="form-control" id='value_open'/>
 
                                 <div class="input-group">
@@ -271,7 +275,7 @@
                                 <div><b>Total: R$ <span id='valor_abertura'></span></b></div>
                             </div>
                             <div class="form-group col-md-6">
-                                <div><b>Fechamento</b></div>
+                                <div><b>Fechamento</b><span id="data_fechamento"></span></div>
                                 <input type='hidden' name="value_close" class="form-control" id='value_close'/>
                                 
                                 <div class="input-group">
@@ -461,6 +465,7 @@
         $('#id_cash').val(cash.id);
         $('#value_open').val(cash.value_open);
         $('#valor_abertura').html(cash.value_open);
+        $('#data_abertura').html(' : ' + dateToDMY(cash.created_at));
 
         $('#a005').val(cash.a005);
         $('#a010').val(cash.a010);
@@ -483,6 +488,8 @@
         $('#value_open').val(cash.value_open);
         $('#valor_abertura').html(cash.value_open);
         $('#valor_fechamento').html(cash.value_close);
+        $('#data_abertura').html(' : ' + dateToDMY(cash.created_at));
+        $('#data_fechamento').html(' : ' + dateToDMY(cash.updated_at));
 
         $('#a005').val(cash.a005);
         $('#a010').val(cash.a010);
@@ -565,6 +572,15 @@
             
         }
         catch(error){console.log(error);}
+    }
+
+    function dateToDMY(date) {
+        var dateObj = new Date(date);
+        
+        var d = dateObj.getDate();
+        var m = dateObj.getMonth() + 1; //Month from 0 to 11
+        var y = dateObj.getFullYear();
+        return ''  + (d <= 9 ? '0' + d : d) + '/' + (m<=9 ? '0' + m : m) + '/'  + y + date.substr(10);
     }
 </script>
 @endsection
