@@ -58,6 +58,7 @@ class CashController extends Controller
             $cash->employe_id = $user->id;
             $cash->created_at = Carbon::createFromFormat('d/m/Y', $request->input('created_at'));
             $cash->value_open = $request->input('value_open');
+            $cash->cash_drawer_id = $request->input('cash_drawer');
             $cash->a005 = $request->input('a005');
             $cash->a010 = $request->input('a010');
             $cash->a025 = $request->input('a025');

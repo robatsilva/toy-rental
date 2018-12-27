@@ -13,6 +13,7 @@ use App\Models\Rental;
 use App\Models\Employe;
 use App\Models\Cash;
 use App\Models\CashFlow;
+use App\Models\CashDrawer;
 
 class ReportController extends Controller
 {
@@ -112,6 +113,24 @@ class ReportController extends Controller
     public function reportByCash(Request $request)
     {
         $user = Employe::find(Auth::user()->id);
+        
+        $cashDrawers = CashDrawer::where('kiosk_id', $request->input("kiosk_id"))
+                        ->where('status', 1)
+                        ->get();
+
+        $cashOpen = Cash::where('employe_id', $user->id)
+            ->whereRaw("updated_at = created_at")
+            ->first();
+
+        $cashDrawerId = $cashDrawers[0]->id;
+
+        if($cashOpen){
+            $cashDrawerId = $cashOpen->cash_drawer_id;
+        }
+
+        if($request->input("cash_drawer")){
+            $cashDrawerId = $request->input("cash_drawer");   
+        }
 
         $total_cc = Rental::
         whereDate('init', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
@@ -137,7 +156,8 @@ class ReportController extends Controller
 
         $total = Rental::
         whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
-            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("kiosk_id", $cashDrawerId)
+            ->where("cash_drawer_id", $cashDrawerId)
             ->where( function($query) use ($user, $request) {
                 if($request->input('check_employe')){
                     $query->where("employe_id", $user->id);
@@ -148,6 +168,7 @@ class ReportController extends Controller
         $totalDay = Rental::
         whereDate('init', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("cash_drawer_id", $cashDrawerId)
             ->where( function($query) use ($user, $request) {
                 if($request->input('check_employe')){
                     $query->where("employe_id", $user->id);
@@ -159,6 +180,7 @@ class ReportController extends Controller
 
         $cashes = Cash::where("kiosk_id", $request->input("kiosk_id"))
         ->whereBetween(DB::raw('date(created_at)'), array($date, $date))
+        ->where("cash_drawer_id", $cashDrawerId)
         ->where( function($query) use ($user, $request) {
             if($request->input('check_employe')){
                 $query->where("employe_id", $user->id);
@@ -166,8 +188,10 @@ class ReportController extends Controller
         })
         ->with('employe')
         ->get();
+
         $cashFlows = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
         ->whereBetween(DB::raw('date(created_at)'), array($date, $date))
+        ->where("cash_drawer_id", $cashDrawerId)
         ->where( function($query) use ($user, $request) {
             if($request->input('check_employe')){
                 $query->where("employe_id", $user->id);
@@ -178,6 +202,7 @@ class ReportController extends Controller
         
         $input = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
         ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+        ->where("cash_drawer_id", $cashDrawerId)
         ->where( function($query) use ($user, $request) {
             if($request->input('check_employe')){
                 $query->where("employe_id", $user->id);
@@ -187,6 +212,7 @@ class ReportController extends Controller
         
         $output = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
         ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+        ->where("cash_drawer_id", $cashDrawerId)
         ->where( function($query) use ($user, $request) {
             if($request->input('check_employe')){
                 $query->where("employe_id", $user->id);
@@ -196,6 +222,7 @@ class ReportController extends Controller
         
         $inputDay = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
         ->whereDate('created_at', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+        ->where("cash_drawer_id", $cashDrawerId)
         ->where( function($query) use ($user, $request) {
             if($request->input('check_employe')){
                 $query->where("employe_id", $user->id);
@@ -205,6 +232,7 @@ class ReportController extends Controller
         
         $outputDay = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
         ->whereDate('created_at', '=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
+        ->where("cash_drawer_id", $cashDrawerId)
         ->where( function($query) use ($user, $request) {
             if($request->input('check_employe')){
                 $query->where("employe_id", $user->id);
@@ -217,15 +245,15 @@ class ReportController extends Controller
         $haveCashOpen = null;
 
         if($request->input("close_cash")){
-            $haveCashOpen = Cash::where('employe_id', $user->id)
-                ->whereRaw("updated_at = created_at")
-                ->first();
+            $haveCashOpen = $cashOpen;
         }
 
         $cash['rentals'] = $total;
         $cash['rentals_day'] = $totalDay;
         $cash['cashes'] = $cashes;
         $cash['cash_flows'] = $cashFlows;
+        $cash['cash_drawers'] = $cashDrawers;
+        $cash['cash_drawer_id'] = $cashDrawerId;
         $cash['input'] = $input;
         $cash['output'] = $output;
         $cash['total'] = $input - $output + $total;
@@ -328,8 +356,17 @@ class ReportController extends Controller
     
     public function cash()
     {
+        $user = Employe::find(Auth::user()->id);
+
+        $cashOpen = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->first();
+
+        if(!$cashOpen){
+            $cash['cash_drawer_id'] = $cashOpen->cash_drawer_id;
+        } else {
+            $cash = null;
+        }
         return view('reports.cash-flow')
-            ->with('cash', null)
+            ->with('cash', $cash)
             ->with('input', null)
             ->with('showCash', false);
     }

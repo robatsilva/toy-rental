@@ -49,6 +49,16 @@
                     <label for="init">Data</label>
                     <input type='text' name="init" value="{{ $input?$input['init']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='init'/>
                 </div>
+                <div class="form-group col-md-4">
+                    <label for="$cash_drawers">Caixa:</label>
+                    <select name="cash_drawer" class="form-control" id="cash_drawer">
+                        @if($cash)
+                            @foreach($cash['cash_drawers'] as $drawer)
+                                <option value="{{ $drawer->id }}" {{ $cash['cash_drawer_id'] == $drawer->id ? 'selected' : '' }}> {{ $drawer->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
                 <div class="form-check col-md-12">
                     <input type="checkbox" class="form-check-input" name="check_employe" id="check_employe" {{ isset($input['check_employe'])?'checked':'' }}>
                     <label class="form-check-label" for="check_employe">Exibir somente meus lançamentos</label>
@@ -219,6 +229,7 @@
                         {!! csrf_field() !!}
                             <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
                             <input type='hidden' name="init" class="init form-control"/>
+                            <input type='hidden' name="cash_drawer" class="cash_drawer form-control"/>
                             <input type='hidden' name="created_at" id="created_at_cash"class="form-control"/>
                             <input type='hidden' name="id" id="id_cash"class="form-control"/>
                             <input type='hidden' name="close_cash" value="{{ isset($close_cash) ? $close_cash : ''  }}" class="form-control"/>
@@ -373,6 +384,11 @@
         $('#new_cash').click(function(){
             modalCashOpen();
         });
+        
+        $('#cash_drawer, #kiosks, #date, #init').change(function(){
+            showLoader();
+            $('#cash-form').submit();
+        });
 
         $('.close_cash').click(function(){
             var cash = JSON.parse($(this).attr('value'));
@@ -384,6 +400,21 @@
             modalCashSee(cash);
         });
         
+        $('#cash-form').submit(function(e){
+            if(validateDate($('#init').val())){
+                alert('Data inválida');
+                e.preventDefault();
+                hideLoader();
+            }
+        });
+        function validateDate(value) {
+            var RegExPattern = /^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])      [\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/;
+
+            if (!((value.match(RegExPattern)) && (value!='')))
+                return true;
+            else
+                return false;
+        }
         $('#cash-open-close-form').submit(function(e){
             if( $('#id_cash').val() ){
                 if( $('#value_close').val() == {!! $cash['total'] ? $cash['total'] : '0'; !!})
@@ -449,6 +480,7 @@
     function modalCashOpen(){
         $('.kiosk_id').val($('#kiosks').val());
         $('.init').val($('#init').val());
+        $('.cash_drawer').val($('#cash_drawer').val());
         $('#created_at_cash').val($('#init').val());
         $('#id_cash').val("");
         $('.valores_abertura').prop("disabled", "");
