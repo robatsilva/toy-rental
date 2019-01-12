@@ -125,7 +125,7 @@
                     <div class="toy-pays text-center"> 
                         <buttom data-value="cd"class="btn btn-primary btn-pay">CD</buttom>
                         <buttom data-value="cc" class="btn btn-primary btn-pay">CC</buttom>
-                        <buttom data-value="di"class="btn btn-primary btn-pay">DI</buttom>
+                        @if($cash)<buttom data-value="di"class="btn btn-primary btn-pay">DI</buttom>@endif
                     </div>
                 @endif
             </div>    

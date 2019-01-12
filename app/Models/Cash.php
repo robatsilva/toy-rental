@@ -10,4 +10,9 @@ class Cash extends Model
     {
         return $this->belongsTo('App\Models\Employe');
     }
+
+    public function cash_drawer()
+    {
+        return $this->belongsTo('App\Models\CashDrawer');
+    }
 }

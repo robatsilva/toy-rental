@@ -190,7 +190,8 @@
                     {!! csrf_field() !!}
                     <div class="row">
                         <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
-                        <input type='hidden' name="created_at" id="created_at"class="form-control"/>
+                        <input type='hidden' name="created_at" id="created_at" class="form-control"/>
+                        <input type='hidden' name="cash_drawer" id="cash_drawer_flow" class="form-control"/>
                         <div class="form-group col-md-6">
                             <label for="input">Valor</label>
                             <input type='text' name="input" class="form-control" id='input' value="0"/>
@@ -367,6 +368,7 @@
         $('#new_input').click(function(){
             $('.kiosk_id').val($('#kiosks').val());
             $('#created_at').val($('#init').val());
+            $('#cash_drawer_flow').val($('#cash_drawer').val());
             $('#modal_input').modal('show');
             $('#input').show();
             $('#output').hide();
@@ -376,6 +378,7 @@
         $('#new_output').click(function(){
             $('.kiosk_id').val($('#kiosks').val());
             $('#created_at').val($('#init').val());
+            $('#cash_drawer_flow').val($('#cash_drawer').val());
             $('#modal_input').modal('show');
             $('#output').show();
             $('#input').hide();
@@ -598,6 +601,10 @@
             @endif
             @if(isset($close_cash))
                 modalCashClose(JSON.parse( '{!! $close_cash !!}' ));
+            @endif
+
+            @if(isset($cash['cashes_old']))
+                modalCashClose(JSON.parse( '{!! $cash["cashes_old"] !!}' ));
             @endif
 
             hideLoader();

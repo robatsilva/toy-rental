@@ -21,6 +21,7 @@ class CashController extends Controller
         $cash = new CashFlow;
         $cash->kiosk_id = $request->input('kiosk_id');
         $cash->employe_id = $user->id;
+        $cash->cash_drawer_id = $request->input('cash_drawer');
         $cash->created_at = Carbon::createFromFormat('d/m/Y', $request->input('created_at'));
         $cash->input = str_replace(",",".", str_replace(".","",$request->input('input')));
         $cash->output = str_replace(",",".", str_replace(".","",$request->input('output')));

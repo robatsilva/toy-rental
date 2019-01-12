@@ -9,7 +9,12 @@
 <div class="container">
     <!--form-->
     <div class="row text-center" style="margin-bottom: 20px;">
-        {{$kiosk->name}}
+        <div>{{$kiosk->name}} - 
+        @if($cash)
+            {{ $cash->cash_drawer->name }} aberto</div>
+        @else
+            Nenhum caixa aberto</div>
+        @endif
     </div>
     <div class="row text-center" style="margin-bottom: 20px;">
         <div class="col-xs-12 col-md-12">

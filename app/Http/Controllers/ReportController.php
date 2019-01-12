@@ -11,6 +11,7 @@ use DB;
 use Auth;
 use App\Models\Rental;
 use App\Models\Employe;
+use App\User;
 use App\Models\Cash;
 use App\Models\CashFlow;
 use App\Models\CashDrawer;
@@ -120,6 +121,13 @@ class ReportController extends Controller
 
         $cashOpen = Cash::where('employe_id', $user->id)
             ->whereRaw("updated_at = created_at")
+            ->where("kiosk_id", $request->input("kiosk_id"))
+            ->first();
+        
+        $cashOpenOld = Cash::where('employe_id', $user->id)
+            ->where("created_at", "<", date("Y-m-d"))
+            ->whereRaw("updated_at = created_at")
+            ->where("kiosk_id", $request->input("kiosk_id"))
             ->first();
 
         $cashDrawerId = $cashDrawers[0]->id;
@@ -199,7 +207,7 @@ class ReportController extends Controller
         })
         ->with('employe')
         ->get();
-        
+
         $input = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
         ->whereDate('created_at', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
         ->where("cash_drawer_id", $cashDrawerId)
@@ -251,6 +259,7 @@ class ReportController extends Controller
         $cash['rentals'] = $total;
         $cash['rentals_day'] = $totalDay;
         $cash['cashes'] = $cashes;
+        $cash['cashes_old'] = $cashOpenOld;
         $cash['cash_flows'] = $cashFlows;
         $cash['cash_drawers'] = $cashDrawers;
         $cash['cash_drawer_id'] = $cashDrawerId;
@@ -358,9 +367,27 @@ class ReportController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
 
-        $cashOpen = Cash::where('employe_id', $user->id)->whereRaw('updated_at = created_at')->first();
+        $kiosks = User::find(Auth::user()->id)
+            ->kiosks()
+            ->get();
 
-        if(!$cashOpen){
+        if($user->kiosk_id)
+            $kiosk_id = $user->kiosk_id;
+        else{
+            $kiosk_id = User::find(Auth::user()->id)
+            ->kiosks()
+            ->where('kiosk_user.user_id', $user->id)
+            ->where('status', 1)
+            ->where('kiosk_user.default', "1")
+            ->first()->id;
+        }
+
+        $cashOpen = Cash::where('employe_id', $user->id)
+            ->where("kiosk_id", $kiosk_id)
+            ->whereRaw('updated_at = created_at')
+            ->first();
+
+        if($cashOpen){
             $cash['cash_drawer_id'] = $cashOpen->cash_drawer_id;
         } else {
             $cash = null;

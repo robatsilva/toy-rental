@@ -71,6 +71,7 @@ class RentalController extends Controller
         ->get();
 
         return view('rentals.list')
+            ->with('cash', $cash->first())
             ->with('kiosk', $kiosk)
             ->with('kiosk_id', $kiosk_id)
             ->with('reasons', $reasons)
@@ -83,6 +84,7 @@ class RentalController extends Controller
      */
     public function index(Request $request, $kiosk_id)
     {
+        $user = Employe::find(Auth::user()->id);
         $kiosk = Kiosk::find($kiosk_id);
         $toys = Toy::
         where('toys.kiosk_id', $kiosk_id)
@@ -99,6 +101,9 @@ class RentalController extends Controller
         ->orderBy("toys.id")
         ->get();
 
+        $cash = Cash::where('employe_id', $user->id)
+        ->whereRaw('updated_at = created_at')->get();
+
         foreach($toys as $toy){
             if($toy->rental){
                 $calc = $this->calculeRental($toy->rental->id)->getData();
@@ -109,6 +114,7 @@ class RentalController extends Controller
         if($request->header('Content-Type') == 'JSON')
             return response()->json($toys);
         return view('rentals.rentals-toys')
+            ->with('cash', $cash->first())
             ->with('kiosk', $kiosk)
             ->with('toys', $toys);
     }
