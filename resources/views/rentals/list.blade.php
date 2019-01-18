@@ -14,6 +14,7 @@
             {{ $cash->cash_drawer->name }} aberto</div>
         @else
             Nenhum caixa aberto</div>
+            <p style="color: red">*Para receber em dinheiro abra um caixa</p>
         @endif
     </div>
     <div class="row text-center" style="margin-bottom: 20px;">

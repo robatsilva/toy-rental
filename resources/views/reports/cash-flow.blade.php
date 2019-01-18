@@ -52,9 +52,9 @@
                 <div class="form-group col-md-4">
                     <label for="$cash_drawers">Caixa:</label>
                     <select name="cash_drawer" class="form-control" id="cash_drawer">
-                        @if($cash)
-                            @foreach($cash['cash_drawers'] as $drawer)
-                                <option value="{{ $drawer->id }}" {{ $cash['cash_drawer_id'] == $drawer->id ? 'selected' : '' }}> {{ $drawer->name }}</option>
+                        @if($cash_drawers)
+                            @foreach($cash_drawers['cash_drawers'] as $drawer)
+                                <option value="{{ $drawer->id }}" {{ $cash_drawers['cash_drawer_id'] == $drawer->id ? 'selected' : '' }}> {{ $drawer->name }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -222,7 +222,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Abrir/Fechar caixa</h4>
+                <h4 id="modal-abrir-fechar-title" class="modal-title">Abrir/Fechar caixa</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -481,6 +481,7 @@
     }
 
     function modalCashOpen(){
+        $('#modal-abrir-fechar-title').html("Abrir caixa");
         $('.kiosk_id').val($('#kiosks').val());
         $('.init').val($('#init').val());
         $('.cash_drawer').val($('#cash_drawer').val());
@@ -494,6 +495,7 @@
     }
 
     function modalCashClose(cash){
+        $('#modal-abrir-fechar-title').html("Fechar caixa");
         $('.kiosk_id').val($('#kiosks').val());
         $('.init').val($('#init').val());
         $('#created_at_cash').val($('#init').val());

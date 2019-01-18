@@ -164,7 +164,7 @@ class ReportController extends Controller
 
         $total = Rental::
         whereDate('init', '<=', Carbon::createFromFormat('d/m/Y', ( $request->input('init')))->format('Y-m-d'))
-            ->where("kiosk_id", $cashDrawerId)
+            ->where("kiosk_id", $request->input("kiosk_id"))
             ->where("cash_drawer_id", $cashDrawerId)
             ->where( function($query) use ($user, $request) {
                 if($request->input('check_employe')){
@@ -256,13 +256,13 @@ class ReportController extends Controller
             $haveCashOpen = $cashOpen;
         }
 
+        $cash_drawers['cash_drawers'] = $cashDrawers;
+        $cash_drawers['cash_drawer_id'] = $cashDrawerId;
         $cash['rentals'] = $total;
         $cash['rentals_day'] = $totalDay;
         $cash['cashes'] = $cashes;
         $cash['cashes_old'] = $cashOpenOld;
         $cash['cash_flows'] = $cashFlows;
-        $cash['cash_drawers'] = $cashDrawers;
-        $cash['cash_drawer_id'] = $cashDrawerId;
         $cash['input'] = $input;
         $cash['output'] = $output;
         $cash['total'] = $input - $output + $total;
@@ -272,6 +272,7 @@ class ReportController extends Controller
         $cash['total_cartao'] = $total_cartao;
         return view('reports.cash-flow')
             ->with('cash', $cash)
+            ->with('cash_drawers', $cash_drawers)
             ->with('input', $request->input())
             ->with('show_cash', $isCashOpen->isEmpty() && $user->kiosk_id)
             ->with('close_cash', $haveCashOpen);
@@ -370,6 +371,7 @@ class ReportController extends Controller
         $kiosks = User::find(Auth::user()->id)
             ->kiosks()
             ->get();
+            
 
         if($user->kiosk_id)
             $kiosk_id = $user->kiosk_id;
@@ -382,18 +384,27 @@ class ReportController extends Controller
             ->first()->id;
         }
 
+        $cashDrawers = CashDrawer::where('kiosk_id', $kiosk_id)
+                        ->where('status', 1)
+                        ->get();
+
         $cashOpen = Cash::where('employe_id', $user->id)
             ->where("kiosk_id", $kiosk_id)
             ->whereRaw('updated_at = created_at')
             ->first();
 
         if($cashOpen){
-            $cash['cash_drawer_id'] = $cashOpen->cash_drawer_id;
+            $cash_drawers['cash_drawers'] = $cashDrawers;
+            $cash_drawers['cash_drawer_id'] = $cashOpen->cash_drawer_id;
         } else {
-            $cash = null;
+            $cash_drawers = null;
         }
+            
+        $cash = null;
+        
         return view('reports.cash-flow')
             ->with('cash', $cash)
+            ->with('cash_drawers', $cash_drawers)
             ->with('input', null)
             ->with('showCash', false);
     }
@@ -407,6 +418,7 @@ class ReportController extends Controller
         if(!$cash->isEmpty()){
             return view('reports.cash-flow')
                 ->with('cash', null)
+                ->with('cash_drawers', null)
                 ->with('input', null)
                 ->with('showCash', false)
                 ->with('closeCash', true);

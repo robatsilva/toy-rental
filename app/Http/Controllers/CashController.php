@@ -39,6 +39,7 @@ class CashController extends Controller
         $cash->save();
         return view('reports.cash-flow')
         ->with('cash', null)
+        ->with('cash_drawers', null)
         ->with('input', null)
         ->with('cash_save', true);
     }
@@ -93,6 +94,7 @@ class CashController extends Controller
         // ->with('input', ['init' => $request->input('created_at')])
         return view('reports.cash-flow')
         ->with('cash', null)
+        ->with('cash_drawers', null)
         ->with('input', $request->input())
         ->with('cash_save', true);
     }

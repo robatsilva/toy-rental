@@ -224,7 +224,7 @@
             {
                 endPoint = "/rental/pause/";
                 showLoader();
-                $.post(endPoint + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(data){
+                $.post(endPoint + toy.rental.id, {_token: "{{ csrf_token() }}", now: "{{ $now }}"}, function(data){
                     hideLoader();
                     loadRentals();
                 })
@@ -273,6 +273,7 @@
             toy = JSON.parse(toy);
             toy.rental.payment_way = $(this).attr("data-value");
             toy.rental._token = "{{ csrf_token() }}";
+            toy.rental.now =  "{{ $now }}";
             showLoader();
             $.post("/rental/finish", toy.rental, function(){
                 loadRentals();

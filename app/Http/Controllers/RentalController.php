@@ -113,10 +113,12 @@ class RentalController extends Controller
 
         if($request->header('Content-Type') == 'JSON')
             return response()->json($toys);
+
         return view('rentals.rentals-toys')
             ->with('cash', $cash->first())
             ->with('kiosk', $kiosk)
-            ->with('toys', $toys);
+            ->with('toys', $toys)
+            ->with('now', Carbon::now());
     }
     
     /**
@@ -220,7 +222,13 @@ class RentalController extends Controller
     public function pause(Request $request, $id){
         $rental = Rental::find($id);
         $rental->status = "Pausado";
-        $rental->end = Carbon::now();
+
+        if( new Carbon($request->input("now")) == Carbon::now()){
+            $rental->end = Carbon::now();
+        } else {
+            $rental->end = new Carbon($request->input("now"));
+        }
+
         $rental->save();
         return;
     }
@@ -294,6 +302,15 @@ class RentalController extends Controller
         $user = Employe::find(Auth::user()->id);
 
         $rental = Rental::find($request->input('id'));
+
+        if(!$rental->end){
+            if( new Carbon($request->input("now")) == Carbon::now()){
+                $rental->end = Carbon::now();
+            } else {
+                $rental->end = new Carbon($request->input("now"));
+            }
+        }
+        $rental->save();
         
         $calc = $this->calculeRental($rental->id)->getData();
         if($request->input('payment_way')){
@@ -311,8 +328,6 @@ class RentalController extends Controller
         $rental->period_id = $calc->period->id;
         $rental->status = "Encerrado";
         $rental->employe_id = $user->id;
-        if(!$rental->end)
-            $rental->end = Carbon::now();
         
         $rental->save();
 
