@@ -68,10 +68,14 @@
                 <div class="modal-body">
                     <form id="payment-form">
                         <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="value_di">Dinheiro:</label>
-                                <input name="value_di" class="form-control money" id="value_di" placeholder="Dinheiro" required>
-                            </div>
+                            @if($cash)
+                                <div class="form-group col-md-4">
+                                    <label for="value_di">Dinheiro:</label>
+                                    <input name="value_di" class="form-control money" id="value_di" placeholder="Dinheiro" required>
+                                </div>
+                            @else
+                                <input type="hidden" value="0" name="value_di" class="form-control money" id="value_di" required>
+                            @endif
                             <div class="form-group col-md-4">
                                 <label for="value_cd">Cartão de débito:</label>
                                 <input name="value_cd" class="form-control money" id="value_cd" placeholder="Débito" required>

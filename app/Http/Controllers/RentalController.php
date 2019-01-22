@@ -57,9 +57,11 @@ class RentalController extends Controller
         }
 
         $kiosk = Kiosk::find($kiosk_id);
-        
+    
+
         $cash = Cash::where('employe_id', $user->id)
-        ->whereRaw('updated_at = created_at')->get();
+            ->where("kiosk_id", $kiosk_id)
+            ->whereRaw('updated_at = created_at')->get();
         
         if($cash->isEmpty() && $user->kiosk_id)
             return redirect('report/cash');
@@ -102,6 +104,7 @@ class RentalController extends Controller
         ->get();
 
         $cash = Cash::where('employe_id', $user->id)
+        ->where("kiosk_id", $kiosk_id)
         ->whereRaw('updated_at = created_at')->get();
 
         foreach($toys as $toy){
@@ -311,23 +314,31 @@ class RentalController extends Controller
             }
         }
         $rental->save();
+
+        $cash = Cash::where('employe_id', $user->id)
+            ->where("kiosk_id", $rental->kiosk_id)
+            ->whereRaw('updated_at = created_at')->first();
         
         $calc = $this->calculeRental($rental->id)->getData();
         if($request->input('payment_way')){
             if($request->input('payment_way') == "cc")
                 $rental->value_cc = $calc->valueTotal;
-                if($request->input('payment_way') == "cd")
+            if($request->input('payment_way') == "cd")
                 $rental->value_cd = $calc->valueTotal;
-                if($request->input('payment_way') == "di")
+            if($request->input('payment_way') == "di")
                 $rental->value_di = $calc->valueTotal;
-            } else {
-                $rental->value_cc = $request->input('value_cc');
-                $rental->value_cd = $request->input('value_cd');
-                $rental->value_di = $request->input('value_di');
+            
+        } else {
+            $rental->value_cc = $request->input('value_cc');
+            $rental->value_cd = $request->input('value_cd');
+            $rental->value_di = $request->input('value_di');
         }
         $rental->period_id = $calc->period->id;
         $rental->status = "Encerrado";
         $rental->employe_id = $user->id;
+
+        if($cash)
+            $rental->cash_drawer_id = $cash->cash_drawer->id;
         
         $rental->save();
 

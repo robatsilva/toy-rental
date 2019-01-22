@@ -9,7 +9,7 @@ ALTER TABLE `kiosks`
 	Acima excutaods ///////////////////////
 
 CREATE TABLE `cash_drawers` (
-	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`id` INT UNSIGNED NULL AUTO_INCREMENT,
 	`name` VARCHAR(50) NOT NULL,
 	PRIMARY KEY (`id`)
 )
@@ -42,7 +42,7 @@ ALTER TABLE `cash_flows`
 update cash_flows set cash_drawer_id = (select id from cash_drawers where cash_drawers.kiosk_id = cash_flows.kiosk_id);
 
 ALTER TABLE `rentals`
-	ADD COLUMN `cash_drawer_id` INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `kiosk_id`,
+	ADD COLUMN `cash_drawer_id` INT(10) UNSIGNED NULL AFTER `kiosk_id`,
 	ADD INDEX `cash_drawer_id` (`cash_drawer_id`),
 	ADD CONSTRAINT `fk_rentals_cashe_drawer` FOREIGN KEY (`cash_drawer_id`) REFERENCES `cash_drawers` (`id`);
 
