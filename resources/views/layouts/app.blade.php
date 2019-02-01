@@ -95,6 +95,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/report/cash') }}">Caixa</a></li>
                                 <li><a href="{{ url('/report') }}">Aluguéis</a></li>
+                                <li><a href="{{ url('/report/employes') }}">Funcionários</a></li>
                                 <li><a href="{{ url('/report/toys') }}">Brinquedos</a></li>
                                 <li><a href="{{ url('/report/payment-way') }}">Forma de pagamento</a></li>
                             </ul>
@@ -124,8 +125,9 @@
             </div>
         </div>
     </nav>
-
-    @yield('content')
+    <div class="container">
+        @yield('content')
+    </div>
 
     <!-- JavaScripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js" integrity="sha384-I6F5OKECLVtK/BL+8iSLDEHowSAfUo76ZL9+kGAgTRdiByINKJaqTPH/QVNS1VDb" crossorigin="anonymous"></script>

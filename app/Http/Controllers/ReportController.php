@@ -107,6 +107,40 @@ class ReportController extends Controller
             ->with('input', $request->input());
     }
     /**
+     * get total of rentals group by employe
+     */
+    public function reportByEmployes(Request $request)
+    {
+        $user = Employe::find(Auth::user()->id);
+
+        $rentals = Rental::selectRaw("*, count(id) as qtd,
+                sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay
+                    ")
+            ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+            ->where("kiosk_id",$request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
+            ->where( function($query) use ($user) {
+                if($user->kiosk_id){
+                    $query->where("employe_id", $user->id);
+                }
+            })
+            ->orderBy("init", "desc")
+            ->with("employe");
+        
+        $rentalsTotal = $rentals
+            ->count();
+
+        $rentals = $rentals
+            ->groupBy("employe_id")
+            ->get();
+
+
+        return view('reports.employe-table')
+            ->with('rentals', $rentals)
+            ->with('rentals_total', $rentalsTotal)
+            ->with('input', $request->input());
+    }
+    /**
      * get cash and cash-flow registers
      */
     public function reportByCash(Request $request)
@@ -317,6 +351,14 @@ class ReportController extends Controller
             ->with('rentals', null)
             ->with('input', null)
             ->with('resume', null);
+    }
+    
+    public function employes()
+    {
+        return view('reports.employe-table')
+            ->with('rentals', null)
+            ->with('rentals_total', null)
+            ->with('input', null);
     }
 
     public function toys()
