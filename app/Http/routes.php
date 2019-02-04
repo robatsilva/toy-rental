@@ -78,6 +78,8 @@ Route::get('/report', 'ReportController@rentals');
 Route::post('/report', 'ReportController@reportByDate');
 Route::get('/report/toys', 'ReportController@toys');
 Route::post('/report/toys', 'ReportController@reportByToys');
+Route::get('/report/employes', 'ReportController@employes');
+Route::post('/report/employes', 'ReportController@reportByEmployes');
 Route::get('/report/cash', 'ReportController@cash');
 Route::get('/report/cash/close', 'ReportController@cashClose');
 Route::post('/report/cash', 'ReportController@reportByCash');
