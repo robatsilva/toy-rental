@@ -9,12 +9,30 @@ use Auth;
 
 use App\Http\Requests;
 use App\Models\Cash;
+use App\Models\Kiosk;
 use App\Models\CashFlow;
 use App\Models\Employe;
 
 
 class CashController extends Controller
 {
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(Request $request)
+    {
+        $this->middleware('auth');
+        if($request->input("kiosk_id"))
+        {
+            $kiosk = Kiosk::find($request->input("kiosk_id"));
+            date_default_timezone_set($kiosk->timezone);
+            // dd($kiosk->timezone);
+        }
+    }
+
     public function registerCashFlow(Request $request)
     {
         $user = Employe::find(Auth::user()->id);

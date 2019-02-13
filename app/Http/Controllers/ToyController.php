@@ -17,6 +17,16 @@ use App\User;
 
 class ToyController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index()
     {
         $toys = Toy::selectRaw('toys.*, toys.status as status_toy')

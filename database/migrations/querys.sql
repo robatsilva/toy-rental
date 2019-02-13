@@ -50,3 +50,8 @@ ALTER TABLE `rentals`
 update rentals set cash_drawer_id = (select id from cash_drawers where cash_drawers.kiosk_id = rentals.kiosk_id order by id asc limit 1);
 update cashes set cash_drawer_id = (select id from cash_drawers where cash_drawers.kiosk_id = cashes.kiosk_id order by id asc limit 1);
 update cash_flows set cash_drawer_id = (select id from cash_drawers where cash_drawers.kiosk_id = cash_flows.kiosk_id order by id asc limit 1);
+
+------------------------acima em produção
+
+ALTER TABLE `kiosks`
+	ADD COLUMN `timezone` VARCHAR(50) NOT NULL DEFAULT 'America/Sao_Paulo' AFTER `payment_code`;

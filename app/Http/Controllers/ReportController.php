@@ -9,15 +9,34 @@ use Carbon\Carbon;
 
 use DB;
 use Auth;
+
 use App\Models\Rental;
 use App\Models\Employe;
 use App\User;
 use App\Models\Cash;
+use App\Models\Kiosk;
 use App\Models\CashFlow;
 use App\Models\CashDrawer;
 
 class ReportController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(Request $request)
+    {
+        $this->middleware('auth');
+        
+        if($request->input("kiosk_id"))
+        {
+            $kiosk = Kiosk::find($request->input("kiosk_id"));
+            date_default_timezone_set($kiosk->timezone);
+            // dd($kiosk->timezone);
+        }
+    }
+
     /**
      * $request has -> input() that have init and end date for report
      * $request has -> input() that have group by flag to group report on toy
@@ -28,6 +47,7 @@ class ReportController extends Controller
         $total = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
             ->where( function($query) use ($user) {
                 if($user->kiosk_id){
                     $query->where("employe_id", $user->id);
@@ -37,6 +57,7 @@ class ReportController extends Controller
         $total += Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
             ->where( function($query) use ($user) {
                 if($user->kiosk_id){
                     $query->where("employe_id", $user->id);
@@ -46,6 +67,7 @@ class ReportController extends Controller
         $total += Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
             ->where( function($query) use ($user) {
                 if($user->kiosk_id){
                     $query->where("employe_id", $user->id);
@@ -322,16 +344,19 @@ class ReportController extends Controller
         $total_cc = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
             ->sum("value_cc");
         
         $total_cd = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
             ->sum("value_cd");
 
         $total_di = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
+            ->where("status", "!=", "Cancelado")
             ->sum("value_di");
         
         $total_period = $total_cc + $total_cd + $total_di;

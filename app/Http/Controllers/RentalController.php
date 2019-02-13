@@ -57,7 +57,7 @@ class RentalController extends Controller
         }
 
         $kiosk = Kiosk::find($kiosk_id);
-    
+        date_default_timezone_set($kiosk->timezone);
 
         $cash = Cash::where('employe_id', $user->id)
             ->where("kiosk_id", $kiosk_id)
@@ -88,6 +88,8 @@ class RentalController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
         $kiosk = Kiosk::find($kiosk_id);
+        date_default_timezone_set($kiosk->timezone);
+
         $toys = Toy::
         where('toys.kiosk_id', $kiosk_id)
         ->where('toys.status', 1)
@@ -159,6 +161,7 @@ class RentalController extends Controller
             $customer = Customers::find($request->input('customer.id'));
         }
         $kiosk = Kiosk::find($request->input('kiosk_id'));
+        date_default_timezone_set($kiosk->timezone);
         
         $rental = Rental::where('toy_id', $request->input('toy_id'))
             ->where("status", "Alugado")

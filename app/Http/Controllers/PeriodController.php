@@ -14,6 +14,18 @@ use App\User;
 
 class PeriodController extends Controller
 {
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    
     public function index()
     {
         $periods = Period::selectRaw('periods.*, periods.status as status_period')

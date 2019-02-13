@@ -13,6 +13,17 @@ use App\User;
 
 class KioskController extends Controller
 {
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -108,6 +119,8 @@ class KioskController extends Controller
     public function edit($id)
     {
         $kiosk = Kiosk::find($id);
+        date_default_timezone_set($kiosk->timezone);
+
         return view('kiosks/form')
             ->with('user', Auth::user())
             ->with("kiosk", $kiosk);
@@ -123,6 +136,8 @@ class KioskController extends Controller
     public function update(Request $request, $id)
     {
         $kiosk = Kiosk::find($id);
+        date_default_timezone_set($kiosk->timezone);
+
         $kiosk->name = $request->input('name');
         $kiosk->tolerance = $request->input('tolerance');
         $kiosk->cnpj = $request->input('cnpj');
@@ -146,6 +161,8 @@ class KioskController extends Controller
     public function toogle($id)
     {
         $kiosk = Kiosk::find($id);
+        date_default_timezone_set($kiosk->timezone);
+
         if($kiosk->status)
             $kiosk->status = 0;
         else
