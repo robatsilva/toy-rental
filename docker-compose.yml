@@ -9,13 +9,13 @@ volumes:
 
 services:
   # MySQL (5.7)
-  mysql:
-    image: ambientum/mysql:5.7
-    container_name: rental-toy-mysql
+  mysql-p:
+    image: mysql:5.7
+    container_name: rental-toy-mysql-p
     volumes:
       - rental-toy-mysql-data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=rental-toy
       - MYSQL_DATABASE=rental-toy
@@ -23,12 +23,12 @@ services:
       - MYSQL_PASSWORD=rental-toy
 
   # PHP (with Caddy)
-  app:
+  app-p:
     image: ambientum/php:7.1-caddy
-    container_name: rental-toy-app
+    container_name: rental-toy-app-p
     volumes:
       - .:/var/www/app
     ports:
-      - "80:8080"
+      - "8080:8080"
     links:
-      - mysql
+      - mysql-p

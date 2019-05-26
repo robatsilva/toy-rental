@@ -207,13 +207,13 @@ class RentalController extends Controller
         $period = Period::where("id", ">", $rental->period_id)
                     ->where('status', 1)
                     ->where("kiosk_id", $rental->kiosk_id)
-                    ->orderBy("id")->first();
+                    ->orderBy("time")->first();
         if($period)
             $rental->period_id = $period->id;
         else{
             $period = Period::where("kiosk_id", $rental->kiosk_id)
             ->where('status', 1)
-            ->orderBy("id")->first();
+            ->orderBy("time")->first();
             
             $rental->period_id = $period->id;
         }
@@ -428,7 +428,7 @@ class RentalController extends Controller
             $time_total = (new Carbon($rental->init))->diffInMinutes(Carbon::now());
         
         $time_considered = $time_total;
-        if($time_total > $rental->extra_time)
+        if($time_total > $rental->extra_timde)
             $time_considered = $time_total - $rental->extra_time; 
         
         $period = Period::where('time', '<=', $time_considered)

@@ -54,6 +54,7 @@ class PeriodController extends Controller
     {
         $periods = Period::where('kiosk_id', $kiosk_id)
         ->where('status', 1)
+        -orderBy('time')
         ->get();
         return response()->json($periods);
     }
