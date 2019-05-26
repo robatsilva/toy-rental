@@ -204,7 +204,8 @@ class RentalController extends Controller
      */
     public function nextPeriod(Request $request, $id){
         $rental = Rental::find($id);
-        $period = Period::where("id", ">", $rental->period_id)
+        $currentPeriod = Period::find($rental->period_id);
+        $period = Period::where("time", ">", $currentPeriod->time)
                     ->where('status', 1)
                     ->where("kiosk_id", $rental->kiosk_id)
                     ->orderBy("time")->first();
