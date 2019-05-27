@@ -428,21 +428,26 @@ class RentalController extends Controller
         else
             $time_total = (new Carbon($rental->init))->diffInMinutes(Carbon::now());
         
+        //extra time é o tempo extra dado ou tempo pausado
         $time_considered = $time_total;
-        if($time_total > $rental->extra_timde)
+        if($time_total > $rental->extra_time)
             $time_considered = $time_total - $rental->extra_time; 
         
-        $period = Period::where('time', '<=', $time_considered)
-            ->where('kiosk_id', $rental->kiosk_id)
-            ->where('status', 1)
-            ->orderBy('time', 'desc')
-            ->first();
+        $periodSelected = Period::find($rental->period_id);
 
-        // if(!$period)
-        //     $period = Period::
-        //                 where('kiosk_id', $rental->kiosk_id)
-        //                 ->orderBy('time', 'asc')->first();
+        // Se o tempo selecionado for menor que o tempo decorrido
+        // não busca tempo abaixo
+        $period = null;
+        if($periodSelected->time < $time_considered){
+            //obtem o periodo de tempo abaixo do tempo decorrido
+            $period = Period::where('time', '<=', $time_considered)
+                ->where('kiosk_id', $rental->kiosk_id)
+                ->where('status', 1)
+                ->orderBy('time', 'desc')
+                ->first();
+        }
 
+        //obtem o periodo de tempo acima do decorrido
         $next_period = Period::where('time', '>=', $time_considered)
             ->where('kiosk_id', $rental->kiosk_id)
             ->where('status', 1)
@@ -457,14 +462,22 @@ class RentalController extends Controller
                 $timeExceeded = $time_considered - $period->time;
                 $valueExceeded = $timeExceeded * $rental->extra_value;
             }
-            
-            $valueTotal = $period->value + $valueExceeded;
-        } else {
-            $valueTotal = $time_considered * $rental->extra_value;
-        }
 
-        if($next_period && ($valueTotal > $next_period->value))
-            $valueTotal = $next_period->value;
+            $valueTotal = $period->value + $valueExceeded;
+            // Se valor calculado for maior que o valor do próximo periodo, considera o valor do próximo
+            // Melhor para o cliente
+            if($next_period && ($valueTotal > $next_period->value))
+                $valueTotal = $next_period->value;
+
+        } else {
+            // Se não tem periodo abaixo do tempo decorrido
+            // A linha comentada abaixo calcula o melhor para o cliente, tempo proporcional
+            // $valueTotal = $time_considered * $rental->extra_value;
+
+            // Seta o valor mínimo o do período selecionado
+            $valueTotal = $periodSelected->value;
+
+        }
 
         $data["rental"] = $rental;
         $data["timeTotal"] = $time_total;
