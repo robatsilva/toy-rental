@@ -145,7 +145,7 @@ class ReportController extends Controller
             ->where("status", "!=", "Cancelado")
             ->where( function($query) use ($user) {
                 if($user->kiosk_id){
-                    $query->where("employe_id", $user->id);
+                    $query->where("employe_init_id", $user->id);
                 }
             })
             ->orderBy("init", "desc")
@@ -155,7 +155,7 @@ class ReportController extends Controller
             ->count();
 
         $rentals = $rentals
-            ->groupBy("employe_id")
+            ->groupBy("employe_init_id")
             ->get();
 
 

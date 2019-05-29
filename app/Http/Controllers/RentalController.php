@@ -189,6 +189,7 @@ class RentalController extends Controller
             $rental->extra_time = 0;
             $rental->extra_value = $kiosk->extra_value;
             $rental->employe_id = $user->id;
+            $rental->employe_init_id = $user->id;
             $rental->init = Carbon::now();
             $rental->status = "Alugado";
             $rental->save();

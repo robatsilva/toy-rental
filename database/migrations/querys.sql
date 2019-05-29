@@ -55,3 +55,10 @@ update cash_flows set cash_drawer_id = (select id from cash_drawers where cash_d
 
 ALTER TABLE `kiosks`
 	ADD COLUMN `timezone` VARCHAR(50) NOT NULL DEFAULT 'America/Sao_Paulo' AFTER `payment_code`;
+
+
+--------------------acima executado
+ALTER TABLE `rentals`
+	ADD COLUMN `employe_init_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `employe_id`;
+
+UPDATE rentals SET employe_init_id = employe_id;
