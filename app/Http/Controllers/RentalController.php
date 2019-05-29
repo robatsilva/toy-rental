@@ -431,8 +431,10 @@ class RentalController extends Controller
         
         //extra time é o tempo extra dado ou tempo pausado
         $time_considered = $time_total;
-        if($time_total > $rental->extra_time)
+        if($time_total >= $rental->extra_time)
             $time_considered = $time_total - $rental->extra_time; 
+        else
+            $time_considered = 0;
         
         $periodSelected = Period::find($rental->period_id);
 
