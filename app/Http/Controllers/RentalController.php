@@ -461,7 +461,7 @@ class RentalController extends Controller
         $valueExceeded = 0;
 
         if($period){
-            if($time_considered > ($rental->tolerance + $period->time)){
+            if($time_considered > ($rental->tolerance + $periodSelected->time)){
                 $timeExceeded = $time_considered - $period->time;
                 $valueExceeded = $timeExceeded * $rental->extra_value;
             }
