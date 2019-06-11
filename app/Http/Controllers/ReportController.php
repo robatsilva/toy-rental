@@ -321,10 +321,10 @@ class ReportController extends Controller
         $cash['cash_flows'] = $cashFlows;
         $cash['input'] = $input;
         $cash['output'] = $output;
-        $cash['total'] = $input - $output + $total;
+        $cash['total'] = number_format((float)($input - $output + $total), 2, '.', '');
         $cash['input_day'] = $inputDay;
         $cash['output_day'] = $outputDay;
-        $cash['total_day'] = $inputDay - $outputDay + $totalDay;
+        $cash['total_day'] = number_format((float)($inputDay - $outputDay + $totalDay), 2, '.', '');
         $cash['total_cartao'] = $total_cartao;
         return view('reports.cash-flow')
             ->with('cash', $cash)
