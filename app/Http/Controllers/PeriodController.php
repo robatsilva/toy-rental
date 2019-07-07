@@ -52,6 +52,8 @@ class PeriodController extends Controller
      */
     public function getByKioskId($kiosk_id)
     {
+        SecurityCheckController::securityCheck($id);
+
         $periods = Period::where('kiosk_id', $kiosk_id)
         ->where('status', 1)
         -orderBy('time')
@@ -82,6 +84,8 @@ class PeriodController extends Controller
      */
     public function store(Request $request)
     {
+        SecurityCheckController::securityCheck($request->input('kiosk_id'));
+
         $period = new Period;
         $period->time = $request->input('time');
         $period->value = $request->input('value');
@@ -109,10 +113,12 @@ class PeriodController extends Controller
      */
     public function edit($id)
     {
+        $period = Period::find($id);
+
+        SecurityCheckController::securityCheck($period->kiosk_id);
         $kiosks = User::find(Auth::user()->id)
                 ->kiosks()
                 ->where('status', 1)->get();
-        $period = Period::find($id);
         return view('periods.form')
             ->with('kiosks', $kiosks)
             ->with("period", $period);
@@ -128,6 +134,8 @@ class PeriodController extends Controller
     public function update(Request $request, $id)
     {
         $period = Period::find($id);
+        SecurityCheckController::securityCheck($period->kiosk_id);
+
         $period->time = $request->input('time');
         $period->value = $request->input('value');
         $period->kiosk_id = $request->input('kiosk_id');
@@ -144,6 +152,8 @@ class PeriodController extends Controller
     public function toogle($id)
     {
         $period = Period::find($id);
+        SecurityCheckController::securityCheck($period->kiosk_id);
+        
         if($period->status)
             $period->status = 0;
         else

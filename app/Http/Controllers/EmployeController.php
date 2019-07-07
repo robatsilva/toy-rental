@@ -54,6 +54,10 @@ class EmployeController extends Controller
 
     public function store(Request $request)
     {
+        SecurityCheckController::securityCheck($request->input('kiosk_id'));
+        if(!Employe::where('email', $request->input('email'))->get()->isEmpty())
+            return redirect('employe/create')
+                ->withErrors(['email' => 'Este e-mail já está cadastrado']);
         $employe = new Employe;
         $employe->name = $request->input('name');
         $employe->password = bcrypt($request->input('password'));
@@ -82,10 +86,12 @@ class EmployeController extends Controller
      */
     public function edit($id)
     {
+        $employe = Employe::find($id);
+        SecurityCheckController::securityCheck($employe->kiosk_id);
+
         $kiosks = User::find(Auth::user()->id)
                 ->kiosks()
                 ->where('status', 1)->get();
-        $employe = Employe::find($id);
         return view('employes.register')
             ->with('kiosks', $kiosks)
             ->with("employe", $employe);
@@ -101,6 +107,9 @@ class EmployeController extends Controller
     public function update(Request $request, $id)
     {
         $employe = Employe::find($id);
+        SecurityCheckController::securityCheck($employe->kiosk_id);
+        SecurityCheckController::securityCheck($request->input('kiosk_id'));
+
         $employe->name = $request->input('name');
         if($request->input('password'))
             $employe->password = bcrypt($request->input('password'));
@@ -119,6 +128,8 @@ class EmployeController extends Controller
     public function toogle($id)
     {
         $employe = Employe::find($id);
+        SecurityCheckController::securityCheck($employe->kiosk_id);
+        
         if($employe->status)
             $employe->status = 0;
         else

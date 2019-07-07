@@ -26,6 +26,8 @@ Route::get('/', 'RentalController@home');
 
 Route::auth();
 
+Route::get('/unauthorized', 'SecurityCheckController@unauthorized');
+
 Route::get('/tutorials', 'HomeController@tutorials');
 
 Route::get('/cadastro', 'RegisterController@index');

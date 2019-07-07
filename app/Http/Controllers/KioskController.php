@@ -119,6 +119,7 @@ class KioskController extends Controller
     public function edit($id)
     {
         $kiosk = Kiosk::find($id);
+        SecurityCheckController::securityCheck($id);
         date_default_timezone_set($kiosk->timezone);
 
         return view('kiosks/form')
@@ -135,6 +136,8 @@ class KioskController extends Controller
      */
     public function update(Request $request, $id)
     {
+        SecurityCheckController::securityCheck($id);
+
         $kiosk = Kiosk::find($id);
         date_default_timezone_set($kiosk->timezone);
 
@@ -160,6 +163,8 @@ class KioskController extends Controller
      */
     public function toogle($id)
     {
+        SecurityCheckController::securityCheck($id);
+
         $kiosk = Kiosk::find($id);
         date_default_timezone_set($kiosk->timezone);
 
@@ -173,6 +178,8 @@ class KioskController extends Controller
 
     public function setDefault($id)
     {
+        SecurityCheckController::securityCheck($id);
+
         $kioskDefault = User::find(Auth::user()->id)
                         ->kiosks()
                         ->where("kiosk_user.default", 1)

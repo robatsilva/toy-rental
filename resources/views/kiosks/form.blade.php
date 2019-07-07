@@ -157,8 +157,8 @@
 </div>
 @endsection
 @section('scripts')
-<script type="text/javascript" src=
-"https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"></script>
+<!-- <script type="text/javascript" src=
+"https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"></script> -->
 
 <script>
     var creditCardBrands;
@@ -174,113 +174,113 @@
         $('#area_code').mask('00');
         $('#card_phone').mask('00 000000000');
         $('#postalcode').mask('00000-000');
-        showLoader();
-        $.get('/payment/session', function(data){
-            PagSeguroDirectPayment.setSessionId(data.id);
-            PagSeguroDirectPayment.getPaymentMethods({
-            amount: 120.00,
-            success: function(response) {
-                hideLoader();
-                creditCardBrands = $.map(response.paymentMethods.CREDIT_CARD.options, function(el) { return el });
-            },
-            error: function(response) {
-                alert(JSON.stringify(response));
-                //tratamento do erro
-            }
-        },'JSON');
+        // showLoader();
+        // $.get('/payment/session', function(data){
+        //     PagSeguroDirectPayment.setSessionId(data.id);
+        //     PagSeguroDirectPayment.getPaymentMethods({
+        //     amount: 120.00,
+        //     success: function(response) {
+        //         hideLoader();
+        //         creditCardBrands = $.map(response.paymentMethods.CREDIT_CARD.options, function(el) { return el });
+        //     },
+        //     error: function(response) {
+        //         alert(JSON.stringify(response));
+        //         //tratamento do erro
+        //     }
+        // },'JSON');
 
-        $("input#card_number").keyup(function(){
-            if($("input#card_number").val().length >= 6){
-                PagSeguroDirectPayment.getBrand({
-                cardBin: $("input#card_number").val().replace(" ", ""),
-                success: function(response) {
-                    creditCardBrands.forEach(function(c){
-                        if(c.name == response.brand.name.toUpperCase()){
-                            creditCardBrand = c.name;
-                            $('#card_img').attr('src', 'https://stc.pagseguro.uol.com.br/' + c.images.MEDIUM.path);
-                            $('#card_ccv').attr('placeholder', response.brand.cvvSize == '3' ? 'xxx' : 'xxxx');
-                        }
-                    });
-                },
-                error: function(response) {
-                    //tratamento do erro
-                },
-                complete: function(response) {
-                    //tratamento comum para todas chamadas
-                }
-            });
-            }
-        });
+        // $("input#card_number").keyup(function(){
+        //     if($("input#card_number").val().length >= 6){
+        //         PagSeguroDirectPayment.getBrand({
+        //         cardBin: $("input#card_number").val().replace(" ", ""),
+        //         success: function(response) {
+        //             creditCardBrands.forEach(function(c){
+        //                 if(c.name == response.brand.name.toUpperCase()){
+        //                     creditCardBrand = c.name;
+        //                     $('#card_img').attr('src', 'https://stc.pagseguro.uol.com.br/' + c.images.MEDIUM.path);
+        //                     $('#card_ccv').attr('placeholder', response.brand.cvvSize == '3' ? 'xxx' : 'xxxx');
+        //                 }
+        //             });
+        //         },
+        //         error: function(response) {
+        //             //tratamento do erro
+        //         },
+        //         complete: function(response) {
+        //             //tratamento comum para todas chamadas
+        //         }
+        //     });
+        //     }
+        // });
 
-        $("#card_type_doc").change(function(){
-            if($(this).val() == 'CNPJ'){
-                $('#card_doc').mask('00.000.000/0000-00');
-            } else {
-                $('#card_doc').mask('000.000.000-98');
-            }
-        });
+        // $("#card_type_doc").change(function(){
+        //     if($(this).val() == 'CNPJ'){
+        //         $('#card_doc').mask('00.000.000/0000-00');
+        //     } else {
+        //         $('#card_doc').mask('000.000.000-98');
+        //     }
+        // });
         $("#salvar").click(function(){
             showLoader();
-            @if(!$kiosk)
-            var param = {
-                cardNumber: $("input#card_number").val().replace(new RegExp(" ", 'g'), ""),
-                cvv: $("input#card_ccv").val(),
-                expirationMonth: $("input#card_date").val().substr(0,2),
-                expirationYear: $("input#card_date").val().substr(3,4),
-                success: function(response) {
-                    $("#token").val(response.card.token);
-                    $("#hash").val(PagSeguroDirectPayment.getSenderHash());
-                    var body = $("#form-kiosk").serialize();
-                    console.log("sucess");
-                    console.log(response);
-                    $.post('/payment/pre-approvals', body ,function(data){
-                        hideLoader();
-                        try{
-                            if(JSON.parse(data).error){
-                                var erros = "";
-                                Object.values(JSON.parse(data).errors).forEach(function(erro){
-                                    erros +=  " - " + erro;
-                                })
-                                alert(erros);
-                                return;
-                            }
-                            if(JSON.parse(data).code){
-                                $("#payment_code").val(JSON.parse(data).code);
-                                alert('Cadastro efetuado com sucesso!');
-                            }
-                            else{
-                                alert('Ocorreu um erro desconhecido no pagamento');
-                                alert('Seu quiosque será cadastrado e entraremos em contato para combinar o pagamento');
-                            }
-                        } catch(e){
-                            alert('Ocorreu um erro desconhecido no pagamento');
-                            alert('Seu quiosque será cadastrado e entraremos em contato para combinar o pagamento');
-                        }
-                        $("#form-kiosk").submit();
-                    })
-                    .fail(function(xhr, status, error) {
-                        hideLoader();
-                        alert(status + ' - ' + error);
-                    });
+            $("#form-kiosk").submit();
+            // @if(!$kiosk)
+            // var param = {
+                // cardNumber: $("input#card_number").val().replace(new RegExp(" ", 'g'), ""),
+                // cvv: $("input#card_ccv").val(),
+                // expirationMonth: $("input#card_date").val().substr(0,2),
+                // expirationYear: $("input#card_date").val().substr(3,4),
+                // success: function(response) {
+                    // var body = $("#form-kiosk").serialize();
+                    // $("#token").val(response.card.token);
+                    // $("#hash").val(PagSeguroDirectPayment.getSenderHash());
+                    // console.log("sucess");
+                    // console.log(response);
+                    // $.post('/payment/pre-approvals', body ,function(data){
+                    //     hideLoader();
+                    //     try{
+                    //         if(JSON.parse(data).error){
+                    //             var erros = "";
+                    //             Object.values(JSON.parse(data).errors).forEach(function(erro){
+                    //                 erros +=  " - " + erro;
+                    //             })
+                    //             alert(erros);
+                    //             return;
+                    //         }
+                    //         if(JSON.parse(data).code){
+                    //             $("#payment_code").val(JSON.parse(data).code);
+                    //             alert('Cadastro efetuado com sucesso!');
+                    //         }
+                    //         else{
+                    //             alert('Ocorreu um erro desconhecido no pagamento');
+                    //             alert('Seu quiosque será cadastrado e entraremos em contato para combinar o pagamento');
+                    //         }
+                    //     } catch(e){
+                    //         alert('Ocorreu um erro desconhecido no pagamento');
+                    //         alert('Seu quiosque será cadastrado e entraremos em contato para combinar o pagamento');
+                    //     }
+                        // $("#form-kiosk").submit();
+                    // })
+                    // .fail(function(xhr, status, error) {
+                    //     hideLoader();
+                    //     alert(status + ' - ' + error);
+                    // });
                     
-                },
-                error: function(response) {
-                    alert(JSON.stringify(response));
-                    hideLoader();
-                    console.log("error");
-                    console.log(response);
+                // },
+                // error: function(response) {
+                //     alert(JSON.stringify(response));
+                //     hideLoader();
+                //     console.log("error");
+                //     console.log(response);
 
-                }
-            }
+                // }
+            // }
 
-            PagSeguroDirectPayment.createCardToken(param);
-            @else
-                $("#form-kiosk").submit();
-            @endif
+            // PagSeguroDirectPayment.createCardToken(param);
+            // @else
+            //     $("#form-kiosk").submit();
+            // @endif
 
         });
     });
 
-});
 </script>
 @endsection

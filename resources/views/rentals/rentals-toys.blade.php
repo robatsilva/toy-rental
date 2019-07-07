@@ -38,6 +38,7 @@
         content:"x";
     }
     .toy-img{
+        min-height: 80px;
         max-height: 80px;
     }
     .toy-data{
@@ -94,10 +95,15 @@
         @endif
         <div class="card" @if($toy->rental && $toy->rental->period->time < $toy->rental->time_diff) style="background-color: #ffa1a1" @endif>
             <div class="toy-data"> 
-                <img 
+                <img hidden alt="Imagem indisponível"
+                    data-id="{{ $toy->id }}"
                     src="{{ $toy->image ? '/images/toys-img/' . $toy->image : '/images/imagem_indisponivel.png' }}" 
-                    class="img-responsive center-block toy-img"/>
-                <div class="text-center">{{ $toy->description }}</div> 
+                    class="img-responsive center-block toy-img toy-img-real"/>
+                <img
+                    id="toy-img-default-{{ $toy->id }}"
+                    src="/images/imagem_indisponivel.png" 
+                    class="img-responsive center-block toy-img toy-img-default"/>
+                <div class="text-center toy-description">{{ $toy->description }}</div> 
                 @if($toy->rental)
                     <div class="btn-customer text-center"><b>{{ $toy->rental->customer->name }}</b></div> 
                     <div class="btn-period col-xs-6 toy-row">
@@ -137,13 +143,24 @@
 @endforeach
 
 <script>
+    $(".toy-img-real").hide();
+    $(".toy-img-default").show();
+
     $(document).ready(function(){
         //Listeners
+        
         initListeners();
     });
 
     function initListeners(){
-        $(".toy-img").dblclick(function(){
+        $('.toy-img-real').on('load', function(){
+            // hide/remove the loading image
+            $(this).show();
+            var id = $(this).attr('data-id');
+            $("#toy-img-default-" + id).hide();
+        });
+
+        $(".toy-img, toy-description").dblclick(function(){
             toy = $(this).parent().parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
             if(toy.rental || !$("#name").val()){
@@ -184,7 +201,6 @@
                     $("#rental-tip").html("");
                 }
                 // validateCustomer();
-                hideLoader();
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
@@ -197,7 +213,6 @@
             showLoader();
             $.post("/rental/next-period/" + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(){
                 loadRentals();
-                hideLoader();
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
@@ -225,7 +240,6 @@
                 endPoint = "/rental/pause/";
                 showLoader();
                 $.post(endPoint + toy.rental.id, {_token: "{{ csrf_token() }}", now: "{{ $now }}"}, function(data){
-                    hideLoader();
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
@@ -240,7 +254,6 @@
                 endPoint = "/rental/start/";
                 showLoader();
                 $.post(endPoint + toy.rental.id, {_token: "{{ csrf_token() }}"}, function(data){
-                    hideLoader();
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
@@ -257,7 +270,6 @@
                 endPoint = "/rental/back/";
                 showLoader();
                 $.get(endPoint + toy.id, {_token: "{{ csrf_token() }}"}, function(data){
-                    hideLoader();
                     loadRentals();
                 })
                 .fail(function(xhr, status, error) {
@@ -277,7 +289,6 @@
             showLoader();
             $.post("/rental/finish", toy.rental, function(){
                 loadRentals();
-                hideLoader();
             })
             .fail(function(xhr, status, error) {
                 hideLoader();

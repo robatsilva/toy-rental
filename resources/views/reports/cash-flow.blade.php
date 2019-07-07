@@ -404,6 +404,7 @@
         });
         
         $('#cash-form').submit(function(e){
+            showLoader();
             if(!validateDate($('#init').val())){
                 alert('Data inválida');
                 e.preventDefault();
@@ -580,10 +581,10 @@
     {
         showLoader();
         $.get("/kiosk/list", function(data){
-            hideLoader();
             kioskResponse(data);
         })
         .fail(function(xhr, status, error) {
+            hideLoader();
             alert(status + ' - ' + error);
         });
     }
@@ -608,6 +609,7 @@
             }
             
             @if(isset($cash_save) || !$cash)
+                showLoader();
                 $('#cash-form').submit();
             @endif
             
@@ -621,7 +623,9 @@
             @if(isset($cash['cashes_old']))
                 modalCashClose(JSON.parse( '{!! $cash["cashes_old"] !!}' ));
             @endif
-
+            @if(isset($cash_save) || !$cash)
+                return;
+            @endif
             hideLoader();
             
         }

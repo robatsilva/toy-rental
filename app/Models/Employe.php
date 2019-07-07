@@ -30,4 +30,9 @@ class Employe extends Authenticatable
         return $this->belongsTo('App\Models\Kiosk');
     }
 
+    public function kiosks()
+    {
+        return $this->belongsToMany('App\Models\Kiosk')->withPivot('default');
+    }
+
 }

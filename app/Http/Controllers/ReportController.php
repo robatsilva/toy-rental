@@ -31,6 +31,8 @@ class ReportController extends Controller
         
         if($request->input("kiosk_id"))
         {
+            SecurityCheckController::securityCheck($request->input('kiosk_id'));
+            
             $kiosk = Kiosk::find($request->input("kiosk_id"));
             date_default_timezone_set($kiosk->timezone);
             // dd($kiosk->timezone);
@@ -44,6 +46,12 @@ class ReportController extends Controller
     public function reportByDate(Request $request)
     {
         $user = Employe::find(Auth::user()->id);
+        if($user->type == '3'){
+            $user->kiosk_id = 0;
+            $request->merge(['init' => date('d/m/Y')]);
+            $request->merge(['end' => date('d/m/Y')]);
+        }
+
         $total = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))

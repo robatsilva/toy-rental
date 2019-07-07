@@ -52,6 +52,7 @@ class ToyController extends Controller
      */
     public function getByKioskId($kiosk_id)
     {
+        SecurityCheckController::securityCheck($kiosk_id);
         $toys = Toy::where('kiosk_id', $kiosk_id)
         ->where('status', 1)
         ->whereNotExists(function($query)
@@ -89,6 +90,7 @@ class ToyController extends Controller
      */
     public function store(Request $request)
     {
+        SecurityCheckController::securityCheck($request->input('kiosk_id'));
         $toy = new Toy;
         $toy->code = $request->input('code');
         $toy->description = $request->input('description');
@@ -128,10 +130,12 @@ class ToyController extends Controller
      */
     public function edit($id)
     {
+        $toy = Toy::find($id);
+        SecurityCheckController::securityCheck($toy->kiosk_id);
+
         $kiosks = User::find(Auth::user()->id)
                 ->kiosks()
                 ->where('status', 1)->get();
-        $toy = Toy::find($id);
         return view('toys.form')
             ->with('kiosks', $kiosks)
             ->with("toy", $toy);
@@ -147,6 +151,8 @@ class ToyController extends Controller
     public function update(Request $request, $id)
     {
         $toy = Toy::find($id);
+        SecurityCheckController::securityCheck($toy->kiosk_id);
+        SecurityCheckController::securityCheck($request->input('kiosk_id'));
         $toy->code = $request->input('code');
         $toy->description = $request->input('description');
         $toy->kiosk_id = $request->input('kiosk_id');
@@ -176,6 +182,8 @@ class ToyController extends Controller
     public function toogle($id)
     {
         $toy = Toy::find($id);
+        SecurityCheckController::securityCheck($toy->kiosk_id);
+        
         if($toy->status)
             $toy->status = 0;
         else

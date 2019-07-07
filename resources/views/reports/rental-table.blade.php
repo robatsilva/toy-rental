@@ -28,6 +28,7 @@
         @else
             <input type="hidden" name="kiosk_id" value="{{ Auth::user()->kiosk_id }}">
         @endif
+        @if(Auth::user()->type != '3')
             <div class="form-group col-md-4">
                 <label for="init">Data de:</label>
                 <input type='text' name="init" value="{{ $input?$input['init']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='init'/>
@@ -36,6 +37,7 @@
                 <label for="end">Data até:</label>
                 <input type='text' name="end" value="{{ $input?$input['end']:\Carbon\Carbon::now()->format('d/m/Y') }}" class="form-control datepicker" id='end'/>
             </div>
+        @endif
         </div>
         <div class="row">
             <div class="col-md-4">

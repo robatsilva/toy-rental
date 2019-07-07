@@ -322,7 +322,7 @@
         // $('#toys').select2({
         //     theme: "bootstrap"
         // });
-
+        showLoader();
         reloadRentals();
 
         //loaders
@@ -364,6 +364,7 @@
         //$.get("/rental/" + $("#kiosks").val(), function(data){
         $.get("/rental/" + kiosk_id, function(data){
             rentalsResponse(data);
+            hideLoader();
         })
         .fail(function(xhr, status, error) {
             hideLoader();
@@ -456,7 +457,6 @@
                 $("#extra-time").html("0");
             else
                 $("#extra-time").html(Number($("#extra-time").html()) + Number(extra_time));
-            hideLoader();
             loadRentals();
         })
         .fail(function(xhr, status, error) {
@@ -494,7 +494,6 @@
         $.post("/rental/finish", toy.rental, function(){
             loadRentals();
             $("#modal-payment").modal('hide');
-            hideLoader();
         })
         .fail(function(xhr, status, error) {
             alert(status + ' - ' + error);
@@ -517,7 +516,6 @@
             $("#modal-cancel").modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-            hideLoader();
         })
         .fail(function(xhr, status, error) {
             alert(status + ' - ' + error);

@@ -30,13 +30,14 @@ class RentalController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Open home of rental screen
      */
     public function home()
     {
         $user = Employe::find(Auth::user()->id);
+
         $kiosks = User::find(Auth::user()->id)
             ->kiosks()
             ->get();
@@ -86,8 +87,12 @@ class RentalController extends Controller
      */
     public function index(Request $request, $kiosk_id)
     {
+        SecurityCheckController::securityCheck($kiosk_id);
+        
         $user = Employe::find(Auth::user()->id);
+        
         $kiosk = Kiosk::find($kiosk_id);
+
         date_default_timezone_set($kiosk->timezone);
 
         $toys = Toy::
@@ -144,6 +149,8 @@ class RentalController extends Controller
      */
     public function store(Request $request)
     {
+        SecurityCheckController::securityCheck($request->input('kiosk_id'));
+
         $user = Employe::find(Auth::user()->id);
 
         if(!$request->input('customer.id'))
@@ -204,6 +211,8 @@ class RentalController extends Controller
      * @return call the index to update rental list
      */
     public function nextPeriod(Request $request, $id){
+        SecurityCheckController::securityCheckByRental($id);
+
         $rental = Rental::find($id);
         $currentPeriod = Period::find($rental->period_id);
         $period = Period::where("time", ">", $currentPeriod->time)
@@ -228,6 +237,8 @@ class RentalController extends Controller
      * @return call the index to update rental list
      */
     public function pause(Request $request, $id){
+        SecurityCheckController::securityCheckByRental($id);
+
         $rental = Rental::find($id);
         $rental->status = "Pausado";
 
@@ -246,6 +257,8 @@ class RentalController extends Controller
      * @return call the index to update rental list
      */
     public function start(Request $request, $id){
+        SecurityCheckController::securityCheckByRental($id);
+
         $rental = Rental::find($id);
         $rental->status = "Alugado";
         
@@ -260,6 +273,8 @@ class RentalController extends Controller
     }
     
     public function back($id){
+        SecurityCheckController::securityCheckByRental($id);
+
         $rental = Rental::where('toy_id', $id)
         ->where('end', '>', Carbon::now()->subMinutes(5)->toDateTimeString())
         ->orderBy("end", "desc")
@@ -282,6 +297,8 @@ class RentalController extends Controller
      * @return call the index to update rental list
      */
     public function cancel(Request $request, $id){
+        SecurityCheckController::securityCheckByRental($id);
+
         $user = Employe::find(Auth::user()->id);
         $rental = Rental::find($id);
         $rental->reason_cancel = $request->input('reason_cancel');
@@ -307,6 +324,8 @@ class RentalController extends Controller
      * @return call the index to update rental list
      */
     public function finish(Request $request){
+        SecurityCheckController::securityCheckByRental($request->input('id'));
+        
         $user = Employe::find(Auth::user()->id);
 
         $rental = Rental::find($request->input('id'));
@@ -351,6 +370,7 @@ class RentalController extends Controller
     }
 
     public function extraTime(Request $request){
+        SecurityCheckController::securityCheckByRental($request->input('id'));
         $rental = Rental::find($request->input('id'));
         if($request->input('extra_time') == 0){
             $rental->extra_time = 0;
@@ -423,6 +443,7 @@ class RentalController extends Controller
 
     public function calculeRental($id)
     {
+        SecurityCheckController::securityCheckByRental($id);
         $rental = Rental::find($id);
         if($rental->end)
             $time_total = (new Carbon($rental->init))->diffInMinutes(new Carbon($rental->end));

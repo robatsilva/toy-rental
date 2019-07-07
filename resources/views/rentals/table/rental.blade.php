@@ -86,7 +86,6 @@
             var id = $(this).closest('tr').attr('id');
             showLoader();
             $.get("/rental/pause/" + id, function(data){
-                hideLoader();
                 loadRentals();
             })
             .fail(function(xhr, status, error) {
@@ -118,7 +117,6 @@
             showLoader();
             $.get("/rental/cancel/" + id, function(data){
                 loadRentals();
-                hideLoader();
             })
             .fail(function(xhr, status, error) {
                 alert(status + ' - ' + error);

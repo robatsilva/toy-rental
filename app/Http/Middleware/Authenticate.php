@@ -25,6 +25,14 @@ class Authenticate
             }
         }
 
+        if(Auth::user()->type == '3' 
+                && ($request->getPathInfo() != '/report' 
+                && $request->getPathInfo() != '/user' 
+                && $request->getPathInfo() != '/report/cash/close' 
+                && $request->getPathInfo() != '/user/update' 
+                && $request->getPathInfo() != '/logout'))
+            return redirect('report');
+
         return $next($request);
     }
 }

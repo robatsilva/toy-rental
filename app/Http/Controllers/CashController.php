@@ -27,6 +27,7 @@ class CashController extends Controller
         $this->middleware('auth');
         if($request->input("kiosk_id"))
         {
+            SecurityCheckController::securityCheck($request->input("kiosk_id"));
             $kiosk = Kiosk::find($request->input("kiosk_id"));
             date_default_timezone_set($kiosk->timezone);
             // dd($kiosk->timezone);
@@ -64,6 +65,7 @@ class CashController extends Controller
     
     public function deleteCashFlow($id){
         $cashFlow = CashFlow::find($id);
+        SecurityCheckController::securityCheck($cashFlow->kiosk_id);
         $cashFlow->delete();
     }
     public function registerCash(Request $request)
@@ -71,6 +73,7 @@ class CashController extends Controller
         $user = Employe::find(Auth::user()->id);
         if($request->input('id')){
             $cash = Cash::find($request->input('id'));
+            SecurityCheckController::securityCheck($cash->kiosk_id);
         }
         else{
             $cash = new Cash;
@@ -119,6 +122,7 @@ class CashController extends Controller
 
     public function deleteCash($id){
         $cash = Cash::find($id);
+        SecurityCheckController::securityCheck($cash->kiosk_id);
         $cash->delete();
     }
 
