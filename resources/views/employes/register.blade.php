@@ -80,6 +80,23 @@
                                 </select>    
                             </div>
                         </div>                        
+                        <div class="form-group">
+                            <label for="type" class="col-md-4 control-label">Permissão:</label>
+                            <div class="col-md-6">
+                                <select name="type" class="form-control" id="type">
+                                        <option value='2'
+                                            @if ($employe && $employe->type == '2')
+                                                selected="selected"
+                                            @endif
+                                        >Funcionário</option>
+                                        <option value='3'
+                                            @if ($employe && $employe->type == '3')
+                                                selected="selected"
+                                            @endif
+                                        >Relatório</option>
+                                </select>    
+                            </div>
+                        </div>                        
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
