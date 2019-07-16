@@ -273,8 +273,8 @@ class RentalController extends Controller
     }
     
     public function back($id){
-        SecurityCheckController::securityCheckByRental($id);
-
+        $toy = Toy::find($id);
+        SecurityCheckController::securityCheck($toy->kiosk_id);
         $rental = Rental::where('toy_id', $id)
         ->where('end', '>', Carbon::now()->subMinutes(5)->toDateTimeString())
         ->orderBy("end", "desc")
