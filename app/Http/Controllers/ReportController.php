@@ -48,8 +48,8 @@ class ReportController extends Controller
         $user = Employe::find(Auth::user()->id);
         if($user->type == '3'){
             $user->kiosk_id = 0;
-            $request->merge(['init' => date('d/m/Y')]);
-            $request->merge(['end' => date('d/m/Y')]);
+            // $request->merge(['init' => date('d/m/Y')]);
+            // $request->merge(['end' => date('d/m/Y')]);
         }
 
         $total = Rental::
