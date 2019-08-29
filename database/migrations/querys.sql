@@ -101,7 +101,12 @@ ADD COLUMN `employe_init_id` INT
 (10) UNSIGNED NULL DEFAULT NULL AFTER `employe_id`;
 
 UPDATE rentals SET employe_init_id = employe_id;
---------------------acima executado
 ALTER TABLE `users`
 ADD COLUMN `type` TINYINT
 (2) UNSIGNED NOT NULL DEFAULT '1' AFTER `status`;
+--------------------acima executado
+ALTER TABLE `kiosks`
+ADD COLUMN `credit_tax` DECIMAL
+(4,2) UNSIGNED NULL DEFAULT '0.00' AFTER `extra_value`,
+ADD COLUMN `debit_tax` DECIMAL
+(4,2) UNSIGNED NULL DEFAULT '0.00' AFTER `credit_tax`;

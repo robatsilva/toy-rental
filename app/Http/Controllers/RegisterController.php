@@ -6,7 +6,7 @@ use App\Http\Requests;
 use Illuminate\Http\Request;
 
 use App\Models\Kiosk;
-use App\User;
+use App\Models\User;
 use Auth;
 
 class RegisterController extends Controller

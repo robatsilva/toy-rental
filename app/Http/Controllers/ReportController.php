@@ -12,7 +12,7 @@ use Auth;
 
 use App\Models\Rental;
 use App\Models\Employe;
-use App\User;
+use App\Models\User;
 use App\Models\Cash;
 use App\Models\Kiosk;
 use App\Models\CashFlow;
@@ -347,8 +347,11 @@ class ReportController extends Controller
     public function reportByPaymentWay(Request $request)
     {
         $user = Employe::find(Auth::user()->id);
-
-
+        $kiosk = Kiosk::find($request->input("kiosk_id"));
+        $cashDrawers = CashDrawer::where('kiosk_id', $request->input("kiosk_id"))
+                        ->where('status', 1)
+                        ->get();
+                        
         $total_cc = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))
@@ -367,48 +370,108 @@ class ReportController extends Controller
             ->where("status", "!=", "Cancelado")
             ->sum("value_di");
         
-        $total_period = $total_cc + $total_cd + $total_di;
         
-        $rentals = Rental::selectRaw("*, date(init) as data_inicio, if(value_cc, 'Cartão de crédito', if(value_cd, 'Cartão de débito', if(value_di, 'Dinheiro', ''))) as payment_way,
-                sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay
-                    ")
-            ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
-            ->where("kiosk_id",$request->input("kiosk_id"))
-            ->where("status", "!=", "Cancelado")
-            ->where( function($query) use ($user) {
-                if($user->kiosk_id){
-                    $query->where("employe_id", $user->id);
-                }
-            })
-            ->orderBy("init", "desc")
-            ->groupBy("payment_way", DB::raw("date(init)"));
-        
+        $rentals = Rental::selectRaw("*, 
+            date(init) as data_inicio, 
+            if(value_cc, 'Cartão de crédito', if(value_cd, 'Cartão de débito', if(value_di, 'Dinheiro', ''))) as payment_way,
+            if(value_cc, 'CC', if(value_cd, 'CD', if(value_di, 'DI', ''))) as payment_type,
+            sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay
+        ")
+        ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+        ->where("kiosk_id",$request->input("kiosk_id"))
+        ->where("status", "!=", "Cancelado")
+        ->where( function($query) use ($user) {
+            if($user->kiosk_id){
+                $query->where("employe_id", $user->id);
+            }
+        })
+        ->orderBy("init", "desc")
+        ->groupBy("payment_way", DB::raw("date(init)"));
+    
         $rentals = $rentals
-                ->get();
-
+            ->get();
+            
         $days = Rental::selectRaw("*, date(init) as data_inicio, sum(value_cc) + sum(value_cd) + sum(value_di) as total_pay")
-            ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
-            ->where("kiosk_id",$request->input("kiosk_id"))
-            ->where("status", "!=", "Cancelado")
-            ->where( function($query) use ($user) {
-                if($user->kiosk_id){
-                    $query->where("employe_id", $user->id);
-                }
-            })
-            ->orderBy("init", "desc")
-            ->groupBy(DB::raw("date(init)"));
+        ->selectRaw("(sum(value_cc) - sum(value_cc) * " . $kiosk->credit_tax / 100 . ") + (sum(value_cd) - sum(value_cd) * " . $kiosk->debit_tax / 100 . ") + sum(value_di) as total_pay_sem_taxa")
+        ->where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+        ->where("kiosk_id",$request->input("kiosk_id"))
+        ->where("status", "!=", "Cancelado")
+        ->where( function($query) use ($user) {
+            if($user->kiosk_id){
+                $query->where("employe_id", $user->id);
+            }
+        })
+        ->orderBy("init", "desc")
+        ->groupBy(DB::raw("date(init)"));
         
         $days = $days
-                ->get();
-
+            ->get();
+            
+        $cash_query = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
+        ->where(DB::raw('date(created_at)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
+        ->where( function($query) use ($user, $request) {
+            if($request->input('check_employe')){
+                $query->where("employe_id", $user->id);
+            }
+        });
+        
+        $cash_input = $cash_query->sum('input');
+        $cash_output = $cash_query->sum('output');
+        
+        $cash_query->groupBy(DB::raw("date(created_at)"));
+        
+        $cash_input_days = clone($cash_query);
+        $cash_input_days = $cash_input_days->where('input', '>', '0')
+        ->select(DB::raw("*, sum(input) as input"))
+        ->get();
+        
+        $cash_output_days = clone($cash_query);
+        $cash_output_days = $cash_output_days->where('output', '>', '0')
+        ->select(DB::raw("*, sum(output) as output"))
+        ->get();
+        
+        $days->each(function ($day) use ($cash_input_days, $cash_output_days) {
+            $input_day = $cash_input_days->filter(function($item) use ($day) {
+                return $item->created_at->format('Y-m-d') == Carbon::createFromFormat('Y-m-d H:i:s', $day->init)->format('Y-m-d');
+            })->first();
+            $day->setAttribute('total_liquido', $day->total_pay);
+            $day->setAttribute('total_liquido_sem_taxa', $day->total_pay_sem_taxa);
+            if($input_day){
+                $day->setAttribute('input', $input_day->input);
+                $day->setAttribute('total_liquido', $input_day->input + $day->total_liquido);
+                $day->setAttribute('total_liquido_sem_taxa', $input_day->input + $day->total_liquido_sem_taxa);
+            }
+            
+            $output_day = $cash_output_days->filter(function($item) use ($day) {
+                return $item->created_at->format('Y-m-d') == Carbon::createFromFormat('Y-m-d H:i:s', $day->init)->format('Y-m-d');
+            })->first();
+            if($output_day){
+                $day->setAttribute('output', $output_day->output);
+                $day->setAttribute('total_liquido', $day->total_liquido - $output_day->output);
+                $day->setAttribute('total_liquido_sem_taxa', $day->total_liquido_sem_taxa - $output_day->output);
+            }
+        });
+        $total_cc_liquid = $total_cc - ($total_cc * $kiosk->credit_tax / 100);
+        $total_cd_liquid = $total_cd - ($total_cd * $kiosk->debit_tax / 100);
+        $total_period = $total_cc + $total_cd + $total_di;
+        $total_period_sem_taxa = $total_cc_liquid + $total_cd_liquid + $total_di;
+        
         return view('reports.payment-way-table')
-            ->with('rentals', $rentals)
-            ->with('total_cc', $total_cc)
-            ->with('total_cd', $total_cd)
-            ->with('total_di', $total_di)
-            ->with('total_period', $total_period)
-            ->with('days', $days)
-            ->with('input', $request->input());
+        ->with('rentals', $rentals)
+        ->with('kiosk', $kiosk)
+        ->with('total_cc', $total_cc)
+        ->with('total_cd', $total_cd)
+        ->with('total_di', $total_di)
+        ->with('total_cc_liquid', $total_cc_liquid)
+        ->with('total_cd_liquid', $total_cd_liquid)
+        ->with('total_period', $total_period)
+        ->with('total_period_sem_taxa', $total_period_sem_taxa)
+        ->with('cash_input', $cash_input)
+        ->with('cash_output', $cash_output)
+        ->with('total_liquido', $total_period + $cash_input - $cash_output)
+        ->with('total_liquido_sem_taxa', $total_period_sem_taxa + $cash_input - $cash_output)
+        ->with('days', $days)
+        ->with('input', $request->input());
     }
 
     /**

@@ -9,7 +9,7 @@ use Session;
 use App\Http\Requests;
 
 use App\Models\Kiosk;
-use App\User;
+use App\Models\User;
 
 class KioskController extends Controller
 {
@@ -81,6 +81,8 @@ class KioskController extends Controller
         $kiosk->tolerance = $request->input('tolerance');
         $kiosk->cnpj = $request->input('cnpj');
         $kiosk->extra_value = $request->input('extra-value');
+        $kiosk->credit_tax = $request->input('credit-tax');
+        $kiosk->debit_tax = $request->input('debit_tax');
         $kiosk->address = $request->input('address');
         $kiosk->address_number = $request->input('address_number');
         $kiosk->address_district = $request->input('address_district');
@@ -145,6 +147,8 @@ class KioskController extends Controller
         $kiosk->tolerance = $request->input('tolerance');
         $kiosk->cnpj = $request->input('cnpj');
         $kiosk->extra_value = $request->input('extra-value');
+        $kiosk->credit_tax = str_replace(',', '.', $request->input('credit-tax'));
+        $kiosk->debit_tax = str_replace(',', '.', $request->input('debit-tax'));
         $kiosk->address = $request->input('address');
         $kiosk->address_number = $request->input('address_number');
         $kiosk->address_district = $request->input('address_district');

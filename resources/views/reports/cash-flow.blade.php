@@ -132,7 +132,9 @@
                                 <a value="{{ $register }}" class="close_cash">Fechar</a>
                                 @endif
                                 <a value="{{ $register }}" class="see_cash">Ver</a>
-                                <a value="{{ $register->id }}" class="delete_cash">Excluir</a>
+                                @if (!Auth::guest() && !Auth::user()->kiosk_id)
+                                    <a value="{{ $register->id }}" class="delete_cash">Excluir</a>
+                                @endIf
                             </td>
                         </tr>       
                         @endforeach
@@ -166,7 +168,9 @@
                             <td>{{ $flow->description }}</td>
                             <td>{{ $flow->input != 0? 'Entrada' : 'Saída' }}</td>
                             <td><a href="/files/{{ $flow->file }}">{{ $flow->file }}</a></td>
-                            <td><a value="{{ $flow->id }}" class="delete_cash_flow">Excluir</a></td>
+                            @if (!Auth::guest() && !Auth::user()->kiosk_id)
+                                <td><a value="{{ $flow->id }}" class="delete_cash_flow">Excluir</a></td>
+                            @EndIf
                         </tr>       
                         @endforeach
                     @endif

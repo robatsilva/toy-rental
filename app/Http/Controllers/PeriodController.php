@@ -10,7 +10,7 @@ use DB;
 
 use App\Models\Period;
 use App\Models\Kiosk;
-use App\User;
+use App\Models\User;
 
 class PeriodController extends Controller
 {

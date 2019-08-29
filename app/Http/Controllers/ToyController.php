@@ -13,7 +13,7 @@ use App\Models\Toy;
 use App\Models\Rental;
 use App\Models\Kiosk;
 use App\Models\ToyLog;
-use App\User;
+use App\Models\User;
 
 class ToyController extends Controller
 {

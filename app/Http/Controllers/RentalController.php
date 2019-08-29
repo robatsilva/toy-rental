@@ -15,7 +15,7 @@ use App\Models\Toy;
 use App\Models\Kiosk;
 use App\Models\Period;
 use App\Models\Employe;
-use App\User;
+use App\Models\User;
 use App\Models\Reason;
 use App\Models\Cash;
 

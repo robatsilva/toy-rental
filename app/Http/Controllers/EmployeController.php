@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Models\Kiosk;
-use App\User;
+use App\Models\User;
 use App\Models\Employe;
 
 class EmployeController extends Controller

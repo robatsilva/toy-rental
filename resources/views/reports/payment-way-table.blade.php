@@ -13,9 +13,14 @@
     .table_day_total{
         background-color: #EEE;
     }
+    .table-values{
+        margin: 0;
+        padding: 0;
+    }
 
     div.card-container {
         padding: 1px 10px 0 0;
+        height: 130px;
 
     }
     div.card {
@@ -23,6 +28,7 @@
         padding-top: 1px;
         padding-bottom: 10px;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+        height: 120px;
     }
     div.card h3{
         margin-top: 10px;
@@ -64,26 +70,49 @@
     <div class="row row-cards">
         <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
+                <h3>Total Dinheiro</h3>
+                <p> R$ @currency($total_di)</p>
+                
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-3 card-container">
+            <div class="card card-value">
                 <h3>Total Crédito</h3>
-                <p> R$ {{ $total_cc }}</p>
+                <p> Bruto R$ @currency($total_cc)</p>
+                <p> Sem taxa R$ @currency($total_cc_liquid)</p>
             </div>
         </div>
         <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
                 <h3>Total Débito</h3>
-                <p> R$ {{ $total_cd }}</p>
+                <p>Bruto R$ @currency($total_cd)</p>
+                <p>Sem taxa R$ @currency($total_cd_liquid)</p>
             </div>
         </div>
         <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
-                <h3>Total Dinheiro</h3>
-                <p> R$ {{ $total_di }}</p>
+                <h3>Total Aluguéis</h3>
+                <p> Bruto R$ @currency($total_period)</p>
+                <p> Sem taxa R$ @currency($total_period_sem_taxa)</p>
             </div>
         </div>
         <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
-                <h3>Total Período</h3>
-                <p> R$ {{ $total_period }}</p>
+                <h3>Entradas</h3>
+                <p> R$ @currency($cash_input)</p>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-3 card-container">
+            <div class="card card-value">
+                <h3>Saídas</h3>
+                <p> R$ @currency($cash_output)</p>
+            </div>
+        </div>
+        <div class="col-xs-6 col-md-3 card-container">
+            <div class="card card-value">
+                <h3>Total liquído</h3>
+                <p> Bruto R$ @currency($total_liquido)</p>
+                <p> Sem taxa R$ @currency($total_liquido_sem_taxa)</p>
             </div>
         </div>
     </div>
@@ -95,15 +124,31 @@
                 <thead>
                 <tr>
                     <th>Data</th>
-                    <th class="text-right">Valor total (R$)</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th class="text-right">Alugueis</th>
+                    <th class="text-right">Liquido</th>
                 </tr>
                 </thead>
                 <tbody>
                 @if(isset($days))
                     @foreach($days as $day)
                     <tr> 
-                        <td>{{ \Carbon\Carbon::parse($day->data_inicio)->format('d/m/Y') }}</td> 
-                        <td class="text-right">{{ $day->total_pay }}</td>
+                        <td>{{ \Carbon\Carbon::parse($day->data_inicio)->format('d/m/y') }}</td> 
+                        <td class="text-right">@currency($day->input)</td>
+                        <td class="text-right">@currency($day->output)</td>
+                        <td class="text-right">
+                            <div class="table-values col-md-6 col-xs-12 text-right">Bruto</div>
+                            <div class="table-values table-values-mask col-md-6 col-xs-12 text-right">@currency($day->total_pay)</div>
+                            <div class="table-values col-md-6 col-xs-12 text-right">S/ Taxa </div>
+                            <div class="table-values table-values-mask col-md-6 col-xs-12 text-right">@currency($day->total_pay_sem_taxa)</div>
+                        </td>
+                        <td class="text-right">
+                            <div class="table-values col-md-6 col-xs-12 text-right">Bruto</div>
+                            <div class="table-values col-md-6 col-xs-12 text-right">@currency($day->total_liquido)</div>
+                            <div class="table-values col-md-6 col-xs-12 text-right">S/ Taxa </div>
+                            <div class="table-values col-md-6 col-xs-12 text-right">@currency($day->total_liquido_sem_taxa)</div>
+                        </td>
                     </tr>       
                     @endforeach
                 @endif
@@ -126,7 +171,22 @@
                     <tr> 
                         <td>{{ \Carbon\Carbon::parse($rental->data_inicio)->format('d/m/Y') }}</td> 
                         <td>{{ $rental->payment_way }}</td> 
-                        <td class="text-right">{{ $rental->total_pay }}</td>
+                        <td class="text-right">
+                            @if($rental->payment_type == 'CC')
+                                <div class="table-values col-md-6 col-xs-12 text-right">Bruto</div>
+                                <div class="table-values col-md-6 col-xs-12 text-right">@currency($rental->total_pay)</div>
+                                <div class="table-values col-md-6 col-xs-12 text-right">S/ Taxa </div>
+                                <div class="table-values col-md-6 col-xs-12 text-right">@currency($rental->total_pay - ($rental->total_pay * $kiosk->credit_tax / 100))</div>
+                            @elseif($rental->payment_type == 'CD')
+                                <div class="table-values col-md-6 col-xs-12 text-right">Bruto</div>
+                                <div class="table-values col-md-6 col-xs-12 text-right">@currency($rental->total_pay)</div>
+                                <div class="table-values col-md-6 col-xs-12 text-right">S/ Taxa </div>
+                                <div class="table-values col-md-6 col-xs-12 text-right">@currency($rental->total_pay - ($rental->total_pay * $kiosk->debit_tax / 100))</div>
+                            @else
+                                @currency($rental->total_pay)
+                            @endIf
+                            
+                        </td>
                     </tr>       
                     @endforeach
                 @endif
@@ -139,7 +199,7 @@
 @section('scripts')
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' });
+        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' });    
         
         //loaders
         initLoaders();

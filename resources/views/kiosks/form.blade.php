@@ -32,6 +32,14 @@
                         <label for="extra-value">R$ minuto extra:</label>
                         <input name="extra-value" class="form-control decimal" value="{{$kiosk?$kiosk->extra_value:''}}" id="extra-value">
                     </div>
+                    <div class="form-group col-md-2">
+                        <label for="credit-tax">Taxa crédito:</label>
+                        <input name="credit-tax" class="form-control tax" value="{{$kiosk?$kiosk->credit_tax:''}}" id="credit-tax">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="debit-tax">Taxa débito:</label>
+                        <input name="debit-tax" class="form-control tax" value="{{$kiosk?$kiosk->debit_tax:''}}" id="debit-tax">
+                    </div>
                     <div class="form-group col-md-10">
                         <label for="address">Endereço:</label>
                         <input name="address" class="form-control" value="{{$kiosk?$kiosk->address:''}}" id="address">
@@ -171,6 +179,7 @@
         $('#card_ccv').mask('0000');
         $('.integer').mask('#');
         $('.decimal').mask('000.000,00', {reverse: true});
+        $('.tax').mask('0,00');
         $('#area_code').mask('00');
         $('#card_phone').mask('00 000000000');
         $('#postalcode').mask('00000-000');

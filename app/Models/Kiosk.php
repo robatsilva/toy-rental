@@ -8,12 +8,12 @@ class Kiosk extends Model
 {
     public function users()
     {
-        return $this->belongsToMany('App\user');
+        return $this->belongsToMany('App\Models\User');
     }
 
     public function employe()
     {
-        return $this->hasMany('App\user', 'kiosk_id');
+        return $this->hasMany('App\Models\User', 'kiosk_id');
     }
 
     public function customers()
