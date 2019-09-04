@@ -64,9 +64,11 @@ class CashController extends Controller
     }
     
     public function deleteCashFlow($id){
-        $cashFlow = CashFlow::find($id);
-        SecurityCheckController::securityCheck($cashFlow->kiosk_id);
-        $cashFlow->delete();
+        if (!Auth::guest() && Auth::user()->type == 1){
+            $cashFlow = CashFlow::find($id);
+            SecurityCheckController::securityCheck($cashFlow->kiosk_id);
+            $cashFlow->delete();
+        }
     }
     public function registerCash(Request $request)
     {
@@ -121,9 +123,11 @@ class CashController extends Controller
     }
 
     public function deleteCash($id){
-        $cash = Cash::find($id);
-        SecurityCheckController::securityCheck($cash->kiosk_id);
-        $cash->delete();
+        if (!Auth::guest() && Auth::user()->type == 1){
+            $cash = Cash::find($id);
+            SecurityCheckController::securityCheck($cash->kiosk_id);
+            $cash->delete();
+        }
     }
 
 }

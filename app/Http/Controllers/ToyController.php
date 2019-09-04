@@ -90,24 +90,26 @@ class ToyController extends Controller
      */
     public function store(Request $request)
     {
-        SecurityCheckController::securityCheck($request->input('kiosk_id'));
-        $toy = new Toy;
-        $toy->code = $request->input('code');
-        $toy->description = $request->input('description');
-        $toy->kiosk_id = $request->input('kiosk_id');
+        if (!Auth::guest() && Auth::user()->type == 1){
+            SecurityCheckController::securityCheck($request->input('kiosk_id'));
+            $toy = new Toy;
+            $toy->code = $request->input('code');
+            $toy->description = $request->input('description');
+            $toy->kiosk_id = $request->input('kiosk_id');
 
-        if($request->file("image")){
-            // get current time and append the upload file extension to it,
-            // then put that name to $photoName variable.
-            $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
-            /*
-            talk the select file and move it public directory and make avatars
-            folder if doesn't exsit then give it that unique name.
-            */
-            $request->file("image")->move(public_path('images/toys-img'), $toy_img);
-            $toy->image = $toy_img;
+            if($request->file("image")){
+                // get current time and append the upload file extension to it,
+                // then put that name to $photoName variable.
+                $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
+                /*
+                talk the select file and move it public directory and make avatars
+                folder if doesn't exsit then give it that unique name.
+                */
+                $request->file("image")->move(public_path('images/toys-img'), $toy_img);
+                $toy->image = $toy_img;
+            }
+            $toy->save();
         }
-        $toy->save();
         return redirect('toy');
     }
 
@@ -150,26 +152,29 @@ class ToyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $toy = Toy::find($id);
-        SecurityCheckController::securityCheck($toy->kiosk_id);
-        SecurityCheckController::securityCheck($request->input('kiosk_id'));
-        $toy->code = $request->input('code');
-        $toy->description = $request->input('description');
-        $toy->kiosk_id = $request->input('kiosk_id');
+        if (!Auth::guest() && Auth::user()->type == 1){
 
-        // get current time and append the upload file extension to it,
-        // then put that name to $photoName variable.
-        if($request->file("image")){
-            $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
-            /*
-            talk the select file and move it public directory and make avatars
-            folder if doesn't exsit then give it that unique name.
-            */
-            $request->file("image")->move(public_path('images/toys-img'), $toy_img);
-            $toy->image = $toy_img;
+            $toy = Toy::find($id);
+            SecurityCheckController::securityCheck($toy->kiosk_id);
+            SecurityCheckController::securityCheck($request->input('kiosk_id'));
+            $toy->code = $request->input('code');
+            $toy->description = $request->input('description');
+            $toy->kiosk_id = $request->input('kiosk_id');
+    
+            // get current time and append the upload file extension to it,
+            // then put that name to $photoName variable.
+            if($request->file("image")){
+                $toy_img = time().'.'.$request->file("image")->getClientOriginalExtension();
+                /*
+                talk the select file and move it public directory and make avatars
+                folder if doesn't exsit then give it that unique name.
+                */
+                $request->file("image")->move(public_path('images/toys-img'), $toy_img);
+                $toy->image = $toy_img;
+            }
+    
+            $toy->save();
         }
-
-        $toy->save();
         return redirect('toy');
     }
 
@@ -181,14 +186,16 @@ class ToyController extends Controller
      */
     public function toogle($id)
     {
-        $toy = Toy::find($id);
-        SecurityCheckController::securityCheck($toy->kiosk_id);
-        
-        if($toy->status)
-            $toy->status = 0;
-        else
-            $toy->status = 1;
-        $toy->save();
+        if (!Auth::guest() && Auth::user()->type == 1) {
+            $toy = Toy::find($id);
+            SecurityCheckController::securityCheck($toy->kiosk_id);
+            
+            if($toy->status)
+                $toy->status = 0;
+            else
+                $toy->status = 1;
+            $toy->save();
+        }
         return redirect('toy');
     }
 

@@ -104,9 +104,14 @@ UPDATE rentals SET employe_init_id = employe_id;
 ALTER TABLE `users`
 ADD COLUMN `type` TINYINT
 (2) UNSIGNED NOT NULL DEFAULT '1' AFTER `status`;
---------------------acima executado
 ALTER TABLE `kiosks`
 ADD COLUMN `credit_tax` DECIMAL
 (4,2) UNSIGNED NULL DEFAULT '0.00' AFTER `extra_value`,
 ADD COLUMN `debit_tax` DECIMAL
 (4,2) UNSIGNED NULL DEFAULT '0.00' AFTER `credit_tax`;
+--------------------acima executado
+
+ALTER TABLE `users`
+	CHANGE COLUMN `type` `type` TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' COMMENT '1 = franqueador, 2 = funcionario, 3 = relatorio, 4 = franqueado,' AFTER `status`;
+
+

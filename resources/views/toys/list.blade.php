@@ -13,9 +13,11 @@
                 <div class="col-md-12 text-center">
                     <h1>Brinquedos Cadastrados</h1>
                 </div>
-                <div class="col-md-12 text-right">
-                    <a href="toy/create" class="btn btn-primary" id="btn-new-toy" class="btn btn-primary">Novo</a>
-                </div>
+                @if (!Auth::guest() && Auth::user()->type == 1)
+                    <div class="col-md-12 text-right">
+                        <a href="toy/create" class="btn btn-primary" id="btn-new-toy" class="btn btn-primary">Novo</a>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <table class="table">
@@ -40,16 +42,18 @@
                                 <td>{{ $toy->status_toy? "Ativo" : "Inativo" }}</td>
                                 <td>{{ $toy->kiosk->name }}</td>
                                 <td>
-                                    <a href="/toy/{{$toy->id}}" class="btn btn-default">
-                                        <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
-                                    </a>
-                                    <a href="/toy/toogle/{{$toy->id}}" class="btn btn-default">
-                                        @if($toy->status_toy)
-                                        <i class="fa fa-toggle-on" title="Desativar" aria-hidden="true"></i>
-                                        @else
-                                        <i class="fa fa-toggle-off" title="Ativar" aria-hidden="true"></i>
-                                        @endif
-                                    </a>
+                                    @if (!Auth::guest() && Auth::user()->type == 1)
+                                        <a href="/toy/{{$toy->id}}" class="btn btn-default">
+                                            <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
+                                        </a>
+                                        <a href="/toy/toogle/{{$toy->id}}" class="btn btn-default">
+                                            @if($toy->status_toy)
+                                            <i class="fa fa-toggle-on" title="Desativar" aria-hidden="true"></i>
+                                            @else
+                                            <i class="fa fa-toggle-off" title="Ativar" aria-hidden="true"></i>
+                                            @endif
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

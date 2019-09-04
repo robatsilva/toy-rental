@@ -84,13 +84,15 @@ class PeriodController extends Controller
      */
     public function store(Request $request)
     {
-        SecurityCheckController::securityCheck($request->input('kiosk_id'));
+        if (!Auth::guest() && Auth::user()->type == 1) {
+            SecurityCheckController::securityCheck($request->input('kiosk_id'));
 
-        $period = new Period;
-        $period->time = $request->input('time');
-        $period->value = $request->input('value');
-        $period->kiosk_id = $request->input('kiosk_id');
-        $period->save();
+            $period = new Period;
+            $period->time = $request->input('time');
+            $period->value = $request->input('value');
+            $period->kiosk_id = $request->input('kiosk_id');
+            $period->save();
+        }
         return redirect('period');
     }
 
@@ -133,13 +135,15 @@ class PeriodController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $period = Period::find($id);
-        SecurityCheckController::securityCheck($period->kiosk_id);
+        if (!Auth::guest() && Auth::user()->type == 1) {
+            $period = Period::find($id);
+            SecurityCheckController::securityCheck($period->kiosk_id);
 
-        $period->time = $request->input('time');
-        $period->value = $request->input('value');
-        $period->kiosk_id = $request->input('kiosk_id');
-        $period->save();
+            $period->time = $request->input('time');
+            $period->value = $request->input('value');
+            $period->kiosk_id = $request->input('kiosk_id');
+            $period->save();
+        }
         return redirect('period');
     }
 
@@ -151,14 +155,16 @@ class PeriodController extends Controller
      */
     public function toogle($id)
     {
-        $period = Period::find($id);
-        SecurityCheckController::securityCheck($period->kiosk_id);
-        
-        if($period->status)
-            $period->status = 0;
-        else
-            $period->status = 1;
-        $period->save();
+        if (!Auth::guest() && Auth::user()->type == 1) {
+            $period = Period::find($id);
+            SecurityCheckController::securityCheck($period->kiosk_id);
+            
+            if($period->status)
+                $period->status = 0;
+            else
+                $period->status = 1;
+            $period->save();
+        }
         return redirect('period');
     }
 }

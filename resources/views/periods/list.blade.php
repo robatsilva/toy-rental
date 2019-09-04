@@ -8,9 +8,11 @@
                 <div class="col-md-12 text-center">
                     <h1>Periodos Cadastrados</h1>
                 </div>
-                <div class="col-md-12 text-right">
-                    <a href="period/create" class="btn btn-primary" id="btn-new-period" class="btn btn-primary">Novo</a>
-                </div>
+                @if (!Auth::guest() && Auth::user()->type == 1)
+                    <div class="col-md-12 text-right">
+                        <a href="period/create" class="btn btn-primary" id="btn-new-period" class="btn btn-primary">Novo</a>
+                    </div>
+                @endif
             </div>
             <div class="row">
                 <table class="table">
