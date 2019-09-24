@@ -185,6 +185,7 @@ class RentalController extends Controller
         
         if($rental && $request->input('customer.change_toy') == 'true'){
             $rental->toy_id = $request->input('toy_id');
+            $rental->change_toy_by = Auth::user()->name;
             $rental->save();
         } else {
             $rental = new Rental;
@@ -199,6 +200,7 @@ class RentalController extends Controller
             $rental->employe_init_id = $user->id;
             $rental->init = Carbon::now();
             $rental->status = "Alugado";
+            $rental->created_by = Auth::user()->name;
             $rental->save();
         }
 
@@ -228,6 +230,7 @@ class RentalController extends Controller
             
             $rental->period_id = $period->id;
         }
+        $rental->next_period_by = Auth::user()->name;
         $rental->save();
         return;
     }
@@ -247,6 +250,8 @@ class RentalController extends Controller
         } else {
             $rental->end = new Carbon($request->input("now"));
         }
+
+        $rental->paused_by = Auth::user()->name;
 
         $rental->save();
         return;
@@ -268,6 +273,7 @@ class RentalController extends Controller
         $rental->reason_extra_time .= " / Pausado pelo sistema";
 
         $rental->end = null;
+        $rental->started_by = Auth::user()->name;
         $rental->save();
         return;
     }
@@ -284,6 +290,7 @@ class RentalController extends Controller
             $rental->value_cc = 0;
             $rental->value_cd = 0;
             $rental->value_di = 0;
+            $rental->back_by = Auth::user()->name;
             $rental->save();
             return response()->json($rental);
         } else {
@@ -314,6 +321,7 @@ class RentalController extends Controller
         $rental->employe_id = $user->id;
         if(!$rental->end)
             $rental->end = Carbon::now();
+        $rental->canceled_by = Auth::user()->name;
         $rental->save();
         return;
     }
@@ -337,6 +345,7 @@ class RentalController extends Controller
                 $rental->end = new Carbon($request->input("now"));
             }
         }
+        $rental->finished_by = Auth::user()->name;
         $rental->save();
 
         $cash = Cash::where('employe_id', $user->id)
@@ -374,6 +383,7 @@ class RentalController extends Controller
         $rental = Rental::find($request->input('id'));
         if($request->input('extra_time') == 0){
             $rental->extra_time = 0;
+            $rental->extra_time_by = Auth::user()->name;
             $rental->save();
             return;
         }
@@ -391,6 +401,7 @@ class RentalController extends Controller
         } else {
             $rental->reason_extra_time .= " / " . $request->input('reason_extra_time');
         }
+        $rental->extra_time_by = Auth::user()->name;
         $rental->save();
     }
     

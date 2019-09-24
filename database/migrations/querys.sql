@@ -109,9 +109,30 @@ ADD COLUMN `credit_tax` DECIMAL
 (4,2) UNSIGNED NULL DEFAULT '0.00' AFTER `extra_value`,
 ADD COLUMN `debit_tax` DECIMAL
 (4,2) UNSIGNED NULL DEFAULT '0.00' AFTER `credit_tax`;
---------------------acima executado
 
 ALTER TABLE `users`
-	CHANGE COLUMN `type` `type` TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' COMMENT '1 = franqueador, 2 = funcionario, 3 = relatorio, 4 = franqueado,' AFTER `status`;
+	CHANGE COLUMN `type` `type` TINYINT
+(2) UNSIGNED NOT NULL DEFAULT '1' COMMENT '1 = franqueador, 2 = funcionario, 3 = relatorio, 4 = franqueado,' AFTER `status`;
+
+--------------------acima executado
+ALTER TABLE `rentals`
+ADD COLUMN `created_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `reason_cancel`,
+ADD COLUMN `change_toy_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `created_by`,
+ADD COLUMN `finished_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `change_toy_by`,
+ADD COLUMN `canceled_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `finished_by`,
+ADD COLUMN `back_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `canceled_by`,
+ADD COLUMN `extra_time_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `back_by`,
+ADD COLUMN `next_period_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `extra_time_by`,
+ADD COLUMN `paused_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `next_period_by`,
+ADD COLUMN `started_by` VARCHAR
+(500) NULL DEFAULT NULL AFTER `paused_by`;
 
 
