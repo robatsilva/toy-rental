@@ -465,9 +465,9 @@
     });
 
     $(".money").focus(function(){
-        var cc = Number($('#value_cc').val());
-        var cd = Number($('#value_cd').val());
-        var di = Number($('#value_di').val());
+        var cc = Number($('#value_cc').val().replace(',', '.'));
+        var cd = Number($('#value_cd').val().replace(',', '.'));
+        var di = Number($('#value_di').val().replace(',', '.'));
         var total = cc + cd + di;
         if(total != Number(toy.rental.value_to_pay) && total != 0){
             $(this).val(toy.rental.value_to_pay - cc - cd - di);
@@ -476,9 +476,9 @@
 
     $(".btn-save-payment").click(function(){    
         showLoader();
-        var cc = Number($('#value_cc').val());
-        var cd = Number($('#value_cd').val());
-        var di = Number($('#value_di').val());
+        var cc = Number($('#value_cc').val().replace(',', '.'));
+        var cd = Number($('#value_cd').val().replace(',', '.'));
+        var di = Number($('#value_di').val().replace(',', '.'));
         var total = cc + cd + di;
 
         if(total != Number(toy.rental.value_to_pay)){
@@ -486,9 +486,9 @@
             return;
         }
         toy.rental.payment_way = undefined;
-        toy.rental.value_cd = $('#value_cd').val();
-        toy.rental.value_cc = $('#value_cc').val();
-        toy.rental.value_di = $('#value_di').val();
+        toy.rental.value_cd = $('#value_cd').val().replace(',', '.');
+        toy.rental.value_cc = $('#value_cc').val().replace(',', '.');
+        toy.rental.value_di = $('#value_di').val().replace(',', '.');
         toy.rental._token = "{{ csrf_token() }}";
         showLoader();
         $.post("/rental/finish", toy.rental, function(){

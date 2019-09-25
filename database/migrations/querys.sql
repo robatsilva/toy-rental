@@ -114,7 +114,6 @@ ALTER TABLE `users`
 	CHANGE COLUMN `type` `type` TINYINT
 (2) UNSIGNED NOT NULL DEFAULT '1' COMMENT '1 = franqueador, 2 = funcionario, 3 = relatorio, 4 = franqueado,' AFTER `status`;
 
---------------------acima executado
 ALTER TABLE `rentals`
 ADD COLUMN `created_by` VARCHAR
 (500) NULL DEFAULT NULL AFTER `reason_cancel`,
@@ -135,4 +134,5 @@ ADD COLUMN `paused_by` VARCHAR
 ADD COLUMN `started_by` VARCHAR
 (500) NULL DEFAULT NULL AFTER `paused_by`;
 
+--------------------acima executado
 
