@@ -125,7 +125,7 @@
                     <div class="btn-value col-xs-6 toy-row">
                         <div class="col-xs-12"><b>Valor</b></div>
                         <div class="col-xs-12"> 
-                            {{ $toy->rental->value_to_pay }}  
+                            @currency($toy->rental->value_to_pay)  
                         </div>
                     </div> 
                     <div class="toy-pays text-center"> 
@@ -307,7 +307,7 @@
         $(".btn-value").dblclick(function(){
             toy = $(this).parent().parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
-            $("#value-total").html(toy.rental.value_to_pay);
+            $("#value-total").html(toy.rental.value_to_pay.replace('.', ','));
             $("#modal-payment").modal('show');
         });
 

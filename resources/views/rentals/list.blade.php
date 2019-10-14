@@ -470,7 +470,7 @@
         var di = Number($('#value_di').val().replace(',', '.'));
         var total = cc + cd + di;
         if(total != Number(toy.rental.value_to_pay) && total != 0){
-            $(this).val(toy.rental.value_to_pay - cc - cd - di);
+            $(this).val((toy.rental.value_to_pay - cc - cd - di).toString().replace('.', ','));
         }
     });
 
@@ -482,7 +482,8 @@
         var total = cc + cd + di;
 
         if(total != Number(toy.rental.value_to_pay)){
-            alert('A soma dos pagamentos deve ser igual a R$' + toy.rental.value_to_pay);
+            alert('A soma dos pagamentos deve ser igual a R$' + toy.rental.value_to_pay.toString().replace('.', ','));
+            hideLoader();
             return;
         }
         toy.rental.payment_way = undefined;
@@ -496,6 +497,7 @@
             $("#modal-payment").modal('hide');
         })
         .fail(function(xhr, status, error) {
+            hideLoader();
             alert(status + ' - ' + error);
         });
     });
@@ -518,6 +520,7 @@
             $('.modal-backdrop').remove();
         })
         .fail(function(xhr, status, error) {
+            hideLoader();
             alert(status + ' - ' + error);
         });
     });

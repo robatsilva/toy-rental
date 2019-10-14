@@ -71,14 +71,14 @@
         <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
                 <h3>Entradas</h3>
-                <p> R$ {{ $cash?$cash['input_day']:"" }}</p>
+                <p> R$ @currency($cash?$cash['input_day']:"")</p>
                 <a id="new_input">Novo</a>
             </div>
         </div>
         <div class="col-xs-6 col-md-3 card-container">
             <div class="card card-value">
                 <h3>Saídas</h3>
-                <p> R$ {{ $cash?$cash['output_day']:"" }}</p>
+                <p> R$ @currency($cash?$cash['output_day']:"")</p>
                 <a id="new_output">Novo</a>
             </div>
         </div>
@@ -86,20 +86,20 @@
             <div class="col-xs-6" style="padding: 0 10px 0 0;">
                 <div class="col-xs-12 card card-value">
                     <h3>Alugueis dinheiro</h3>
-                    <p> R$ {{ $cash?$cash['rentals_day']:"" }}</p>
+                    <p> R$ @currency($cash?$cash['rentals_day']:"")</p>
 
                 </div>
             </div>
             <div class="col-xs-6 card card-value">
                 <h3>Alugueis cartões</h3>
-                <p> R$ {{ $cash?$cash['total_cartao']:"" }}</p>
+                <p> R$ @currency($cash?$cash['total_cartao']:"")</p>
             </div>
         </div>
         <div class="col-xs-12 col-md-12 card-container">
             <div class="card card-value">
                 <h3 class="valor-caixa-title">Valor em Caixa</h3>
                 <p> = Entradas - Saídas + Alugueis dinheiro + Valor em caixa dos dias anteriores</p>
-                <h3 class="valor-caixa"> R$ {{ $cash?$cash['total']:"" }}</h3>
+                <h3 class="valor-caixa"> R$ @currency($cash?$cash['total']:"")</h3>
             </div>
         </div>
     </div>

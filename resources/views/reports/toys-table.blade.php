@@ -56,7 +56,7 @@
             <tr class="text-center" id="{{$rental->id}}"> 
                 <td>{{ $rental->toy->description }}</td> 
                 <td>{{ $rental->total_time }}</td>
-                <td>{{ $rental->total_pay }}</td>
+                <td>@currency($rental->total_pay)</td>
             </tr>       
             @endforeach
         @endif

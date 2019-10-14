@@ -44,7 +44,7 @@
             @if($resume)
                 <div class="col-md-8 text-right">
                     <h4>Total no período </h4>
-                    <h2>R$ {{ $resume }} </h2>
+                    <h2>R$ @currency($resume) </h2>
                 </div>
             @endif
         </div>
@@ -78,7 +78,7 @@
         @if($rentals)
             @foreach($rentals as $rental)
             <tr class="text-center {{ $rental->rental_status }}" id="{{$rental->id}}"> 
-                <td>{{ Carbon\Carbon::parse($rental->init)->format('d/m/Y') }}</td> 
+                <td>{{ Carbon\Carbon::parse($rental->init)->format('d/m/y') }}</td> 
                 <td>{{ $rental->toy->description }}</td> 
                 <td>{{ $rental->customer->name }}</td> 
                 <td>{{ Carbon\Carbon::parse($rental->init)->format('H:i') }}</td> 
@@ -89,9 +89,9 @@
                 <td>{{ $rental->time_diff }}</td> 
                 <td>{{ $rental->time_considered }}</td> 
                 <td>{{ $rental->reason_extra_time }}</td> 
-                <td>{{ $rental->value_cc }}</td> 
-                <td>{{ $rental->value_cd }}</td> 
-                <td>{{ $rental->value_di }}</td> 
+                <td>@currency($rental->value_cc)</td> 
+                <td>@currency($rental->value_cd)</td> 
+                <td>@currency($rental->value_di)</td> 
                 <td>{{ $rental->employe->name }}</td> 
                 <td>{{ $rental->reason_cancel }}</td> 
                 <td>{{ $rental->rental_status }}</td> 
