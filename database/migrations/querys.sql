@@ -136,3 +136,10 @@ ADD COLUMN `started_by` VARCHAR
 
 --------------------acima executado
 
+ALTER TABLE `kiosks`
+ADD COLUMN `royalty` DECIMAL
+(4,2) UNSIGNED NULL DEFAULT '0.00' AFTER `debit_tax`;
+
+ALTER TABLE `users`
+ADD COLUMN `royalty` TINYINT
+(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `status`;

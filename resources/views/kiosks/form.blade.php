@@ -40,6 +40,12 @@
                         <label for="debit-tax">Taxa débito:</label>
                         <input name="debit-tax" class="form-control tax" value="{{$kiosk?$kiosk->debit_tax:''}}" id="debit-tax">
                     </div>
+                    @if (!Auth::guest() && Auth::user()->type == '1')
+                    <div class="form-group col-md-2">
+                        <label for="royalty">Taxa royalty:</label>
+                        <input name="royalty" class="form-control tax" value="{{$kiosk?$kiosk->royalty:''}}" id="royalty">
+                    </div>
+                    @endif
                     <div class="form-group col-md-10">
                         <label for="address">Endereço:</label>
                         <input name="address" class="form-control" value="{{$kiosk?$kiosk->address:''}}" id="address">

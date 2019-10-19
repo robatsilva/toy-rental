@@ -13,6 +13,10 @@
     .Cancelado{
         background: #FAA;
     }
+
+    #royalty{
+        color: red;
+    }
 </style>
 <div class="container">
 <div class="row">
@@ -45,6 +49,9 @@
                 <div class="col-md-8 text-right">
                     <h4>Total no período </h4>
                     <h2>R$ @currency($resume) </h2>
+                    @if (!Auth::guest() && Auth::user()->royalty == '1')
+                        <h5 id="royalty"> Royalties R$ @currency($royalties) </h5>
+                    @endif
                 </div>
             @endif
         </div>

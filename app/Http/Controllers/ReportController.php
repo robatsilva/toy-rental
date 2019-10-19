@@ -46,6 +46,7 @@ class ReportController extends Controller
     public function reportByDate(Request $request)
     {
         $user = Employe::find(Auth::user()->id);
+        $kiosk = Kiosk::find($request->input("kiosk_id"));
         if($user->type == '3'){
             $user->kiosk_id = 0;
             // $request->merge(['init' => date('d/m/Y')]);
@@ -82,6 +83,8 @@ class ReportController extends Controller
                 }
             })
             ->sum("value_di");
+
+        $royalties = $total * $kiosk->royalty / 100;
         $rentals = Rental::selectRaw("*, rentals.status as rental_status, (value_cd + value_cc + value_di) as total_pay,
                 
                 TIMESTAMPDIFF(MINUTE, init, if(END is not null, END, '" . Carbon::now() . "')) AS time_diff,
@@ -104,6 +107,7 @@ class ReportController extends Controller
         return view('reports.rental-table')
             ->with('rentals', $rentals)
             ->with('input', $request->input())
+            ->with('royalties', $royalties)
             ->with('resume', $total);
     }
 

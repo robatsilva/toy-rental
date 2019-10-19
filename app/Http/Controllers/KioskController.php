@@ -81,8 +81,9 @@ class KioskController extends Controller
         $kiosk->tolerance = $request->input('tolerance');
         $kiosk->cnpj = $request->input('cnpj');
         $kiosk->extra_value = $request->input('extra-value');
-        $kiosk->credit_tax = $request->input('credit-tax');
-        $kiosk->debit_tax = $request->input('debit_tax');
+        $kiosk->credit_tax = str_replace(',', '.', $request->input('credit-tax'));
+        $kiosk->debit_tax = str_replace(',', '.', $request->input('debit-tax'));
+        $kiosk->royalty = str_replace(',', '.', $request->input('royalty'));
         $kiosk->address = $request->input('address');
         $kiosk->address_number = $request->input('address_number');
         $kiosk->address_district = $request->input('address_district');
@@ -149,6 +150,7 @@ class KioskController extends Controller
         $kiosk->extra_value = $request->input('extra-value');
         $kiosk->credit_tax = str_replace(',', '.', $request->input('credit-tax'));
         $kiosk->debit_tax = str_replace(',', '.', $request->input('debit-tax'));
+        $kiosk->royalty = str_replace(',', '.', $request->input('royalty'));
         $kiosk->address = $request->input('address');
         $kiosk->address_number = $request->input('address_number');
         $kiosk->address_district = $request->input('address_district');
