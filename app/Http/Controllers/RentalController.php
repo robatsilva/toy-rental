@@ -241,8 +241,11 @@ class RentalController extends Controller
      */
     public function pause(Request $request, $id){
         SecurityCheckController::securityCheckByRental($id);
-
+        
         $rental = Rental::find($id);
+        $kiosk = Kiosk::find($rental->kiosk_id);
+        date_default_timezone_set($kiosk->timezone);
+
         $rental->status = "Pausado";
 
         if( new Carbon($request->input("now")) == Carbon::now()){
@@ -265,6 +268,9 @@ class RentalController extends Controller
         SecurityCheckController::securityCheckByRental($id);
 
         $rental = Rental::find($id);
+        $kiosk = Kiosk::find($rental->kiosk_id);
+        date_default_timezone_set($kiosk->timezone);
+
         $rental->status = "Alugado";
         
         $time_paused = (new Carbon($rental->end))->diffInMinutes(Carbon::now());
@@ -281,6 +287,9 @@ class RentalController extends Controller
     public function back($id){
         $toy = Toy::find($id);
         SecurityCheckController::securityCheck($toy->kiosk_id);
+        $kiosk = Kiosk::find($toy->kiosk_id);
+
+        date_default_timezone_set($kiosk->timezone);
         $rental = Rental::where('toy_id', $id)
         ->where('end', '>', Carbon::now()->subMinutes(5)->toDateTimeString())
         ->orderBy("end", "desc")
@@ -308,6 +317,10 @@ class RentalController extends Controller
 
         $user = Employe::find(Auth::user()->id);
         $rental = Rental::find($id);
+
+        $kiosk = Kiosk::find($rental->kiosk_id);
+        date_default_timezone_set($kiosk->timezone);
+
         $rental->reason_cancel = $request->input('reason_cancel');
                 
         if(!$rental->reason_cancel){
@@ -337,6 +350,9 @@ class RentalController extends Controller
         $user = Employe::find(Auth::user()->id);
 
         $rental = Rental::find($request->input('id'));
+
+        $kiosk = Kiosk::find($rental->kiosk_id);
+        date_default_timezone_set($kiosk->timezone);
 
         if(!$rental->end){
             if( new Carbon($request->input("now")) == Carbon::now()){
