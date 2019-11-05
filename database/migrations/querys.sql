@@ -134,7 +134,6 @@ ADD COLUMN `paused_by` VARCHAR
 ADD COLUMN `started_by` VARCHAR
 (500) NULL DEFAULT NULL AFTER `paused_by`;
 
---------------------acima executado
 
 ALTER TABLE `kiosks`
 ADD COLUMN `royalty` DECIMAL
@@ -143,3 +142,49 @@ ADD COLUMN `royalty` DECIMAL
 ALTER TABLE `users`
 ADD COLUMN `royalty` TINYINT
 (1) UNSIGNED NOT NULL DEFAULT '0' AFTER `status`;
+
+--------------------acima executado
+
+ALTER TABLE `kiosk_user`
+ADD CONSTRAINT `fk_kiosk_user` FOREIGN KEY
+(`kiosk_id`) REFERENCES `kiosks`
+(`id`),
+ADD CONSTRAINT `fk_user_kiosk` FOREIGN KEY
+(`user_id`) REFERENCES `users`
+(`id`);
+
+-- DELETE FROM kiosk_user WHERE kiosk_id = 31
+
+CREATE TABLE `permissions`
+(
+	`id` INT
+(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR
+(50) NOT NULL COLLATE 'latin1_swedish_ci',
+	PRIMARY KEY
+(`id`)
+)
+COLLATE='utf8_unicode_ci'
+ENGINE=InnoDB
+;
+
+CREATE TABLE `permission_user`
+(
+	`user_id` INT
+(10) UNSIGNED NULL DEFAULT NULL,
+	`permission_id` INT
+(10) UNSIGNED NULL DEFAULT NULL,
+	INDEX `user_id`
+(`user_id`),
+	INDEX `permission_id`
+(`permission_id`),
+	CONSTRAINT `fk_permission_user` FOREIGN KEY
+(`permission_id`) REFERENCES `permissions`
+(`id`),
+	CONSTRAINT `fk_user_permission` FOREIGN KEY
+(`user_id`) REFERENCES `users`
+(`id`)
+)
+COLLATE='utf8_unicode_ci'
+ENGINE=InnoDB
+;
