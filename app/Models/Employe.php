@@ -35,4 +35,9 @@ class Employe extends Authenticatable
         return $this->belongsToMany('App\Models\Kiosk')->withPivot('default');
     }
 
+    public function permissions()
+    {
+        return $this->belongsToMany('App\Models\Permission', 'permission_user', 'user_id', 'permission_id');
+    }
+
 }

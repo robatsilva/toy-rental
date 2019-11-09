@@ -84,7 +84,7 @@ class PeriodController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::guest() && Auth::user()->type == 1) {
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()) {
             SecurityCheckController::securityCheck($request->input('kiosk_id'));
 
             $period = new Period;
@@ -135,7 +135,7 @@ class PeriodController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::guest() && Auth::user()->type == 1) {
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()) {
             $period = Period::find($id);
             SecurityCheckController::securityCheck($period->kiosk_id);
 
@@ -155,7 +155,7 @@ class PeriodController extends Controller
      */
     public function toogle($id)
     {
-        if (!Auth::guest() && Auth::user()->type == 1) {
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()) {
             $period = Period::find($id);
             SecurityCheckController::securityCheck($period->kiosk_id);
             

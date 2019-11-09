@@ -64,7 +64,7 @@ class CashController extends Controller
     }
     
     public function deleteCashFlow($id){
-        if (!Auth::guest() && Auth::user()->type == 1){
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()){
             $cashFlow = CashFlow::find($id);
             SecurityCheckController::securityCheck($cashFlow->kiosk_id);
             $cashFlow->delete();
@@ -123,7 +123,7 @@ class CashController extends Controller
     }
 
     public function deleteCash($id){
-        if (!Auth::guest() && Auth::user()->type == 1){
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()){
             $cash = Cash::find($id);
             SecurityCheckController::securityCheck($cash->kiosk_id);
             $cash->delete();

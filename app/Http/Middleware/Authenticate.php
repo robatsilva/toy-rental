@@ -25,13 +25,21 @@ class Authenticate
             }
         }
 
-        if(Auth::user()->type == '3' 
+        if(Auth::user()->permissions()->get()->where('name', 'relatorio')->first() 
                 && ($request->getPathInfo() != '/report' 
                 && $request->getPathInfo() != '/user' 
                 && $request->getPathInfo() != '/report/cash/close' 
                 && $request->getPathInfo() != '/user/update' 
                 && $request->getPathInfo() != '/logout'))
             return redirect('report');
+
+        if(Auth::user()->permissions()->get()->where('name', 'shopping')->first() 
+                && ($request->getPathInfo() != '/report/payment-way' 
+                && $request->getPathInfo() != '/user' 
+                && $request->getPathInfo() != '/report/cash/close' 
+                && $request->getPathInfo() != '/user/update' 
+                && $request->getPathInfo() != '/logout'))
+            return redirect('report/payment-way');
 
         return $next($request);
     }

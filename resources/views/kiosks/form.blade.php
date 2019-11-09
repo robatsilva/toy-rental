@@ -40,7 +40,7 @@
                         <label for="debit-tax">Taxa débito:</label>
                         <input name="debit-tax" class="form-control tax" value="{{$kiosk?$kiosk->debit_tax:''}}" id="debit-tax">
                     </div>
-                    @if (!Auth::guest() && Auth::user()->type == '1')
+                    @if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first())
                     <div class="form-group col-md-2">
                         <label for="royalty">Taxa royalty:</label>
                         <input name="royalty" class="form-control tax" value="{{$kiosk?$kiosk->royalty:''}}" id="royalty">

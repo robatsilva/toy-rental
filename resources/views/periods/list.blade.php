@@ -8,7 +8,7 @@
                 <div class="col-md-12 text-center">
                     <h1>Periodos Cadastrados</h1>
                 </div>
-                @if (!Auth::guest() && Auth::user()->type == 1)
+                @if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first())
                     <div class="col-md-12 text-right">
                         <a href="period/create" class="btn btn-primary" id="btn-new-period" class="btn btn-primary">Novo</a>
                     </div>

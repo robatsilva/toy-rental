@@ -82,7 +82,7 @@
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
-                    @if (!Auth::guest() && Auth::user()->type != '3')
+                    @if (!Auth::guest() && !Auth::user()->permissions()->get()->whereIn('name', ['relatorio', 'shopping'])->first())
                         @if (!Auth::guest() && !Auth::user()->kiosk_id)
                             <li><a href="{{ url('/cadastro') }}">Cadastros</a></li>
                         @endif

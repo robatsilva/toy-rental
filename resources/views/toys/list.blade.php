@@ -13,7 +13,7 @@
                 <div class="col-md-12 text-center">
                     <h1>Brinquedos Cadastrados</h1>
                 </div>
-                @if (!Auth::guest() && Auth::user()->type == 1)
+                @if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first())
                     <div class="col-md-12 text-right">
                         <a href="toy/create" class="btn btn-primary" id="btn-new-toy" class="btn btn-primary">Novo</a>
                     </div>
@@ -42,7 +42,7 @@
                                 <td>{{ $toy->status_toy? "Ativo" : "Inativo" }}</td>
                                 <td>{{ $toy->kiosk->name }}</td>
                                 <td>
-                                    @if (!Auth::guest() && Auth::user()->type == 1)
+                                    @if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first())
                                         <a href="/toy/{{$toy->id}}" class="btn btn-default">
                                             <span class="glyphicon glyphicon-pencil" title="Editar" aria-hidden="true"></span>
                                         </a>

@@ -188,3 +188,24 @@ CREATE TABLE `permission_user`
 COLLATE='utf8_unicode_ci'
 ENGINE=InnoDB
 ;
+
+INSERT INTO permission_user (
+SELECT permissions.id, users.id
+FROM permissions
+	JOIN users 
+WHERE users.`type` = 1 AND permissions.id = 1
+);
+
+INSERT INTO permission_user (
+SELECT permissions.id, users.id
+FROM permissions
+	JOIN users 
+WHERE users.`type` = 2 AND permissions.id = 2
+);
+
+INSERT INTO permission_user (
+SELECT permissions.id, users.id
+FROM permissions
+	JOIN users 
+WHERE users.`type` = 3 AND permissions.id = 3
+);

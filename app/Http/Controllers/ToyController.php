@@ -90,7 +90,7 @@ class ToyController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::guest() && Auth::user()->type == 1){
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()){
             SecurityCheckController::securityCheck($request->input('kiosk_id'));
             $toy = new Toy;
             $toy->code = $request->input('code');
@@ -152,7 +152,7 @@ class ToyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::guest() && Auth::user()->type == 1){
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()){
 
             $toy = Toy::find($id);
             SecurityCheckController::securityCheck($toy->kiosk_id);
@@ -186,7 +186,7 @@ class ToyController extends Controller
      */
     public function toogle($id)
     {
-        if (!Auth::guest() && Auth::user()->type == 1) {
+        if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first()) {
             $toy = Toy::find($id);
             SecurityCheckController::securityCheck($toy->kiosk_id);
             

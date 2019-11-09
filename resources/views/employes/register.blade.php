@@ -85,15 +85,20 @@
                             <div class="col-md-6">
                                 <select name="type" class="form-control" id="type">
                                         <option value='2'
-                                            @if ($employe && $employe->type == '2')
+                                            @if ($employe && $employe->permissions()->get()->where('name', 'funcionario')->first())
                                                 selected="selected"
                                             @endif
                                         >Funcionário</option>
                                         <option value='3'
-                                            @if ($employe && $employe->type == '3')
+                                            @if ($employe && $employe->permissions()->get()->where('name', 'relatorio')->first())
                                                 selected="selected"
                                             @endif
                                         >Relatório</option>
+                                        <option value='4'
+                                            @if ($employe && $employe->permissions()->get()->where('name', 'shopping')->first())
+                                                selected="selected"
+                                            @endif
+                                        >Shopping</option>
                                 </select>    
                             </div>
                         </div>                        

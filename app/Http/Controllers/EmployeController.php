@@ -65,6 +65,7 @@ class EmployeController extends Controller
         $employe->kiosk_id = $request->input('kiosk_id');
         $employe->type = $request->input('type');
         $employe->save();
+        $employe->permissions()->attach($request->input('type'));
         return redirect('employe');
     }
 
@@ -116,8 +117,10 @@ class EmployeController extends Controller
             $employe->password = bcrypt($request->input('password'));
         $employe->email = $request->input('email');
         $employe->kiosk_id = $request->input('kiosk_id');
+        $employe->permissions()->detach($employe->type);
         $employe->type = $request->input('type');
         $employe->save();
+        $employe->permissions()->attach($request->input('type'));
         return redirect('employe');
     }
 

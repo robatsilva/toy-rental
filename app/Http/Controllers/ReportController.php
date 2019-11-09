@@ -47,10 +47,8 @@ class ReportController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
         $kiosk = Kiosk::find($request->input("kiosk_id"));
-        if($user->type == '3'){
+        if($user->permissions()->get()->whereIn('name', ['relatorio', 'shopping'])->first()){
             $user->kiosk_id = 0;
-            // $request->merge(['init' => date('d/m/Y')]);
-            // $request->merge(['end' => date('d/m/Y')]);
         }
 
         $total = Rental::
@@ -352,10 +350,13 @@ class ReportController extends Controller
     {
         $user = Employe::find(Auth::user()->id);
         $kiosk = Kiosk::find($request->input("kiosk_id"));
+        if($user->permissions()->get()->whereIn('name', ['relatorio', 'shopping'])->first()){
+            $user->kiosk_id = 0;
+        }
         $cashDrawers = CashDrawer::where('kiosk_id', $request->input("kiosk_id"))
                         ->where('status', 1)
                         ->get();
-                        
+        
         $total_cc = Rental::
             where(DB::raw('date(init)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"))
             ->where("kiosk_id", $request->input("kiosk_id"))

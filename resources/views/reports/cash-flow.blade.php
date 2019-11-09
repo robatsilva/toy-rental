@@ -132,7 +132,7 @@
                                 <a value="{{ $register }}" class="close_cash">Fechar</a>
                                 @endif
                                 <a value="{{ $register }}" class="see_cash">Ver</a>
-                                @if (!Auth::guest() && Auth::user()->type == 1)
+                                @if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first())
                                     <a value="{{ $register->id }}" class="delete_cash">Excluir</a>
                                 @endIf
                             </td>
@@ -168,7 +168,7 @@
                             <td>{{ $flow->description }}</td>
                             <td>{{ $flow->input != 0? 'Entrada' : 'Saída' }}</td>
                             <td><a href="/files/{{ $flow->file }}">{{ $flow->file }}</a></td>
-                            @if (!Auth::guest() && Auth::user()->type == 1)
+                            @if (!Auth::guest() && Auth::user()->permissions()->get()->where('name', 'franqueador')->first())
                                 <td><a value="{{ $flow->id }}" class="delete_cash_flow">Excluir</a></td>
                             @EndIf
                         </tr>       
