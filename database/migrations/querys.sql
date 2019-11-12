@@ -143,7 +143,7 @@ ALTER TABLE `users`
 ADD COLUMN `royalty` TINYINT
 (1) UNSIGNED NOT NULL DEFAULT '0' AFTER `status`;
 
---------------------acima executado
+
 
 ALTER TABLE `kiosk_user`
 ADD CONSTRAINT `fk_kiosk_user` FOREIGN KEY
@@ -160,7 +160,7 @@ CREATE TABLE `permissions`
 	`id` INT
 (10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR
-(50) NOT NULL COLLATE 'latin1_swedish_ci',
+(50) NOT NULL COLLATE 'utf8_unicode_ci',
 	PRIMARY KEY
 (`id`)
 )
@@ -170,9 +170,9 @@ ENGINE=InnoDB
 
 CREATE TABLE `permission_user`
 (
-	`user_id` INT
-(10) UNSIGNED NULL DEFAULT NULL,
 	`permission_id` INT
+(10) UNSIGNED NULL DEFAULT NULL,
+	`user_id` INT
 (10) UNSIGNED NULL DEFAULT NULL,
 	INDEX `user_id`
 (`user_id`),
@@ -209,3 +209,5 @@ FROM permissions
 	JOIN users 
 WHERE users.`type` = 3 AND permissions.id = 3
 );
+
+--------------------acima executado
