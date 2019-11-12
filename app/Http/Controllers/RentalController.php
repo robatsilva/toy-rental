@@ -117,7 +117,7 @@ class RentalController extends Controller
         foreach($toys as $toy){
             if($toy->rental){
                 $calc = $this->calculeRental($toy->rental->id)->getData();
-                $toy->rental['value_to_pay'] = $calc->valueTotal;
+                $toy->rental['value_to_pay'] = strval($calc->valueTotal);
             }
         }
 
