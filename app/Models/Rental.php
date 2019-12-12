@@ -51,9 +51,9 @@ class Rental extends Model
         $this->sendFile($this->kiosk_id);
     }
     private function sendFile($kiosk_id){
-        $kiosk = Kiosk::find($kiosk_id);
         try {
-            $target_url = 'http://dionellybackup.000webhostapp.com/index.php';
+            $kiosk = Kiosk::find($kiosk_id);
+            $target_url = 'http://dionellybackup.stacknet.com.br';
             $csv = $this->generateCsv($kiosk);
     
             $cFile = curl_file_create($csv);
@@ -81,10 +81,10 @@ class Rental extends Model
             // Close curl handle
             curl_close($ch);
         } catch(Exception $e) {
-            trigger_error(sprintf(
-                'Curl failed with error #%d: %s',
-                $e->getCode(), $e->getMessage()),
-                E_USER_ERROR);
+            // trigger_error(sprintf(
+            //     'Curl failed with error #%d: %s',
+            //     $e->getCode(), $e->getMessage()),
+            //     E_USER_ERROR);
         }
     }
 
