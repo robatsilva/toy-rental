@@ -53,7 +53,7 @@ class Rental extends Model
     private function sendFile($kiosk_id){
         try {
             $kiosk = Kiosk::find($kiosk_id);
-            $target_url = env('BACKUP', 'http://dionellybackup.stacknet.com.br');
+            $target_url = env('BACKUP', 'http://backupdionelly.freevar.com');
             $csv = $this->generateCsv($kiosk);
     
             $cFile = curl_file_create($csv);
