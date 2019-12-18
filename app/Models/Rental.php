@@ -72,7 +72,6 @@ class Rental extends Model
             curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             $content = curl_exec($ch);
-        
             // Check the return value of curl_exec(), too
             if ($content === false) {
                 throw new Exception(curl_error($ch), curl_errno($ch));
@@ -96,18 +95,15 @@ class Rental extends Model
             ->get();
         
         $file = tempnam(sys_get_temp_dir(), 'csv');
-        $string = '<?php ' .
-        'header("Content-type: application/vnd.ms-excel");' .
-        'header("Content-Disposition: attachment; filename='.$kiosk->name.'.xls");' .
-         '?>' .
-         '<table
-         border="1">' .
-         '<tr>' .
-            '<th>Brinquedo</th>' .
-            '<th>Cliente</th> ' .
-            '<th>Inicio</th>' .
-            '<th>Status</th>' .
-          '</tr>';
+        $string = '<html><body>' .
+        '<table border="1">' .
+            '<tr>' .
+                '<th>Brinquedo</th>' .
+                '<th>Cliente</th> ' .
+                '<th>Inicio</th>' .
+                '<th>Status</th>' .
+            '</tr>' .
+            '</body></html>';
         
         foreach ($rentals as $row) {
             $string .= '<tr>' .
