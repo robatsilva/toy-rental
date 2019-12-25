@@ -190,7 +190,7 @@
                 <h4 class="modal-title">Novo lançamento</h4>
             </div>
             <div class="modal-body">
-                <form id="rental-form" action="/cash-flow" method="post" enctype="multipart/form-data">
+                <form id="input-output-form" action="/cash-flow" method="post" enctype="multipart/form-data">
                     {!! csrf_field() !!}
                     <div class="row">
                         <input type='hidden' name="kiosk_id" class="kiosk_id form-control"/>
@@ -437,6 +437,7 @@
             return false                           // se inválida :(
         }
         $('#cash-open-close-form').submit(function(e){
+            showLoader();
             if( $('#id_cash').val() ){
                 if( $('#value_close').val() == {!! $cash['total'] ? $cash['total'] : '0'; !!})
                     return;
@@ -458,23 +459,30 @@
                         alert('Valor informado MENOR do que o valor em caixa de R$ {!! $cash['total'] ? $cash['total'] : '0'; !!}. Verifique se é necessário realizar lançamentos de SAÍDA');
                 }
             }
-
-            e.preventDefault()
+            hideloader();
+            e.preventDefault();
+        });
+        $('#input-output-form').submit(function(e){
+            showLoader();
         });
         
         $('.delete_cash_flow').click(function(){
+            showLoader();
             $.get('/cash-flow/delete/' + $(this).attr('value'), function(data){
                 $('#cash-form').submit();
             })
             .fail(function(xhr, status, error) {
+                hideLoader();
                 alert(status + ' - ' + error);
             });
         });
         $('.delete_cash').click(function(){
+            shoLoader();
             $.get('/cash/delete/' + $(this).attr('value'), function(data){
                 $('#cash-form').submit();
             })
             .fail(function(xhr, status, error) {
+                hideLoader();
                 alert(status + ' - ' + error);
             });
         });

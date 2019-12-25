@@ -11,7 +11,7 @@
         margin-top: 15px;
     }
     div.card {
-        height: 320px;
+        height: 100%;
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
     }
     .btn-close {
@@ -43,7 +43,7 @@
     }
     .toy-data{
         height: 290px;
-        padding: 10px;
+        padding: 10px 10px 0 10px;
     }
     .toy-row{
         padding:5px 0 0 0;
@@ -62,6 +62,9 @@
     }
     .btn-pay{
         width: 31%;
+    }
+    .btn-back{
+        height: 25px;
     }
     .toy-bottom {
         background-color: #AAA;
@@ -135,6 +138,11 @@
                     </div>
                 @endif
             </div>    
+            <div class="text-center btn-back"> 
+                @if(!$toy->rental)
+                    <a>Voltar último aluguel</a> 
+                @endif
+            </div>
             <div class="toy-bottom text-center btn-status {{ $toy->rental ? $toy->rental->status : 'Disponivel' }}"> 
                 <b>{{ $toy->rental ? $toy->rental->status : "Disponível" }}</b> 
             </div>
@@ -204,7 +212,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(xhr.responseText);
+                alert(status + ' - ' + error);
             });
         }
         $(".btn-period").dblclick(function(){
@@ -216,7 +224,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(xhr.responseText);
+                alert(status + ' - ' + error);
             });
 
         });
@@ -231,7 +239,7 @@
                 end.css("display", "block");
             }
         });
-        $(".btn-status").dblclick(function(){
+        $(".btn-status, .btn-back").dblclick(function(){
             toy = $(this).parent().parent().attr("data-rental");
             toy = JSON.parse(toy);
             var endPoint = "";
@@ -244,7 +252,7 @@
                 })
                 .fail(function(xhr, status, error) {
                     hideLoader();
-                    alert(xhr.responseText);
+                    alert(status + ' - ' + error);
                 });
                 return;
             }
@@ -258,7 +266,7 @@
                 })
                 .fail(function(xhr, status, error) {
                     hideLoader();
-                    alert(xhr.responseText);
+                    alert(status + ' - ' + error);
                 });
                 return;
             }
@@ -274,7 +282,7 @@
                 })
                 .fail(function(xhr, status, error) {
                     hideLoader();
-                    alert(xhr.responseText);
+                    alert(status + ' - ' + error);
                 });
             }
 
@@ -292,7 +300,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(xhr.responseText);
+                alert(status + ' - ' + error);
             });
         });
 

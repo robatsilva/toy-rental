@@ -368,7 +368,7 @@
         })
         .fail(function(xhr, status, error) {
             hideLoader();
-            alert(error)
+            alert(status + ' - ' + error);
         });
     }
     function loadCpf(){
