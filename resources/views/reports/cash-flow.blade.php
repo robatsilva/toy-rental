@@ -473,7 +473,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         });
         $('.delete_cash').click(function(){
@@ -483,7 +483,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         });
         $('.valores_abertura').keyup(function(){
@@ -597,7 +597,7 @@
         })
         .fail(function(xhr, status, error) {
             hideLoader();
-            alert(status + ' - ' + error);
+            showError(error, status, xhr);
         });
     }
 

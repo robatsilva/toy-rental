@@ -276,7 +276,7 @@
                     // })
                     // .fail(function(xhr, status, error) {
                     //     hideLoader();
-                    //     alert(status + ' - ' + error);
+                    //     showError(error, status, xhr);
                     // });
                     
                 // },

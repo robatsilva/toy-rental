@@ -89,7 +89,7 @@
                 loadRentals();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         });
 
@@ -108,7 +108,7 @@
                 hideLoader();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         });
 
@@ -119,7 +119,7 @@
                 loadRentals();
             })
             .fail(function(xhr, status, error) {
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         });
     }

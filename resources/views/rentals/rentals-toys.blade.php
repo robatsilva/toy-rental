@@ -212,7 +212,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         }
         $(".btn-period").dblclick(function(){
@@ -224,7 +224,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
 
         });
@@ -252,7 +252,7 @@
                 })
                 .fail(function(xhr, status, error) {
                     hideLoader();
-                    alert(status + ' - ' + error);
+                    showError(error, status, xhr);
                 });
                 return;
             }
@@ -266,11 +266,11 @@
                 })
                 .fail(function(xhr, status, error) {
                     hideLoader();
-                    alert(status + ' - ' + error);
+                    showError(error, status, xhr);
                 });
                 return;
             }
-            if(toy.rental || $("#name").val()){
+            if(toy.rental){
                 alert('Não é possível voltar o último aluguel enquanto houver um cpf de cliente digitado');
                 return;
             }
@@ -282,7 +282,7 @@
                 })
                 .fail(function(xhr, status, error) {
                     hideLoader();
-                    alert(status + ' - ' + error);
+                    showError(error, status, xhr);
                 });
             }
 
@@ -300,7 +300,7 @@
             })
             .fail(function(xhr, status, error) {
                 hideLoader();
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         });
 

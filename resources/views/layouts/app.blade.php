@@ -147,6 +147,19 @@
         function hideLoader(){
             $("#loader").hide();
         }
+
+        function showError(error, status, xhr){
+            if(xhr && xhr.status === 401){
+                location.reload();
+                return;
+            }
+            hideLoader();
+            if(xhr.responseText){
+                alert(xhr.responseText);
+            } else {
+                alert(xhr.status + ' = ' + error);
+            }
+        }
     </script>
     @yield('scripts')
 </body>

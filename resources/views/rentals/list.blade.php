@@ -340,7 +340,7 @@
             periodResponse(data);
         })
         .fail(function(xhr, status, error) {
-            alert(status + ' - ' + error);
+            showError(error, status, xhr);
         });
     }
     // function loadKiosks()
@@ -368,7 +368,7 @@
         })
         .fail(function(xhr, status, error) {
             hideLoader();
-            alert(status + ' - ' + error);
+            showError(error, status, xhr);
         });
     }
     function loadCpf(){
@@ -381,7 +381,7 @@
             .fail(function(xhr, status, error) {
                 hideLoader();
                 cpfResponse('');
-                alert(status + ' - ' + error);
+                showError(error, status, xhr);
             });
         }
         else{
@@ -460,7 +460,7 @@
             loadRentals();
         })
         .fail(function(xhr, status, error) {
-            alert(status + ' - ' + error);
+            showError(error, status, xhr);
         });
     });
 
@@ -498,7 +498,7 @@
         })
         .fail(function(xhr, status, error) {
             hideLoader();
-            alert(status + ' - ' + error);
+            showError(error, status, xhr);
         });
     });
 
@@ -521,7 +521,7 @@
         })
         .fail(function(xhr, status, error) {
             hideLoader();
-            alert(status + ' - ' + error);
+            showError(error, status, xhr);
         });
     });
     

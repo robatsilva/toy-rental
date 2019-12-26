@@ -219,7 +219,7 @@
             kioskResponse(data);
         })
         .fail(function(xhr, status, error) {
-            alert(status + ' - ' + error);
+            showError(error, status, xhr);
         });
     }
 
