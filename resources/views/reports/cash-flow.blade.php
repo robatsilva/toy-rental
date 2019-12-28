@@ -459,7 +459,7 @@
                         alert('Valor informado MENOR do que o valor em caixa de R$ {!! $cash['total'] ? $cash['total'] : '0'; !!}. Verifique se é necessário realizar lançamentos de SAÍDA');
                 }
             }
-            hideloader();
+            hideLoader();
             e.preventDefault();
         });
         $('#input-output-form').submit(function(e){
@@ -477,7 +477,7 @@
             });
         });
         $('.delete_cash').click(function(){
-            shoLoader();
+            showLoader();
             $.get('/cash/delete/' + $(this).attr('value'), function(data){
                 $('#cash-form').submit();
             })
