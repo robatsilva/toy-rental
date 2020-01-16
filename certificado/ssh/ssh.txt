@@ -3,7 +3,7 @@ dionelly - 	ssh -p 65002 u797852837@31.220.16.241
 toy - 	ssh -p 65002 u158194571@185.224.137.172
 
 --------atualizar certificado
-
+na pasta public
 php acme-client/bin/acme issue --domains sistema.dionellybrinquedos.com.br --path /home/u797852837/public_html/sistema --server letsencrypt
 
 php acme-client/bin/acme check --name sistema.dionellybrinquedos.com.br --server letsencrypt
@@ -11,7 +11,8 @@ php acme-client/bin/acme check --name sistema.dionellybrinquedos.com.br --server
 cd /home/u797852837/acme-client/data/certs/acme-v01.api.letsencrypt.org.directory/sistema.dionellybrinquedos.com.br
 
 ----copiar e colar no cpanel
-cat fullchain.pem
+
+cat fullchain.pem (copiar primeiro certificado)
 cat key.pem
 
 https://www.hostinger.com/tutorials/ssl/how-to-install-free-ssl-from-lets-encypt-on-shared-hosting
