@@ -52,7 +52,7 @@ class PeriodController extends Controller
      */
     public function getByKioskId($kiosk_id)
     {
-        SecurityCheckController::securityCheck($id);
+        SecurityCheckController::securityCheck($kiosk_id);
 
         $periods = Period::where('kiosk_id', $kiosk_id)
         ->where('status', 1)

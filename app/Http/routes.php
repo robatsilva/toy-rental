@@ -97,11 +97,13 @@ Route::get('/period', 'PeriodController@index');
 Route::post('/period', 'PeriodController@store');
 Route::get('/period/create', 'PeriodController@create');
 Route::get('/period/list', 'PeriodController@listPeriods');
-Route::get('/period/{id}', 'PeriodController@edit');
+// Route::get('/period/{id}', 'PeriodController@edit');
 Route::get('/period/getByKioskId/{kiosk_id}', 'PeriodController@getByKioskId');
 Route::post('/period/update/{id}', 'PeriodController@update');
 Route::get('/period/toogle/{id}', 'PeriodController@toogle');
 
 Route::get('/payment/session', 'PayController@getSession');
 Route::post('/payment/pre-approvals', 'PayController@preApprovals');
+
+Route::get('/type/{kiosk_id}', 'TypeController@getByKioskId');
 

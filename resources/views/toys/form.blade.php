@@ -58,6 +58,12 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="type_id">Tipo:</label>
+                        <select name="type_id" class="form-control" id="type_id">
+                            
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>Upload Image</label>
                         <div class="input-group">
                             <span class="input-group-btn">
@@ -78,9 +84,12 @@
     </div>
 </div>
 @endsection
+
 @section('scripts')
 <script>
     $(document).ready( function() {
+        setKioskListener();
+        loadTypes($("#kiosk_id").val());
     	$(document).on('change', '.btn-file :file', function() {
 		var input = $(this),
 			label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
@@ -115,5 +124,26 @@
 		    readURL(this);
 		}); 	
 	});
+
+    function setKioskListener(){
+        $('#kiosk_id').change(function(){
+           loadTypes($(this).val()) 
+        });
+    }
+
+    function loadTypes(kiosk_id){
+        showLoader();
+        $.get('/type/' + kiosk_id, function(data){
+            hideLoader();
+            $('#type_id').html(data);
+            @if($toy && $toy->type_id)
+                $('#type_id').val({{ $toy->type_id }});
+            @endif
+        })
+        .fail(function(xhr, status, error) {
+            hideLoader();
+            showError(error, status, xhr);
+        });
+    }
 </script>
 @endsection

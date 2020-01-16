@@ -99,6 +99,7 @@ class RentalController extends Controller
         $toys = Toy::
         where('toys.kiosk_id', $kiosk_id)
         ->where('toys.status', 1)
+        ->whereIn('toys.type_id', explode(",", $request->get('types')))
         ->with("kiosk")
         ->with(["rental" => function($query) use ($kiosk_id){
             $query->selectRaw("*,

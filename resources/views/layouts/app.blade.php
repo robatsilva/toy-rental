@@ -157,7 +157,9 @@
             if(xhr.responseText){
                 alert(xhr.responseText);
             } else {
-                alert(xhr.status + ' = ' + error);
+                if(xhr.status){
+                    alert(xhr.status + ' = ' + error);
+                }
             }
         }
     </script>

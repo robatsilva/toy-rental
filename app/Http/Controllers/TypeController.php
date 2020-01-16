@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Models\Kiosk;
 
-class ToyTypeController extends Controller
+class TypeController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -23,9 +24,19 @@ class ToyTypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($kiosk_id)
     {
-        //
+     
+    }
+
+    public function getByKioskId($kiosk_id)
+    {
+        $types = Kiosk::find($kiosk_id)
+        ->types()
+        ->get();
+
+        return view('types/options')
+                ->with('types', $types);
     }
 
     /**

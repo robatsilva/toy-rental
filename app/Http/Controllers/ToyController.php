@@ -96,6 +96,7 @@ class ToyController extends Controller
             $toy->code = $request->input('code');
             $toy->description = $request->input('description');
             $toy->kiosk_id = $request->input('kiosk_id');
+            $toy->type_id = $request->input('type_id');
 
             if($request->file("image")){
                 // get current time and append the upload file extension to it,
@@ -160,6 +161,7 @@ class ToyController extends Controller
             $toy->code = $request->input('code');
             $toy->description = $request->input('description');
             $toy->kiosk_id = $request->input('kiosk_id');
+            $toy->type_id = $request->input('type_id');
     
             // get current time and append the upload file extension to it,
             // then put that name to $photoName variable.

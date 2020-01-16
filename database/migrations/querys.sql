@@ -211,3 +211,74 @@ WHERE users.`type` = 3 AND permissions.id = 3
 );
 
 --------------------acima executado
+
+CREATE TABLE `types`
+(
+	`id` INT
+(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`description` VARCHAR
+(50) NOT NULL DEFAULT '0',
+	`created_at` TIMESTAMP NULL DEFAULT NULL,
+	`updated_at` TIMESTAMP NULL DEFAULT NULL,
+	PRIMARY KEY
+(`id`)
+)
+ENGINE=InnoDB
+AUTO_INCREMENT=1
+;
+
+
+CREATE TABLE `kiosk_type`
+(
+	`id` INT
+(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`kiosk_id` INT
+(10) UNSIGNED NOT NULL DEFAULT '0',
+	`type_id` INT
+(10) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY
+(`id`),
+	INDEX `fk_kiosk_type_kiosk_id`
+(`kiosk_id`),
+	INDEX `fk_kiosk_type_type_id`
+(`type_id`),
+	CONSTRAINT `fk_kiosk_type_kiosk_id` FOREIGN KEY
+(`kiosk_id`) REFERENCES `kiosks`
+(`id`),
+	CONSTRAINT `fk_kiosk_type_type_id` FOREIGN KEY
+(`type_id`) REFERENCES `types`
+(`id`)
+)
+ENGINE=InnoDB
+;
+
+INSERT INTO `types` (`
+id`,
+`description
+`, `created_at`, `updated_at`) VALUES
+(1, 'Carrinho elétrico', NULL, NULL);
+
+INSERT INTO `types` (`
+id`,
+`description
+`, `created_at`, `updated_at`) VALUES
+(2, 'Carrinho de bebê', NULL, NULL);
+
+INSERT INTO kiosk_type
+	(kiosk_id, type_id)
+SELECT id, 1
+FROM kiosks;
+
+ALTER TABLE `periods`
+ADD COLUMN `type_id` INT
+(10) UNSIGNED NULL DEFAULT '1' AFTER `kiosk_id`,
+ADD CONSTRAINT `fk_periods_types` FOREIGN KEY
+(`type_id`) REFERENCES `types`
+(`id`);
+
+ALTER TABLE `toys`
+ADD COLUMN `type_id` INT
+(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `kiosk_id`,
+ADD CONSTRAINT `fk_toys_types` FOREIGN KEY
+(`type_id`) REFERENCES `types`
+(`id`);

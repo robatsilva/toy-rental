@@ -30,4 +30,9 @@ class Kiosk extends Model
     {
         return $this->hasMany('App\Toy');
     }
+    
+    public function types()
+    {
+        return $this->belongsToMany('App\Models\Type');
+    }
 }

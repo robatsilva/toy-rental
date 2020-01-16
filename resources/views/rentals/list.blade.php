@@ -7,8 +7,16 @@
     }
 </style>
 <div class="container">
-    <!--form-->
     <div class="row text-center" style="margin-bottom: 20px;">
+        @if($kiosk->types->count() > 1)
+            <div class="btn-group" data-toggle="buttons">
+                @foreach($kiosk->types as $type)
+                <label class="btn btn-primary active type">
+                    <input class="type" type="checkbox" value="{{ $type->id }}" checked>{{ $type->description }}
+                </label>
+                @endforeach
+            </div>
+        @endif
         <div>{{$kiosk->name}} - 
         @if($cash)
             {{ $cash->cash_drawer->name }} aberto</div>
@@ -312,6 +320,7 @@
     var toy;
     var customer = {id: "", name: "", cpf: ""};
     var periods = JSON.parse(`{!! $periods !!}`);
+    var types = [];
 
     
     $(document).ready(function(){
@@ -362,7 +371,11 @@
     // }
     function loadRentals() {
         //$.get("/rental/" + $("#kiosks").val(), function(data){
-        $.get("/rental/" + kiosk_id, function(data){
+        types = [];
+        $.each($("input.type:checked"), function(){
+            types.push($(this).val());
+        });
+        $.get("/rental/" + kiosk_id + "?types=" + types.join(","), function(data){
             rentalsResponse(data);
             hideLoader();
         })
@@ -391,13 +404,10 @@
     ////////////////End Loaders
     ////////////////Listeners
     function initListeners(){
-        //kioskChange();
         cpfChange();
         nameChange();
-        //toysChange();
-        //periodChange();
         inputKeyUp();
-        //btnClick();
+        typeToogle();
     }
     function inputKeyUp(){
         $('#cpf').keydown(function (e){
@@ -405,11 +415,6 @@
                 loadCpf();
             }
         });
-        // $('#name').keydown(function (e){
-        //     if(e.keyCode == 13){
-        //         toysFocus();
-        //     }
-        // });
     }
     function cpfChange(){
         $("#cpf").change(function(){
@@ -419,6 +424,19 @@
     function nameChange(){
         $("#name").on('blur', function() {
             customer.name = $("#name").val();
+        });
+    }
+    function typeToogle(){
+        $("input.type").change(function() {
+            if(!$(this).prop("checked") && $("input.type:checked").length === 0){
+                $(this).parent().addClass("active");
+                $(this).prop("checked", true);
+                return;
+            }
+    
+            showLoader();
+            loadRentals();
+            
         });
     }
 

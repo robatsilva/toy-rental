@@ -21,7 +21,7 @@
                         <input type="text" name="value" class="form-control" id="value" value="{{$period?$period->value:''}}">
                     </div>
                     <div class="form-group">
-                        <label for="period_id">Quiosque:</label>
+                        <label for="kiosk_id">Quiosque:</label>
                         <select name="kiosk_id" class="form-control" id="kiosk_id">
                             @foreach($kiosks as $kiosk)
                             <option value='{{ $kiosk->id }}'
@@ -32,10 +32,40 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="type_id">Tipo:</label>
+                        <select name="type_id" class="form-control" id="type_id">
+                            
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary">Salvar</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>    
+    $(document).ready(function(){
+        loadTypes($("#kiosk_id").val());
+        $('#kiosk_id').change(function(){
+            loadTypes($(this).val()) 
+        });
+    });
+    function loadTypes(kiosk_id){
+        showLoader();
+        $.get('/type/' + kiosk_id, function(data){
+            hideLoader();
+            $('#type_id').html(data);
+            @if($period && $period->type_id)
+                $('#type_id').val({{ $period->type_id }});
+            @endif
+        })
+        .fail(function(xhr, status, error) {
+            hideLoader();
+            showError(error, status, xhr);
+        });
+    }
+</script>
 @endsection
