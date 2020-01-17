@@ -69,17 +69,12 @@ class RentalController extends Controller
             return redirect('report/cash');
 
         $reasons = Reason::where("kiosk_id", $kiosk_id)->get();
-        $periods = Period::where("kiosk_id", $kiosk_id)
-        ->where('status', 1)
-        ->orderBy('time', "asc")
-        ->get();
 
         return view('rentals.list')
             ->with('cash', $cash->first())
             ->with('kiosk', $kiosk)
             ->with('kiosk_id', $kiosk_id)
-            ->with('reasons', $reasons)
-            ->with('periods', json_encode($periods->toArray()));
+            ->with('reasons', $reasons);
     }
     /**
      * Display a listing of the resource.
@@ -189,11 +184,17 @@ class RentalController extends Controller
             $rental->change_toy_by = Auth::user()->name;
             $rental->save();
         } else {
+            $toy = Toy::find($request->input('toy_id'));
+            $period = Period::where('type_id', $toy->type_id)
+                                ->where('kiosk_id', $toy->kiosk_id)
+                                ->where('status', 1)
+                                ->orderBy("time")
+                                ->first();
             $rental = new Rental;
             $rental->customer_id = $customer->id;
             $rental->kiosk_id = $request->input('kiosk_id');
-            $rental->toy_id = $request->input('toy_id');
-            $rental->period_id = $request->input('period.id');
+            $rental->toy_id = $toy->id;
+            $rental->period_id = $period->id;
             $rental->tolerance = $kiosk->tolerance;
             $rental->extra_time = 0;
             $rental->extra_value = $kiosk->extra_value;
@@ -219,6 +220,7 @@ class RentalController extends Controller
         $rental = Rental::find($id);
         $currentPeriod = Period::find($rental->period_id);
         $period = Period::where("time", ">", $currentPeriod->time)
+                    ->where('type_id', $currentPeriod->type_id)
                     ->where('status', 1)
                     ->where("kiosk_id", $rental->kiosk_id)
                     ->orderBy("time")->first();
@@ -226,6 +228,7 @@ class RentalController extends Controller
             $rental->period_id = $period->id;
         else{
             $period = Period::where("kiosk_id", $rental->kiosk_id)
+            ->where('type_id', $currentPeriod->type_id)
             ->where('status', 1)
             ->orderBy("time")->first();
             
@@ -493,6 +496,7 @@ class RentalController extends Controller
         if($periodSelected->time < $time_considered){
             //obtem o periodo de tempo abaixo do tempo decorrido
             $period = Period::where('time', '<=', $time_considered)
+                ->where('type_id', $periodSelected->type_id)
                 ->where('kiosk_id', $rental->kiosk_id)
                 ->where('status', 1)
                 ->orderBy('time', 'desc')
@@ -501,6 +505,7 @@ class RentalController extends Controller
 
         //obtem o periodo de tempo acima do decorrido
         $next_period = Period::where('time', '>=', $time_considered)
+            ->where('type_id', $periodSelected->type_id)
             ->where('kiosk_id', $rental->kiosk_id)
             ->where('status', 1)
             ->orderBy('time', 'asc')

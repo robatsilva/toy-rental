@@ -5,18 +5,22 @@
     .btn-digit, .btn-limpar{
         padding: 15px;
     }
+    .hidden-toogle{
+        display: none;
+    }
+    .type-group{
+        margin-bottom: 10px;
+    }
 </style>
 <div class="container">
     <div class="row text-center" style="margin-bottom: 20px;">
-        @if($kiosk->types->count() > 1)
-            <div class="btn-group" data-toggle="buttons">
-                @foreach($kiosk->types as $type)
-                <label class="btn btn-primary active type">
-                    <input class="type" type="checkbox" value="{{ $type->id }}" checked>{{ $type->description }}
-                </label>
-                @endforeach
-            </div>
-        @endif
+        <div {{ ($kiosk->types->count() === 1)?("class=hidden-toogle"):"" }} class="btn-group type-group" data-toggle="buttons">
+            @foreach($kiosk->types as $type)
+            <label class="btn btn-primary active type">
+                <input class="type" type="checkbox" value="{{ $type->id }}" checked>{{ $type->description }}
+            </label>
+            @endforeach
+        </div>
         <div>{{$kiosk->name}} - 
         @if($cash)
             {{ $cash->cash_drawer->name }} aberto</div>
@@ -52,16 +56,12 @@
     @if(!$kiosk_id)
         <h2>Para começar você deve cadastrar pelo menos um <a href="kiosk">Quiosque</a></h2>
     @else
-        @if($periods == '[]')
-            <h2>Para começar você deve cadastrar pelo menos um <a href="period">Período</a> para o quiosque "{{ $kiosk->name }}"</h2><!--(<a href="kiosk">Trocar quiosque</a>)-->
-        @else
-            <div class="row text-center">
-                <span id="rental-tip"></span>
-            </div>
-            <!--Grid-->
-            <div id="rentals-toys" class="row form-group">
-            </div>
-        @endif
+        <div class="row text-center">
+            <span id="rental-tip"></span>
+        </div>
+        <!--Grid-->
+        <div id="rentals-toys" class="row form-group">
+        </div>
     @endif
 
     <!-- Modal payment-->
@@ -319,7 +319,6 @@
     var toys;
     var toy;
     var customer = {id: "", name: "", cpf: ""};
-    var periods = JSON.parse(`{!! $periods !!}`);
     var types = [];
 
     
@@ -344,14 +343,14 @@
     // function initLoaders(){;
     //     loadKiosks();
     // }
-    function loadPeriods(){
-        $.get("/period/getByKioskId/" + kiosk_id, function(data){
-            periodResponse(data);
-        })
-        .fail(function(xhr, status, error) {
-            showError(error, status, xhr);
-        });
-    }
+    // function loadPeriods(){
+    //     $.get("/period/getByKioskId/" + kiosk_id, function(data){
+    //         periodResponse(data);
+    //     })
+    //     .fail(function(xhr, status, error) {
+    //         showError(error, status, xhr);
+    //     });
+    // }
     // function loadKiosks()
     // {
     //     showLoader();

@@ -178,7 +178,6 @@
                 toy.rental.customer =       customer;
                 toy.rental.kiosk_id =       kiosk_id;
                 toy.rental.toy_id =         toy.id;
-                toy.rental.period =         periods[0];
                 registerRental();
             }
         });
