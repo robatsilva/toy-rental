@@ -282,3 +282,4 @@ ADD COLUMN `type_id` INT
 ADD CONSTRAINT `fk_toys_types` FOREIGN KEY
 (`type_id`) REFERENCES `types`
 (`id`);
+
