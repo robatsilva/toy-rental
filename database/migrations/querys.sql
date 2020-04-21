@@ -253,14 +253,12 @@ ENGINE=InnoDB
 ;
 
 INSERT INTO `types` (`
-id`,
-`description
+id`,`description
 `, `created_at`, `updated_at`) VALUES
 (1, 'Carrinho elétrico', NULL, NULL);
 
 INSERT INTO `types` (`
-id`,
-`description
+id`,`description
 `, `created_at`, `updated_at`) VALUES
 (2, 'Carrinho de bebê', NULL, NULL);
 
@@ -283,3 +281,4 @@ ADD CONSTRAINT `fk_toys_types` FOREIGN KEY
 (`type_id`) REFERENCES `types`
 (`id`);
 
+--------------------acima executado
