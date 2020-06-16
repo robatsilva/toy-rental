@@ -282,3 +282,18 @@ ADD CONSTRAINT `fk_toys_types` FOREIGN KEY
 (`id`);
 
 --------------------acima executado
+ALTER TABLE `kiosk_type`
+ADD `tolerance` INT
+(2) UNSIGNED NOT NULL DEFAULT '0' AFTER `type_id`;
+
+ALTER TABLE `kiosk_type`
+ADD `tolerance_calc_time` INT
+(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `tolerance`;
+
+ALTER TABLE `kiosk_type`
+ADD `extra_value` DECIMAL
+(10,2) UNSIGNED NOT NULL DEFAULT '0' AFTER `tolerance`;
+
+ALTER TABLE `rentals`
+ADD `tolerance_calc_time` INT
+(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `tolerance`;

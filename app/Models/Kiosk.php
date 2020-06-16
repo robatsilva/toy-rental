@@ -33,6 +33,6 @@ class Kiosk extends Model
     
     public function types()
     {
-        return $this->belongsToMany('App\Models\Type');
+        return $this->belongsToMany('App\Models\Type')->withPivot('tolerance', 'tolerance_calc_time', 'extra_value');
     }
 }

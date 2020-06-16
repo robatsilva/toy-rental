@@ -19,6 +19,7 @@ use App\Models\Employe;
 use App\Models\User;
 use App\Models\Reason;
 use App\Models\Cash;
+use App\Models\Type;
 
 class RentalController extends Controller
 {
@@ -190,14 +191,24 @@ class RentalController extends Controller
                                 ->where('status', 1)
                                 ->orderBy("time")
                                 ->first();
+
+            $toy_type = new Type();
+            foreach ($kiosk->types as $type) {
+                if($type->id == $toy->type_id){
+                    $toy_type = $type;
+                }
+            }
+
             $rental = new Rental;
             $rental->customer_id = $customer->id;
             $rental->kiosk_id = $request->input('kiosk_id');
             $rental->toy_id = $toy->id;
             $rental->period_id = $period->id;
-            $rental->tolerance = $kiosk->tolerance;
+            
+            $rental->tolerance = $toy_type->tolerance;
+            $rental->tolerance_calc_time = $toy_type->tolerance_calc_time;
             $rental->extra_time = 0;
-            $rental->extra_value = $kiosk->extra_value;
+            $rental->extra_value = $toy_type->extra_value;
             $rental->employe_id = $user->id;
             $rental->employe_init_id = $user->id;
             $rental->init = Carbon::now();
@@ -516,7 +527,7 @@ class RentalController extends Controller
 
         if($period){
             if($time_considered > ($rental->tolerance + $periodSelected->time)){
-                $timeExceeded = $time_considered - $period->time;
+                $timeExceeded = ($time_considered - $period->time) / $rental->tolerance_calc_time;
                 $valueExceeded = $timeExceeded * $rental->extra_value;
             }
 
