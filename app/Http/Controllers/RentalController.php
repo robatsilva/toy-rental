@@ -526,8 +526,14 @@ class RentalController extends Controller
         $valueExceeded = 0;
 
         if($period){
+            $tolerance_calc_time = 1;
+            foreach ($rental->kiosk->types as $type) {
+                if($rental->toy->type_id == $type->id){
+                    $tolerance_calc_time = $type->tolerance_calc_time;
+                }
+            }
             if($time_considered > ($rental->tolerance + $periodSelected->time)){
-                $timeExceeded = ($time_considered - $period->time) / $rental->tolerance_calc_time;
+                $timeExceeded = intdiv(($time_considered - $period->time), $tolerance_calc_time);
                 $valueExceeded = $timeExceeded * $rental->extra_value;
             }
 
