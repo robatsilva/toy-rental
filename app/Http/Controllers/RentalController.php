@@ -206,7 +206,6 @@ class RentalController extends Controller
             $rental->period_id = $period->id;
             
             $rental->tolerance = $toy_type->tolerance;
-            $rental->tolerance_calc_time = $toy_type->tolerance_calc_time;
             $rental->extra_time = 0;
             $rental->extra_value = $toy_type->extra_value;
             $rental->employe_id = $user->id;

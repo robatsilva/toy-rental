@@ -24,14 +24,14 @@
                         <label for="cnpj">CNPJ:</label>
                         <input name="cnpj" class="cnpj form-control" value="{{$kiosk?$kiosk->cnpj:$user->cnpj}}" id="cnpj">
                     </div>
-                    <div class="form-group col-md-2">
+                    <!-- <div class="form-group col-md-2">
                         <label for="tolerance">Tolerância:</label>
                         <input name="tolerance" class="form-control integer" value="{{$kiosk?$kiosk->tolerance:''}}" id="tolerance">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="extra-value">R$ minuto extra:</label>
                         <input name="extra-value" class="form-control decimal" value="{{$kiosk?$kiosk->extra_value:''}}" id="extra-value">
-                    </div>
+                    </div> -->
                     <div class="form-group col-md-2">
                         <label for="credit-tax">Taxa crédito:</label>
                         <input name="credit-tax" class="form-control tax" value="{{$kiosk?$kiosk->credit_tax:''}}" id="credit-tax">

@@ -6,6 +6,7 @@ toy - 	ssh -p 65002 u158194571@185.224.137.172
 (servidor) mysqldump -u u797852837_renta -p u797852837_renta > dump.sql 
 (local) scp -P 65002  u797852837@31.220.16.241:/home/u797852837/dump.sql d:
 (local)docker cp c:/dump.sql rental-toy-mysql-p:home
+(docker mysql) mysql -u root -p u797852837_renta < dump.sql
 
 --------atualizar certificado
 na pasta public
