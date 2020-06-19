@@ -427,14 +427,19 @@
     }
     function typeToogle(){
         $("input.type").change(function() {
-            if(!$(this).prop("checked") && $("input.type:checked").length === 0){
+            if($("input.type:checked").length === 0){
                 $(this).parent().addClass("active fa-toggle-off");
-                $(this).parent().removeClass("active fa-toggle-on");
                 $(this).prop("checked", true);
+                alert('Não é permitido desabilitar os dois tipos')
                 return;
+            } 
+            
+            if($(this).prop("checked")){
+                $(this).parent().addClass("fa-toggle-on");
+                $(this).parent().removeClass("fa-toggle-off");
             } else {
-                $(this).parent().addClass("active fa-toggle-on");
-                $(this).parent().removeClass("active fa-toggle-of");
+                $(this).parent().addClass("fa-toggle-off");
+                $(this).parent().removeClass("fa-toggle-on");
             }
     
             showLoader();

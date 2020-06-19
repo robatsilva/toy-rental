@@ -204,10 +204,9 @@ class RentalController extends Controller
             $rental->kiosk_id = $request->input('kiosk_id');
             $rental->toy_id = $toy->id;
             $rental->period_id = $period->id;
-            
-            $rental->tolerance = $toy_type->tolerance;
+            $rental->tolerance = $toy_type->pivot->tolerance_calc_time;
             $rental->extra_time = 0;
-            $rental->extra_value = $toy_type->extra_value;
+            $rental->extra_value = $toy_type->pivot->extra_value;
             $rental->employe_id = $user->id;
             $rental->employe_init_id = $user->id;
             $rental->init = Carbon::now();
@@ -528,11 +527,14 @@ class RentalController extends Controller
             $tolerance_calc_time = 1;
             foreach ($rental->kiosk->types as $type) {
                 if($rental->toy->type_id == $type->id){
-                    $tolerance_calc_time = $type->tolerance_calc_time;
+                    $tolerance_calc_time = $type->pivot->tolerance_calc_time;
                 }
             }
             if($time_considered > ($rental->tolerance + $periodSelected->time)){
                 $timeExceeded = intdiv(($time_considered - $period->time), $tolerance_calc_time);
+                if($timeExceeded == 0){
+                    $timeExceeded = 1;
+                }
                 $valueExceeded = $timeExceeded * $rental->extra_value;
             }
 
