@@ -7,8 +7,8 @@
 LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7,3, POSITIVE);
 
 //////////////////////// Variáveis do wifi
-String ssid = "bloco doce";
-String password = "kira2017";
+String ssid = "BLOCO DOCE";
+String password = "11111111";
 SoftwareSerial esp8266 (2, 3); //WIFI
 String path = "/toy/check/13";
 String server = "sistema.dionellybrinquedos.com.br";
@@ -17,6 +17,7 @@ String getRequestLength = String(getRequest.length());
 String response="";
 /////////////////////////
 ///////////////////////// Variáveis controle
+boolean debugger = false;
 boolean sensorAtivo = false;
 boolean wifiAtivo = false;
 boolean cartaoAtivo = false;
@@ -92,6 +93,8 @@ void setLCD(){
 }
 
 void escreverLCD(String mensagemAcima, String mensagemAbaixo){
+  db(mensagemAcima);
+  db(mensagemAbaixo);
   if(ultimaMensagem == mensagemAcima + mensagemAbaixo) return;
   lcd.setCursor(0,0);
   lcd.print("                 ");
@@ -148,9 +151,9 @@ void espRead() {
   response = "";
 
   boolean ctrl = false;
-  
+  db("vai aguardar estar available");
   while(!esp8266.available()){ lerSensor(); }
-
+  db("available");
   long int time = millis();
   
   while ( (time + 2000) > millis())
@@ -158,8 +161,9 @@ void espRead() {
     lerSensor();
     while (esp8266.available())
     {
-      // The esp has data so display its output to the serial window
+      // The esp has data
       char c = esp8266.read(); // read the next character.
+      
       if(c == '{') ctrl = true;
 
       if(ctrl) response += c;
@@ -167,6 +171,7 @@ void espRead() {
       if(c == '}') ctrl = false;
     }
   }
+  db(response);
 }
 
 void espClear() {
@@ -177,25 +182,38 @@ void espClear() {
 }
 
 void reset() {
+  db("iniciando reset");
   escreverLCD("Iniciando...", "");
   delay(1000);
+  db("enviou para wifi at + rst");
   esp8266.println("AT+RST");
-  if(esp8266.find("OK")) escreverLCD("Iniciando", "Passo 2");
+  if(esp8266.find("OK")) { 
+    espRead();
+    escreverLCD("Iniciando", "Passo 2");
+  } else {
+    db("não encontrou ok no reset");
+    espRead();  
+  }
   delay(1000);
 }
 
 void connectWifi() {
   if(digitalRead(iWifi) == LOW) return;
+  db("conectando no wifi");
   espClear();
   escreverLCD("Conectando...", "");
   String CMD = "AT+CWJAP=\"" +ssid+"\",\"" + password + "\"";
+  db(CMD);
   esp8266.println(CMD);
   delay(5000);
   if(esp8266.find("OK")) {
+    db("CONECTADO");
     escreverLCD("Conectado!!!!", "");
     conectado = true;
   }
   else {
+    db("não conectado, tentando de novo");
+    espRead();
     connectWifi();
     return;
   }
@@ -303,6 +321,8 @@ void myDelay(int _delay){
   }
 }
 
-
-
-
+void db(String texto){
+  if(debugger){
+    Serial.println(texto);
+  }
+}
