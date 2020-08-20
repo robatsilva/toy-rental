@@ -78,9 +78,9 @@ class KioskController extends Controller
         $kiosk = new Kiosk;
         $kiosk->user_id = Auth::user()->id;
         $kiosk->name = $request->input('name');
-        $kiosk->tolerance = $request->input('tolerance');
+        // $kiosk->tolerance = $request->input('tolerance');
         $kiosk->cnpj = $request->input('cnpj');
-        $kiosk->extra_value = $request->input('extra-value');
+        // $kiosk->extra_value = $request->input('extra-value');
         $kiosk->credit_tax = str_replace(',', '.', $request->input('credit-tax'));
         $kiosk->debit_tax = str_replace(',', '.', $request->input('debit-tax'));
         $kiosk->royalty = str_replace(',', '.', $request->input('royalty'));
@@ -145,9 +145,9 @@ class KioskController extends Controller
         date_default_timezone_set($kiosk->timezone);
 
         $kiosk->name = $request->input('name');
-        $kiosk->tolerance = $request->input('tolerance');
+        // $kiosk->tolerance = $request->input('tolerance');
         $kiosk->cnpj = $request->input('cnpj');
-        $kiosk->extra_value = $request->input('extra-value');
+        // $kiosk->extra_value = $request->input('extra-value');
         $kiosk->credit_tax = str_replace(',', '.', $request->input('credit-tax'));
         $kiosk->debit_tax = str_replace(',', '.', $request->input('debit-tax'));
         $kiosk->royalty = str_replace(',', '.', $request->input('royalty'));

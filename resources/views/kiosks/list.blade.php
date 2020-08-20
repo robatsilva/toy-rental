@@ -18,8 +18,8 @@
                     <thead>
                         <tr>
                             <th>Nome</th>
-                            <th>Tolerância</th>
-                            <th>R$ minuto extra</th>
+                            <!-- <th>Tolerância</th>
+                            <th>R$ minuto extra</th> -->
                             <th>Status</th>
                             <th>Ação</th>
                         </tr>
@@ -28,8 +28,8 @@
                         @foreach ($kiosks as $kiosk)
                             <tr>
                                 <td>{{ $kiosk->name }}</td>
-                                <td>{{ $kiosk->tolerance }}</td>
-                                <td>{{ $kiosk->extra_value }}</td>
+                                <!-- <td>{{ $kiosk->tolerance }}</td>
+                                <td>{{ $kiosk->extra_value }}</td> -->
                                 <td>{{ $kiosk->status?"Ativo" : "Inativo" }}</td>
                                 <td>
                                     <a href="/kiosk/{{$kiosk->id}}" class="btn btn-default">

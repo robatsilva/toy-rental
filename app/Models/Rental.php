@@ -48,7 +48,7 @@ class Rental extends Model
     public function save (array $options = array())
 	{   
         parent::save($options); // Calls Default Save
-        $this->sendFile($this->kiosk_id);
+        // $this->sendFile($this->kiosk_id);
     }
     private function sendFile($kiosk_id){
         try {

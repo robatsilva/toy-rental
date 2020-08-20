@@ -16,7 +16,7 @@
     <div class="row text-center" style="margin-bottom: 20px;">
         <div {{ ($kiosk->types->count() === 1)?("class=hidden-toogle"):"" }} class="btn-group type-group" data-toggle="buttons">
             @foreach($kiosk->types as $type)
-            <label class="btn btn-primary active type">
+            <label class="btn btn-primary active type fa fa-toggle-on">
                 <input class="type" type="checkbox" value="{{ $type->id }}" checked>{{ $type->description }}
             </label>
             @endforeach
@@ -427,10 +427,19 @@
     }
     function typeToogle(){
         $("input.type").change(function() {
-            if(!$(this).prop("checked") && $("input.type:checked").length === 0){
-                $(this).parent().addClass("active");
+            if($("input.type:checked").length === 0){
+                $(this).parent().addClass("active fa-toggle-off");
                 $(this).prop("checked", true);
+                alert('Não é permitido desabilitar os dois tipos')
                 return;
+            } 
+            
+            if($(this).prop("checked")){
+                $(this).parent().addClass("fa-toggle-on");
+                $(this).parent().removeClass("fa-toggle-off");
+            } else {
+                $(this).parent().addClass("fa-toggle-off");
+                $(this).parent().removeClass("fa-toggle-on");
             }
     
             showLoader();
