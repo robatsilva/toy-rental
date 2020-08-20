@@ -8,6 +8,9 @@ toy - 	ssh -p 65002 u158194571@185.224.137.172
 (local)docker cp c:/dump.sql rental-toy-mysql-p:home
 
 --------atualizar certificado
+mudou o esquema, precisa fazer upload de arquivos a partir do novo link abaixo, colar na pasta de certificado e seguir os passos
+
+
 na pasta public
 php acme-client/bin/acme issue --domains sistema.dionellybrinquedos.com.br --path /home/u797852837/public_html/sistema --server letsencrypt
 
