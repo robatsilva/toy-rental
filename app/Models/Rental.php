@@ -51,6 +51,7 @@ class Rental extends Model
         // $this->sendFile($this->kiosk_id);
     }
     private function sendFile($kiosk_id){
+        // https://pt.stackoverflow.com/questions/207775/qual-%C3%A9-a-solu%C3%A7%C3%A3o-para-processos-ass%C3%ADncronos-em-php
         try {
             $kiosk = Kiosk::find($kiosk_id);
             $target_url = env('BACKUP', 'http://backupdionelly.freevar.com');
