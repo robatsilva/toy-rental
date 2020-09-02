@@ -98,6 +98,7 @@
                                 <li><a href="{{ url('/report/employes') }}">Funcionários</a></li>
                                 <li><a href="{{ url('/report/toys') }}">Brinquedos</a></li>
                                 <li><a href="{{ url('/report/payment-way') }}">Forma de pagamento</a></li>
+                                <li><a href="{{ url('/report/entry-exit') }}">Lançamentos</a></li>
                             </ul>
                         </li>
                     @endif

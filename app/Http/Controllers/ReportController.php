@@ -480,6 +480,39 @@ class ReportController extends Controller
     }
 
     /**
+     * get total of rentals group by payment way
+     */
+    public function reportByEntryExit(Request $request)
+    {
+        $user = Employe::find(Auth::user()->id);
+        $kiosk = Kiosk::find($request->input("kiosk_id"));
+        if($user->permissions()->get()->whereIn('name', ['relatorio', 'shopping'])->first()){
+            $user->kiosk_id = 0;
+        }
+        $cashDrawers = CashDrawer::where('kiosk_id', $request->input("kiosk_id"))
+                        ->where('status', 1)
+                        ->get();
+        
+            
+        $cash_query = CashFlow::where("kiosk_id", $request->input("kiosk_id"))
+        ->where("employe_id", $request->input("employe_id"))
+        ->where(DB::raw('date(created_at)'), 'between', DB::raw("'" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('init')))) . "' and '" . date('Y-m-d', strtotime(str_replace('/', '-', $request->input('end')))) . "'"));
+        
+        $cash_input = $cash_query->sum('input');
+        $cash_output = $cash_query->sum('output');
+        
+        $cash_flows = $cash_query->get();
+
+        return view('reports.entry-exit-table')
+        ->with('kiosk', $kiosk)
+        ->with('cash_flows', $cash_flows)
+        ->with('cash_input', $cash_input)
+        ->with('cash_output', $cash_output)
+        ->with('input', $request->input());
+    }
+
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -574,6 +607,13 @@ class ReportController extends Controller
     {
         return view('reports.payment-way-table')
             ->with('rentals', null)
+            ->with('input', null);
+    }
+
+    public function entryExit()
+    {
+        return view('reports.entry-exit-table')
+            ->with('cash', null)
             ->with('input', null);
     }
 

@@ -37,6 +37,16 @@ class EmployeController extends Controller
         return view('employes.list')->with('employes', $employes);
     }
 
+
+    public function list($kiosk_id)
+    {
+        $employes = Employe::selectRaw('users.*')
+        ->where('kiosk_id', $kiosk_id)
+        ->get();
+        return response()->json($employes);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      *

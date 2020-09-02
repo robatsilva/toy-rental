@@ -49,6 +49,7 @@ Route::post('/user/update', 'UserController@update');
 Route::get('/employe', 'EmployeController@index');
 Route::post('/employe', 'EmployeController@store');
 Route::get('/employe/create', 'EmployeController@create');
+Route::get('/employe/list/{kiosk_id}', 'EmployeController@list');
 Route::get('/employe/{id}', 'EmployeController@edit');
 Route::post('/employe/update/{id}', 'EmployeController@update');
 Route::get('/employe/toogle/{id}', 'EmployeController@toogle');
@@ -87,6 +88,8 @@ Route::get('/report/cash/close', 'ReportController@cashClose');
 Route::post('/report/cash', 'ReportController@reportByCash');
 Route::get('/report/payment-way', 'ReportController@paymentWay');
 Route::post('/report/payment-way', 'ReportController@reportByPaymentWay');
+Route::get('/report/entry-exit', 'ReportController@entryExit');
+Route::post('/report/entry-exit', 'ReportController@reportByEntryExit');
 
 Route::post('/cash-flow', 'CashController@registerCashFlow');
 Route::post('/cash', 'CashController@registerCash');
