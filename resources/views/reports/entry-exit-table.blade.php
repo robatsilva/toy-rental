@@ -123,6 +123,7 @@
         initLoaders();
         $('#kiosks').change(function(){
             showLoader();
+            loadEmploies();
         });
     });
 
