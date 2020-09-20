@@ -95,7 +95,7 @@ class CashController extends Controller
             $cash->a20 = $request->input('a20');
             $cash->a50 = $request->input('a50');
             $cash->a100 = $request->input('a100');
-            $cash->a100 = $request->input('a200');
+            $cash->a200 = $request->input('a200');
         }
         $cash->value_close = $request->input('value_close');
         $cash->f005= $request->input('f005');
@@ -108,7 +108,8 @@ class CashController extends Controller
         $cash->f10 = $request->input('f10');
         $cash->f20 = $request->input('f20');
         $cash->f50 = $request->input('f50');
-        $cash->f100 = $request->input('f200');
+        $cash->f100 = $request->input('f100');
+        $cash->f200 = $request->input('f200');
         
         $cash->save();
 
