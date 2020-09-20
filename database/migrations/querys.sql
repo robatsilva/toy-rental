@@ -281,7 +281,6 @@ ADD CONSTRAINT `fk_toys_types` FOREIGN KEY
 (`type_id`) REFERENCES `types`
 (`id`);
 
---------------------acima executado
 ALTER TABLE `kiosk_type`
 ADD `tolerance` INT
 (2) UNSIGNED NOT NULL DEFAULT '0' AFTER `type_id`;
@@ -297,3 +296,13 @@ ADD `extra_value` DECIMAL
 ALTER TABLE `rentals`
 ADD `tolerance_calc_time` INT
 (2) UNSIGNED NOT NULL DEFAULT '1' AFTER `tolerance`;
+
+--------------------acima executado
+ALTER TABLE `cashes`
+ADD COLUMN `a200` INT
+(10) UNSIGNED NULL DEFAULT '0' AFTER `a100`;
+
+
+ALTER TABLE `cashes`
+ADD COLUMN `f200` INT
+(10) UNSIGNED NULL DEFAULT '0' AFTER `f100`;
