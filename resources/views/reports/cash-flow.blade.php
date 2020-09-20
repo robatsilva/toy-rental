@@ -287,6 +287,10 @@
                                     <div class="input-group-addon">R$ 100,00</div>
                                     <input type="text" class="form-control valores_abertura" peso="100" id="a100" name="a100" class="form-control">
                                 </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ 200,00</div>
+                                    <input type="text" class="form-control valores_abertura" peso="200" id="a200" name="a200" class="form-control">
+                                </div>
 
                                 <div><b>Total: R$ <span id='valor_abertura'></span></b></div>
                             </div>
@@ -337,6 +341,10 @@
                                 <div class="input-group">
                                     <div class="input-group-addon">R$ 100,00</div>
                                     <input type="text" class="form-control valores_fechamento" peso="100" id="f100" name="f100" class="form-control">
+                                </div>
+                                <div class="input-group">
+                                    <div class="input-group-addon">R$ 200,00</div>
+                                    <input type="text" class="form-control valores_fechamento" peso="200" id="f200" name="f200" class="form-control">
                                 </div>
 
                                 <div><b>Total: R$ <span id='valor_fechamento'></span></b></div>
@@ -541,6 +549,7 @@
         $('#a20').val(cash.a20);
         $('#a50').val(cash.a50);
         $('#a100').val(cash.a100);
+        $('#a200').val(cash.a200);
         $('.valores_abertura').prop("disabled", "disabled");
         $('.valores_fechamento').prop("disabled", "");
         $('#save_cash').prop("disabled", "");
@@ -565,6 +574,7 @@
         $('#a20').val(cash.a20);
         $('#a50').val(cash.a50);
         $('#a100').val(cash.a100);
+        $('#a200').val(cash.a200);
 
         $('#f005').val(cash.f005);
         $('#f010').val(cash.f010);
@@ -577,6 +587,7 @@
         $('#f20').val(cash.f20);
         $('#f50').val(cash.f50);
         $('#f100').val(cash.f100);
+        $('#f200').val(cash.f200);
         $('.valores_abertura').prop("disabled", "disabled");
         $('.valores_fechamento').prop("disabled", "disabled");
         $('#save_cash').prop("disabled", "disabled");
