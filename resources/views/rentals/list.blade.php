@@ -252,65 +252,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    
-</div>
-
-<!-- TODO remove this -->
-<div class="container" style="display: none;">
-    <!--form-->
-    <div class="row">
-        <form id="rental-form">
-            {!! csrf_field() !!}
-            <div class="row">
-                <div class="form-group col-xs-4">
-                    <label for="kiosks">Quiosque operado:</label>
-                    <select name="kiosk_id" class="form-control" id="kiosks">
-                    </select>
-                </div>
-                <div class="form-group col-xs-4">
-                    <label for="tolerance">Tolerância:</label>
-                    <input name="tolerance" disabled class="form-control" id="tolerance" placeholder="Tolerância" required>
-                </div>
-                <div class="form-group col-xs-4">
-                    <label for="extra-value">Minuto adicional:</label>
-                    <input name="extra_value" disabled class="form-control" id="extra-value" placeholder="Minuto adicional" required>
-                </div>
-                <div class="form-group col-xs-6 col-md-3">
-                    <label for="cpf">CPF:</label>
-                    <input name="cpf" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" class="form-control clear" placeholder="CPF" required>
-                </div>
-                <div class="form-group col-xs-6 col-md-3">
-                    <input type="hidden" name="id" id="i_oldd"/>
-                    <label for="name">Nome:</label>
-                    <input class="form-control clear" name="name" placeholder="Nome" disabled required>
-                </div>
-                <div class="col-xs-6 col-md-3 form-group">
-                    <label for="toys">Brinquedo:</label>
-                        <select name="toy_id" class="js-example-basic-single js-states clear form-control" id="toys" required>
-                        </select>
-                </div>
-                
-                <div class="form-group col-xs-6 col-md-3">
-                    <label for="period">Periodo:</label>
-                    <select name="period_id" class="form-control clear" id="period" required>
-                        <option value="">Escolha o periodo...</option>
-                    </select>
-                </div>
-                
-            </div>
-            <div class="row">
-                <div class="form-group col-md-4">
-                    <button id="btn-register-" class="btn btn-primary col-md-12" disabled>Registrar</button>
-                </div>
-            </div>
-        </form>
-    </div>
-    
-    <!--Table-->
-    <div id="-rental" class="row form-group">
-    </div>
+    </div>  
 </div>
 @endsection
 @section('scripts')

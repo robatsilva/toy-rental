@@ -84,7 +84,7 @@
                 <ul class="nav navbar-nav">
                     @if (!Auth::guest() && !Auth::user()->permissions()->get()->whereIn('name', ['relatorio', 'shopping'])->first())
                         @if (!Auth::guest() && !Auth::user()->kiosk_id)
-                            <li><a href="{{ url('/cadastro') }}">Cadastros</a></li>
+                            <li><a href="{{ url('/cadastro') }}">Cadastro</a></li>
                         @endif
                         <li><a href="{{ url('/tutorials') }}">Tutorial</a></li>
                         <li class="dropdown">
